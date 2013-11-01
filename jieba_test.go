@@ -745,3 +745,45 @@ func TestSetdictionary(t *testing.T) {
 		}
 	}
 }
+
+func TestLoadUserDict(t *testing.T) {
+	SetDictionary("dict.txt")
+	LoadUserDict("userdict.txt")
+
+	sentence := "李小福是创新办主任也是云计算方面的专家;例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
+	result := []string{"\u674e\u5c0f\u798f", "\u662f", "\u521b\u65b0\u529e", "\u4e3b\u4efb", "\u4e5f", "\u662f", "\u4e91\u8ba1\u7b97", "\u65b9\u9762", "\u7684", "\u4e13\u5bb6", ";", "\u4f8b\u5982", "\u6211", "\u8f93\u5165", "\u4e00\u4e2a", "\u5e26", "\u201c", "\u97e9\u7389\u8d4f\u9274", "\u201d", "\u7684", "\u6807\u9898", "\uff0c", "\u5728", "\u81ea\u5b9a\u4e49\u8bcd", "\u5e93\u4e2d", "\u4e5f", "\u589e\u52a0", "\u4e86", "\u6b64", "\u8bcd\u4e3a", "N", "\u7c7b\u578b"}
+	words := Cut(sentence, false, true)
+	if len(words) != len(result) {
+		t.Error(len(words))
+	}
+	for index, word := range words {
+		if word != result[index] {
+			t.Error(word)
+		}
+	}
+
+	sentence = "easy_install is great"
+	result = []string{"easy_install", " ", "is", " ", "great"}
+	words = Cut(sentence, false, true)
+	if len(words) != len(result) {
+		t.Error(len(words))
+	}
+	for index, word := range words {
+		if word != result[index] {
+			t.Error(word)
+		}
+	}
+
+	sentence = "python 的正则表达式是好用的"
+	result = []string{"python", " ", "\u7684", "\u6b63\u5219\u8868\u8fbe\u5f0f", "\u662f", "\u597d\u7528", "\u7684"}
+	words = Cut(sentence, false, true)
+	if len(words) != len(result) {
+		t.Error(words)
+		t.Error(result)
+	}
+	for index, word := range words {
+		if word != result[index] {
+			t.Error(word)
+		}
+	}
+}

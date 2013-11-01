@@ -2,22 +2,12 @@ package jiebago
 
 import (
 	"bufio"
-	"crypto/sha1"
-	"encoding/gob"
-	"fmt"
 	"math"
 	"os"
 	"path/filepath"
-	"runtime"
 	"strconv"
 	"strings"
 	"unicode/utf8"
-)
-
-const (
-	CACHE_NAME        = "jieba.gob"
-	USER_CACHE_PREFIX = "jieba.user."
-	USER_CACHE_SUFFIX = ".gob"
 )
 
 type Node struct {
@@ -35,16 +25,6 @@ type TopTrie struct {
 	Freq    map[string]float64
 }
 
-func hash(s string) string {
-	h := sha1.New()
-	h.Write([]byte(s))
-	return fmt.Sprintf("%x", h.Sum(nil))
-}
-
-func getUserCacheName(prefix string, path string, suffix string) string {
-	return fmt.Sprintf("%s%s%s", prefix, hash(path), suffix)
-}
-
 func newTopTrie(filename string) (*TopTrie, error) {
 	var file_path string
 	var topTrie *TopTrie
@@ -56,32 +36,6 @@ func newTopTrie(filename string) (*TopTrie, error) {
 			return nil, err
 		}
 		file_path = filepath.Clean(filepath.Join(pwd, filename))
-	}
-
-	_, curFileName, _, _ := runtime.Caller(1)
-	_curpath := filepath.Dir(curFileName)
-	abs_path := filepath.Join(_curpath, Dictionary)
-	var cache_file string
-	if file_path == abs_path {
-		cache_file = filepath.Join(os.TempDir(), CACHE_NAME)
-	} else {
-		cache_file = filepath.Join(os.TempDir(),
-			getUserCacheName(USER_CACHE_PREFIX, abs_path, USER_CACHE_SUFFIX))
-	}
-
-	cacheFileStat, cacheErr := os.Stat(cache_file)
-	dictFileStat, _ := os.Stat(abs_path)
-	if cacheErr == nil {
-		if cacheFileStat.ModTime().After(dictFileStat.ModTime()) {
-			cacheFile, openError := os.Open(cache_file)
-			if openError == nil {
-				dec := gob.NewDecoder(cacheFile)
-				err := dec.Decode(&topTrie)
-				if err == nil {
-					return topTrie, nil
-				}
-			}
-		}
 	}
 
 	topTrie = &TopTrie{T: make(Trie), MinFreq: 100.0, Total: 0.0, Freq: make(map[string]float64)}
@@ -111,11 +65,6 @@ func newTopTrie(filename string) (*TopTrie, error) {
 		}
 		topTrie.Freq[key] = val
 	}
-
-	cacheFile_, _ := os.OpenFile(cache_file, os.O_CREATE|os.O_WRONLY, 0644)
-	defer cacheFile_.Close()
-	enc := gob.NewEncoder(cacheFile_)
-	enc.Encode(topTrie)
 
 	return topTrie, nil
 }
@@ -167,6 +116,7 @@ func LoadUserDict(file_path string) error {
 		}
 		words := strings.Split(line, " ")
 		word, freqStr := words[0], words[1]
+		word = strings.Replace(word, "\ufeff", "", 1)
 		freq, _ := strconv.ParseFloat(freqStr, 64)
 		TT.addWord(word, freq)
 	}
