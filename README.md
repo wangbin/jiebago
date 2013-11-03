@@ -155,12 +155,18 @@
     writer.WriteString(strings.Join(results, "/ "))
     writer.Flush()
 
-分词速度和性能测试数据待补充。
 
 Tokenize
 =========
 
 尚未实现 :/
+
+分词速度
+=======
+
+ - 2MB / Second in Full Mode
+ - 700KB / Second in Default Mode
+ - Test Env: AMD Phenom(tm) II X6 1055T CPU @ 2.8GHz; 《金庸全集》 
 
 许可证
 ======
