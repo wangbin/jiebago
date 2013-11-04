@@ -159,7 +159,29 @@
 Tokenize
 =========
 
-尚未实现 :/
+    var sentence = "永和服装饰品有限公司"
+    // 默认模式
+    for _, token := range jiebago.Tokenize(sentence, "default", true) {
+        fmt.Printf("word %s\t\t start: %d \t\t end:%d\n", token.Word, token.Start, token.End)
+    }
+    // 搜索模式
+    for _, token := range jiebago.Tokenize(sentence, "search", true) {
+        fmt.Printf("word %s\t\t start: %d \t\t end:%d\n", token.Word, token.Start, token.End)
+    }
+
+输出结果：
+
+    word 永和                start: 0                end:2
+    word 服装                start: 2                end:4
+    word 饰品                start: 4                end:6
+    word 有限公司            start: 6                end:10
+
+    word 永和                start: 0                end:2
+    word 服装                start: 0                end:2
+    word 饰品                start: 0                end:2
+    word 有限                start: 0                end:2
+    word 公司                start: 2                end:4
+    word 有限公司            start: 0                end:4
 
 分词速度
 =======
