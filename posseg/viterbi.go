@@ -87,6 +87,11 @@ func Viterbi(obs []rune) (float64, []StateTag) {
 			}
 		}
 		if len(obs_states) == 0 {
+			for key := range prev_states_expect_next {
+				obs_states = append(obs_states, key)
+			}
+		}
+		if len(obs_states) == 0 {
 			obs_states = ProbTransKeys
 		}
 		mem_path[t] = make(map[StateTag]StateTag)

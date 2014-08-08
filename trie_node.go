@@ -108,17 +108,22 @@ func LoadUserDict(file_path string) error {
 	}
 	defer file.Close()
 
-	reader := bufio.NewReader(file)
-	for {
-		line, readError := reader.ReadString('\n')
-		if readError != nil && len(line) == 0 {
-			break
-		}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
 		words := strings.Split(line, " ")
 		word, freqStr := words[0], words[1]
 		word = strings.Replace(word, "\ufeff", "", 1)
-		freq, _ := strconv.ParseFloat(freqStr, 64)
-		TT.addWord(word, freq)
+		freq, freqErr := strconv.ParseFloat(freqStr, 64)
+		if freqErr != nil {
+			continue // TODO: how to handle wrong type of frequency?
+		}
+		tag := ""
+		if len(words) == 3 {
+			tag = words[2]
+		}
+		addWord(word, freq, tag)
 	}
-	return nil
+
+	return scanner.Err()
 }

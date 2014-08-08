@@ -12,8 +12,7 @@ import (
 )
 
 var (
-	WordTagTab       = make(map[string]string)
-	isUserDictLoaded = false
+	WordTagTab = make(map[string]string)
 )
 
 type WordTag struct {
@@ -282,11 +281,9 @@ func cut(sentence string, HMM bool) []WordTag {
 }
 
 func Cut(sentence string, HMM bool) []WordTag {
-	if !isUserDictLoaded {
-		for key, value := range jiebago.UserWordTagTab {
-			WordTagTab[key] = value
-		}
-		isUserDictLoaded = true
+	for key := range jiebago.UserWordTagTab {
+		WordTagTab[key] = jiebago.UserWordTagTab[key]
+		delete(jiebago.UserWordTagTab, key)
 	}
 	return cut(sentence, HMM)
 }

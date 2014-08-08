@@ -23740,6 +23740,7 @@ func init() {
 	CharStateTab['\u8ddb'] = []StateTag{
 		StateTag{'B', "n"},
 		StateTag{'B', "v"},
+		StateTag{'S', "a"},
 	}
 	CharStateTab['\u4edd'] = []StateTag{
 		StateTag{'E', "nr"},
