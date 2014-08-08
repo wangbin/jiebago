@@ -1,12 +1,16 @@
 package posseg
 
+import (
+	"math"
+)
+
 type StateTagFloatMap map[StateTag]float64
 
 func (m StateTagFloatMap) Get(key StateTag) float64 {
 	if _, ok := m[key]; ok {
 		return m[key]
 	} else {
-		return MIN_FLOAT
+		return math.Inf(-1)
 	}
 }
 

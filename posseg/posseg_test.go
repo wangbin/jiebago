@@ -370,3 +370,35 @@ func TestBug132(t *testing.T) {
 		}
 	}
 }
+
+func TestBug137(t *testing.T) {
+	/*
+		https://github.com/fxsjy/jieba/issues/137
+	*/
+	jiebago.SetDictionary("../dict.txt")
+	sentence := "前港督衛奕信在八八年十月宣布成立中央政策研究組"
+	cutResult := []WordTag{
+		WordTag{"\u524d", "f"},
+		WordTag{"\u6e2f\u7763", "n"},
+		WordTag{"\u885b\u5955", "z"},
+		WordTag{"\u4fe1", "n"},
+		WordTag{"\u5728", "p"},
+		WordTag{"\u516b\u516b\u5e74", "m"},
+		WordTag{"\u5341\u6708", "t"},
+		WordTag{"\u5ba3\u5e03", "v"},
+		WordTag{"\u6210\u7acb", "v"},
+		WordTag{"\u4e2d\u592e", "n"},
+		WordTag{"\u653f\u7b56", "n"},
+		WordTag{"\u7814\u7a76", "vn"},
+		WordTag{"\u7d44", "x"},
+	}
+	result := Cut(sentence, true)
+	if len(cutResult) != len(result) {
+		t.Error(result)
+	}
+	for i, _ := range result {
+		if result[i] != cutResult[i] {
+			t.Error(result[i])
+		}
+	}
+}
