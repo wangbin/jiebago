@@ -293,61 +293,6 @@ func TestCut(t *testing.T) {
 	}
 }
 
-func TestUserDict(t *testing.T) {
-	jiebago.SetDictionary("../dict.txt")
-	jiebago.LoadUserDict("../userdict.txt")
-	sentence := "李小福是创新办主任也是云计算方面的专家; 什么是八一双鹿例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
-	cutResult := []WordTag{
-		WordTag{"\u674e\u5c0f\u798f", "nr"},
-		WordTag{"\u662f", "v"},
-		WordTag{"\u521b\u65b0\u529e", "i"},
-		WordTag{"\u4e3b\u4efb", "b"},
-		WordTag{"\u4e5f", "d"},
-		WordTag{"\u662f", "v"},
-		WordTag{"\u4e91\u8ba1\u7b97", "x"},
-		WordTag{"\u65b9\u9762", "n"},
-		WordTag{"\u7684", "uj"},
-		WordTag{"\u4e13\u5bb6", "n"},
-		WordTag{";", "x"},
-		WordTag{" ", "x"},
-		WordTag{"\u4ec0\u4e48", "r"},
-		WordTag{"\u662f", "v"},
-		WordTag{"\u516b\u4e00\u53cc\u9e7f", "nz"},
-		WordTag{"\u4f8b\u5982", "v"},
-		WordTag{"\u6211", "r"},
-		WordTag{"\u8f93\u5165", "v"},
-		WordTag{"\u4e00\u4e2a", "m"},
-		WordTag{"\u5e26", "v"},
-		WordTag{"\u201c", "x"},
-		WordTag{"\u97e9\u7389\u8d4f\u9274", "nz"},
-		WordTag{"\u201d", "x"},
-		WordTag{"\u7684", "uj"},
-		WordTag{"\u6807\u9898", "n"},
-		WordTag{"\uff0c", "x"},
-		WordTag{"\u5728", "p"},
-		WordTag{"\u81ea\u5b9a\u4e49\u8bcd", "n"},
-		WordTag{"\u5e93\u4e2d", "nrt"},
-		WordTag{"\u4e5f", "d"},
-		WordTag{"\u589e\u52a0", "v"},
-		WordTag{"\u4e86", "ul"},
-		WordTag{"\u6b64", "r"},
-		WordTag{"\u8bcd", "n"},
-		WordTag{"\u4e3a", "p"},
-		WordTag{"N", "eng"},
-		WordTag{"\u7c7b\u578b", "n"},
-	}
-
-	result := Cut(sentence, true)
-	if len(cutResult) != len(result) {
-		t.Error(result)
-	}
-	for i, _ := range result {
-		if result[i] != cutResult[i] {
-			t.Error(result[i])
-		}
-	}
-}
-
 func TestBug132(t *testing.T) {
 	/*
 		https://github.com/fxsjy/jieba/issues/132
@@ -392,6 +337,61 @@ func TestBug137(t *testing.T) {
 		WordTag{"\u7814\u7a76", "vn"},
 		WordTag{"\u7d44", "x"},
 	}
+	result := Cut(sentence, true)
+	if len(cutResult) != len(result) {
+		t.Error(result)
+	}
+	for i, _ := range result {
+		if result[i] != cutResult[i] {
+			t.Error(result[i])
+		}
+	}
+}
+
+func TestUserDict(t *testing.T) {
+	jiebago.SetDictionary("../dict.txt")
+	jiebago.LoadUserDict("../userdict.txt")
+	sentence := "李小福是创新办主任也是云计算方面的专家; 什么是八一双鹿例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
+	cutResult := []WordTag{
+		WordTag{"\u674e\u5c0f\u798f", "nr"},
+		WordTag{"\u662f", "v"},
+		WordTag{"\u521b\u65b0\u529e", "i"},
+		WordTag{"\u4e3b\u4efb", "b"},
+		WordTag{"\u4e5f", "d"},
+		WordTag{"\u662f", "v"},
+		WordTag{"\u4e91\u8ba1\u7b97", "x"},
+		WordTag{"\u65b9\u9762", "n"},
+		WordTag{"\u7684", "uj"},
+		WordTag{"\u4e13\u5bb6", "n"},
+		WordTag{";", "x"},
+		WordTag{" ", "x"},
+		WordTag{"\u4ec0\u4e48", "r"},
+		WordTag{"\u662f", "v"},
+		WordTag{"\u516b\u4e00\u53cc\u9e7f", "nz"},
+		WordTag{"\u4f8b\u5982", "v"},
+		WordTag{"\u6211", "r"},
+		WordTag{"\u8f93\u5165", "v"},
+		WordTag{"\u4e00\u4e2a", "m"},
+		WordTag{"\u5e26", "v"},
+		WordTag{"\u201c", "x"},
+		WordTag{"\u97e9\u7389\u8d4f\u9274", "nz"},
+		WordTag{"\u201d", "x"},
+		WordTag{"\u7684", "uj"},
+		WordTag{"\u6807\u9898", "n"},
+		WordTag{"\uff0c", "x"},
+		WordTag{"\u5728", "p"},
+		WordTag{"\u81ea\u5b9a\u4e49\u8bcd", "n"},
+		WordTag{"\u5e93\u4e2d", "nrt"},
+		WordTag{"\u4e5f", "d"},
+		WordTag{"\u589e\u52a0", "v"},
+		WordTag{"\u4e86", "ul"},
+		WordTag{"\u6b64", "r"},
+		WordTag{"\u8bcd", "n"},
+		WordTag{"\u4e3a", "p"},
+		WordTag{"N", "eng"},
+		WordTag{"\u7c7b\u578b", "n"},
+	}
+
 	result := Cut(sentence, true)
 	if len(cutResult) != len(result) {
 		t.Error(result)
