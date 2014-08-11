@@ -1,6 +1,8 @@
 结巴分词Go版 jiebago
 ===================
 
+[![Build Status](https://travis-ci.org/wangbin/jiebago.png?branch=master)](https://travis-ci.org/wangbin/jiebago)
+
 [结巴分词](https://github.com/fxsjy/jieba)是[@fxsjy](https://github.com/fxsjy)用Python编写的中文分词组件，jiebago是结巴分词的Go语言实现，目前已经实现的功能包括：三种模式分词、自定义词典、关键词提取和词性标注。
 
 
@@ -120,23 +122,23 @@
 并行分词
 =======
 
-因为Go有强大的goroute特性，并行分词实现起来非常简单，所以并没有内置到jiebaogo中，而是由使用者自己实现，下面是一个简单的例子：
+因为Go有强大的goroutine特性，并行分词实现起来非常简单，所以并没有内置到jiebaogo中，而是由使用者自己实现，下面是一个简单的例子：
 
     lineCount := 0
     inputFile, _ := os.Open(FileName)
     defer inputFile.Close()
-    reader := bufio.NewReader(inputFile)
+    scanner := bufio.NewScanner(inputFile)
     ch := make(chan []string, 1)
-    for {
-        line, readError := reader.ReadString('\n')
-        if readError != nil && len(line) == 0 {
-            break
-        }
+    for scanner.Scan() {
+        line := scanner.Text()
         fileLength += len([]rune(line))
         lineCount += 1
         go func() {
             ch <- jiebago.Cut(line, false, true)
         }()
+    }
+    if err := scanner.Err(); err != nil {
+        panic(err)
     }
     outputFile, _ := os.OpenFile("parallelCut.log", os.O_CREATE|os.O_WRONLY, 0600)
     defer outputFile.Close()
