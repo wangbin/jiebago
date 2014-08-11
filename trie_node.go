@@ -45,18 +45,19 @@ func newTopTrie(filename string) (*TopTrie, error) {
 	}
 	defer file.Close()
 
-	reader := bufio.NewReader(file)
-	for {
-		line, readError := reader.ReadString('\n')
-		if readError != nil && len(line) == 0 {
-			break
-		}
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		line := scanner.Text()
 		words := strings.Split(line, " ")
 		word, freqStr := words[0], words[1]
 		freq, _ := strconv.ParseFloat(freqStr, 64)
 		topTrie.Total += freq
 		topTrie.addWord(word, freq)
 	}
+	if scanErr := scanner.Err(); scanErr != nil {
+		return nil, scanErr
+	}
+
 	var val float64
 	for key := range topTrie.Freq {
 		val = math.Log(topTrie.Freq[key] / topTrie.Total)
