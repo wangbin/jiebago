@@ -37,13 +37,10 @@ func (pss ProbStates) Len() int {
 
 func (pss ProbStates) Less(i, j int) bool {
 	if pss[i].Prob == pss[j].Prob {
-		if pss[i].ST.Tag < pss[j].ST.Tag {
-			return true
-		} else if pss[i].ST.State < pss[j].ST.State {
-			return true
-		} else {
-			return false
+		if pss[i].ST.State == pss[j].ST.State {
+			return pss[i].ST.Tag < pss[j].ST.Tag
 		}
+		return pss[i].ST.State < pss[j].ST.State
 	}
 	return pss[i].Prob < pss[j].Prob
 }
