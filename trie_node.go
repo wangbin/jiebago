@@ -2,24 +2,28 @@ package jiebago
 
 import (
 	"bufio"
+	"crypto/md5"
+	"encoding/gob"
+	"fmt"
+	"log"
 	"math"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"unicode/utf8"
 )
 
-type Node struct {
-	Name     string
-	SubNodes Trie
-	IsLeaf   bool
+type Trie struct {
+	Nodes  map[rune]*Trie
+	IsLeaf bool
 }
 
-type Trie map[string]*Node
+func NewTrie() *Trie {
+	return &Trie{make(map[rune]*Trie), false}
+}
 
 type TopTrie struct {
-	T       Trie
+	T       *Trie
 	MinFreq float64
 	Total   float64
 	Freq    map[string]float64
@@ -38,60 +42,106 @@ func newTopTrie(filename string) (*TopTrie, error) {
 		file_path = filepath.Clean(filepath.Join(pwd, filename))
 	}
 
-	topTrie = &TopTrie{T: make(Trie), MinFreq: 100.0, Total: 0.0, Freq: make(map[string]float64)}
-	file, openError := os.Open(file_path)
-	if openError != nil {
-		return nil, openError
+	fi, err := os.Stat(file_path)
+	if err != nil {
+		return nil, err
 	}
-	defer file.Close()
+	log.Printf("Building Trie..., from %s\n", file_path)
+	h := fmt.Sprintf("%x", md5.Sum([]byte(file_path)))
+	cache_file_name := fmt.Sprintf("jieba.%s.cache", h)
+	cache_path := filepath.Join(os.TempDir(), cache_file_name)
+	isDictCached := true
+	cache_fi, err := os.Stat(cache_path)
 
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		words := strings.Split(line, " ")
-		word, freqStr := words[0], words[1]
-		freq, _ := strconv.ParseFloat(freqStr, 64)
-		topTrie.Total += freq
-		topTrie.addWord(word, freq)
-	}
-	if scanErr := scanner.Err(); scanErr != nil {
-		return nil, scanErr
+	if err != nil {
+		isDictCached = false
 	}
 
-	var val float64
-	for key := range topTrie.Freq {
-		val = math.Log(topTrie.Freq[key] / topTrie.Total)
-		if val < topTrie.MinFreq {
-			topTrie.MinFreq = val
+	if isDictCached {
+		isDictCached = cache_fi.ModTime().After(fi.ModTime())
+	}
+
+	var cacheFile *os.File
+	if isDictCached {
+		cacheFile, err = os.Open(cache_path)
+		if err != nil {
+			isDictCached = false
 		}
-		topTrie.Freq[key] = val
+		defer cacheFile.Close()
+	}
+	if isDictCached {
+		dec := gob.NewDecoder(cacheFile)
+		err = dec.Decode(&topTrie)
+		if err != nil {
+			isDictCached = false
+		} else {
+			log.Printf("loaded model from cache %s\n", cache_path)
+		}
 	}
 
+	if !isDictCached {
+		topTrie = &TopTrie{T: NewTrie(), MinFreq: 100.0, Total: 0.0, Freq: make(map[string]float64)}
+		file, openError := os.Open(file_path)
+		if openError != nil {
+			return nil, openError
+		}
+		defer file.Close()
+
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := scanner.Text()
+			words := strings.Split(line, " ")
+			word, freqStr := words[0], words[1]
+			freq, _ := strconv.ParseFloat(freqStr, 64)
+			topTrie.Total += freq
+			topTrie.addWord(word, freq)
+		}
+		if scanErr := scanner.Err(); scanErr != nil {
+			return nil, scanErr
+		}
+
+		var val float64
+		for key := range topTrie.Freq {
+			val = math.Log(topTrie.Freq[key] / topTrie.Total)
+			if val < topTrie.MinFreq {
+				topTrie.MinFreq = val
+			}
+			topTrie.Freq[key] = val
+		}
+
+		// dump topTrie
+		cacheFile, err = os.OpenFile(cache_path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
+		if err != nil {
+			return topTrie, err
+		}
+		defer cacheFile.Close()
+		enc := gob.NewEncoder(cacheFile)
+		err := enc.Encode(topTrie)
+		if err != nil {
+			return topTrie, err
+		} else {
+			log.Printf("dumped model from cache %s\n", cache_path)
+		}
+	}
 	return topTrie, nil
 }
 
 func (tt *TopTrie) addWord(word string, freq float64) {
 	tt.Freq[word] = freq
-	var p Trie
-	var node *Node
-	var key string
-	count := utf8.RuneCountInString(word)
-	for index, c := range []rune(word) {
+	var p *Trie
+	runes := []rune(word)
+	count := len(runes)
+	for index, key := range runes {
 		if index == 0 {
 			p = tt.T
 		}
-		key = string(c)
-		if _, ok := p[key]; ok {
-			node = p[key]
-		} else {
-			node = &Node{Name: key, IsLeaf: false}
-			p[key] = node
-			node.SubNodes = make(Trie)
+		if _, ok := p.Nodes[key]; !ok {
+			p.Nodes[key] = NewTrie()
 		}
 		if index == count-1 {
-			p[key].IsLeaf = true
+			p.Nodes[key].IsLeaf = true
 		}
-		p = node.SubNodes
+		p = p.Nodes[key]
 	}
 }
 
