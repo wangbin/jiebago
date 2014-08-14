@@ -38,8 +38,7 @@ func ExtractTags(sentence string, topK int) []string {
 		if utf8.RuneCountInString(w) < 2 {
 			continue
 		}
-		index := stopWords.Search(w)
-		if index < len(stopWords) && stopWords[index] == w {
+		if _, ok := stopWords[w]; ok {
 			continue
 		}
 		if f, ok := freq[w]; ok {

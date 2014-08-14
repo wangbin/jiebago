@@ -79,6 +79,7 @@
 
     func main() {
         jiebago.SetDictionary("/Path/to/default/dictionary/file")
+        analyse.SetIdf("/Path/to/idf/file")
         fmt.Println(strings.Join(analyse.ExtractTags(sentence, 20), "/ "))
     }
     
