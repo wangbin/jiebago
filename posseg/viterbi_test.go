@@ -42,5 +42,4 @@ func TestViterbi(t *testing.T) {
 			t.Error(route[index])
 		}
 	}
-
 }
