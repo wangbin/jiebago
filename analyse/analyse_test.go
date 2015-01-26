@@ -185,6 +185,7 @@ var (
 func TestExtractTags(t *testing.T) {
 	jiebago.SetDictionary("../dict.txt")
 	SetIdf("idf.txt")
+
 	for index, sentence := range test_contents {
 		result := ExtractTags(sentence, 20)
 		if len(result) != len(Tags[index]) {
@@ -192,8 +193,9 @@ func TestExtractTags(t *testing.T) {
 		}
 		for i, tag := range result {
 			if tag != Tags[index][i] {
-				t.Error(tag)
+				t.Errorf("%s != %s", tag, Tags[index][i])
 			}
 		}
 	}
+
 }

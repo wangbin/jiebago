@@ -57,10 +57,10 @@ func ExtractTags(sentence string, topK int) []string {
 	tis := make(TfIdfs, 0)
 	for k, v := range freq {
 		var ti TfIdf
-		if freq_, ok := idfFreq[k]; ok {
+		if freq_, ok := idfLoader.Freq[k]; ok {
 			ti = TfIdf{word: k, freq: freq_ * v}
 		} else {
-			ti = TfIdf{word: k, freq: medianIdf * v}
+			ti = TfIdf{word: k, freq: idfLoader.Median * v}
 		}
 		tis = append(tis, ti)
 	}

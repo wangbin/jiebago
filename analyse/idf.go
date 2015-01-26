@@ -11,24 +11,61 @@ import (
 
 var (
 	stopWords map[string]string
-	idfFreq   map[string]float64
-	medianIdf float64
+	idfLoader *IDFLoader
 )
 
 func init() {
-	idfFreq = make(map[string]float64)
+	idfLoader = NewIDFLoader()
 	stopWords = map[string]string{
-		"the": "the", "of": "of", "is": "is", "and": "and", "to": "to", "in": "in", "that": "that", "we": "we", "for": "for", "an": "an", "are": "are", "by": "bye", "be": "be", "as": "as", "on": "on", "with": "with", "can": "can", "if": "of", "from": "from", "which": "which", "you": "you", "it": "it", "this": "this", "then": "then", "at": "at", "have": "have", "all": "all", "not": "not", "one": "one", "has": "has", "or": "or",
+		"the":   "the",
+		"of":    "of",
+		"is":    "is",
+		"and":   "and",
+		"to":    "to",
+		"in":    "in",
+		"that":  "that",
+		"we":    "we",
+		"for":   "for",
+		"an":    "an",
+		"are":   "are",
+		"by":    "bye",
+		"be":    "be",
+		"as":    "as",
+		"on":    "on",
+		"with":  "with",
+		"can":   "can",
+		"if":    "of",
+		"from":  "from",
+		"which": "which",
+		"you":   "you",
+		"it":    "it",
+		"this":  "this",
+		"then":  "then",
+		"at":    "at",
+		"have":  "have",
+		"all":   "all",
+		"not":   "not",
+		"one":   "one",
+		"has":   "has",
+		"or":    "or",
 	}
 }
 
-func SetIdf(idfFilePath string) error {
-	if !filepath.IsAbs(idfFilePath) {
-		pwd, err := os.Getwd()
-		if err != nil {
-			return err
-		}
-		idfFilePath = filepath.Clean(filepath.Join(pwd, idfFilePath))
+type IDFLoader struct {
+	Path   string
+	Freq   map[string]float64
+	Median float64
+}
+
+func NewIDFLoader() *IDFLoader {
+	loader := new(IDFLoader)
+	loader.Freq = make(map[string]float64)
+	return loader
+}
+
+func (loader *IDFLoader) NewPath(idfFilePath string) error {
+	if loader.Path == idfFilePath {
+		return nil
 	}
 	idfFile, err := os.Open(idfFilePath)
 	if err != nil {
@@ -44,15 +81,27 @@ func SetIdf(idfFilePath string) error {
 		if err != nil {
 			continue
 		}
-		idfFreq[word] = freq
+		loader.Freq[word] = freq
 		freqs = append(freqs, freq)
 	}
 	if err := scanner.Err(); err != nil {
 		return err
 	}
 	sort.Float64s(freqs)
-	medianIdf = freqs[len(freqs)/2]
+	loader.Median = freqs[len(freqs)/2]
 	return nil
+
+}
+
+func SetIdf(idfFilePath string) error {
+	if !filepath.IsAbs(idfFilePath) {
+		pwd, err := os.Getwd()
+		if err != nil {
+			return err
+		}
+		idfFilePath = filepath.Clean(filepath.Join(pwd, idfFilePath))
+	}
+	return idfLoader.NewPath(idfFilePath)
 }
 
 func SetStopWords(stopWordsFilePath string) error {
