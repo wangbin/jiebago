@@ -9,7 +9,7 @@ import (
 
 var (
 	Dictionary     = "dict.txt"
-	TT             *TopTrie
+	trie           *Trie
 	UserWordTagTab = make(map[string]string)
 )
 
@@ -70,39 +70,29 @@ func GetDAG(sentence string) map[int][]int {
 	dag := make(map[int][]int)
 	runes := []rune(sentence)
 	n := len(runes)
-	p := TT.T
-	i, j := 0, 0
-	var c rune
-	for {
-		if i >= n {
-			break
-		}
-		c = runes[j]
-		if _, ok := p.Nodes[c]; ok {
-			p = p.Nodes[c]
-			if p.IsLeaf {
-				if _, inDag := dag[i]; !inDag {
-					dag[i] = []int{j}
-				} else {
-					dag[i] = append(dag[i], j)
-				}
+	i := 0
+	var frag string
+	for k := 0; k < n; k++ {
+		tmpList := make([]int, 0)
+		i = k
+		frag = string(runes[k])
+		for {
+			if !trie.Nodes.Contains(frag) {
+				break
 			}
-			j += 1
-			if j >= n {
-				i += 1
-				j = i
-				p = TT.T
+			if _, ok := trie.Freq[frag]; ok {
+				tmpList = append(tmpList, i)
 			}
-		} else {
-			p = TT.T
 			i += 1
-			j = i
+			if i >= n {
+				break
+			}
+			frag = string(runes[k : i+1])
 		}
-	}
-	for i := 0; i < n; i++ {
-		if _, ok := dag[i]; !ok {
-			dag[i] = []int{i}
+		if len(tmpList) == 0 {
+			tmpList = append(tmpList, k)
 		}
+		dag[k] = tmpList
 	}
 	return dag
 }
@@ -122,10 +112,10 @@ func Calc(sentence string, dag map[int][]int, idx int) map[int]*Route {
 				word = string(runes[idx : i+1])
 			}
 			var route *Route
-			if _, ok := TT.Freq[word]; ok {
-				route = &Route{TT.Freq[word] + routes[i+1].Freq, i}
+			if _, ok := trie.Freq[word]; ok {
+				route = &Route{trie.Freq[word] + routes[i+1].Freq, i}
 			} else {
-				route = &Route{TT.MinFreq + routes[i+1].Freq, i}
+				route = &Route{trie.MinFreq + routes[i+1].Freq, i}
 			}
 			candidates = append(candidates, route)
 		}
@@ -161,7 +151,7 @@ func cut_DAG(sentence string) []string {
 					buf = make([]rune, 0)
 				} else {
 					bufString := string(buf)
-					if _, ok := TT.Freq[bufString]; !ok {
+					if _, ok := trie.Freq[bufString]; !ok {
 						recognized := finalseg.Cut(bufString)
 						for _, t := range recognized {
 							result = append(result, t)
@@ -184,7 +174,7 @@ func cut_DAG(sentence string) []string {
 			result = append(result, string(buf))
 		} else {
 			bufString := string(buf)
-			if _, ok := TT.Freq[bufString]; !ok {
+			if _, ok := trie.Freq[bufString]; !ok {
 				recognized := finalseg.Cut(bufString)
 				for _, t := range recognized {
 					result = append(result, t)
@@ -328,7 +318,7 @@ func CutForSearch(sentence string, hmm bool) []string {
 				var gram2 string
 				for i := 0; i < len(runes)-increment+1; i++ {
 					gram2 = string(runes[i : i+increment])
-					if _, ok := TT.Freq[gram2]; ok {
+					if _, ok := trie.Freq[gram2]; ok {
 						result = append(result, gram2)
 					}
 				}
@@ -340,6 +330,6 @@ func CutForSearch(sentence string, hmm bool) []string {
 }
 
 func SetDictionary(dict_path string) (err error) {
-	TT, err = newTopTrie(dict_path)
+	trie, err = newTrie(dict_path)
 	return
 }
