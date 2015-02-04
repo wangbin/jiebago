@@ -9,7 +9,6 @@ import (
 
 var (
 	Dictionary     = "dict.txt"
-	trie           *Trie
 	UserWordTagTab = make(map[string]string)
 )
 
@@ -77,10 +76,10 @@ func GetDAG(sentence string) map[int][]int {
 		i = k
 		frag = string(runes[k])
 		for {
-			if !trie.Nodes.Contains(frag) {
+			if !T.Nodes.Contains(frag) {
 				break
 			}
-			if _, ok := trie.Freq[frag]; ok {
+			if _, ok := T.Freq[frag]; ok {
 				tmpList = append(tmpList, i)
 			}
 			i += 1
@@ -112,10 +111,10 @@ func Calc(sentence string, dag map[int][]int, idx int) map[int]*Route {
 				word = string(runes[idx : i+1])
 			}
 			var route *Route
-			if _, ok := trie.Freq[word]; ok {
-				route = &Route{trie.Freq[word] + routes[i+1].Freq, i}
+			if _, ok := T.Freq[word]; ok {
+				route = &Route{T.Freq[word] + routes[i+1].Freq, i}
 			} else {
-				route = &Route{trie.MinFreq + routes[i+1].Freq, i}
+				route = &Route{T.MinFreq + routes[i+1].Freq, i}
 			}
 			candidates = append(candidates, route)
 		}
@@ -151,7 +150,7 @@ func cut_DAG(sentence string) []string {
 					buf = make([]rune, 0)
 				} else {
 					bufString := string(buf)
-					if _, ok := trie.Freq[bufString]; !ok {
+					if _, ok := T.Freq[bufString]; !ok {
 						recognized := finalseg.Cut(bufString)
 						for _, t := range recognized {
 							result = append(result, t)
@@ -174,7 +173,7 @@ func cut_DAG(sentence string) []string {
 			result = append(result, string(buf))
 		} else {
 			bufString := string(buf)
-			if _, ok := trie.Freq[bufString]; !ok {
+			if _, ok := T.Freq[bufString]; !ok {
 				recognized := finalseg.Cut(bufString)
 				for _, t := range recognized {
 					result = append(result, t)
@@ -318,7 +317,7 @@ func CutForSearch(sentence string, hmm bool) []string {
 				var gram2 string
 				for i := 0; i < len(runes)-increment+1; i++ {
 					gram2 = string(runes[i : i+increment])
-					if _, ok := trie.Freq[gram2]; ok {
+					if _, ok := T.Freq[gram2]; ok {
 						result = append(result, gram2)
 					}
 				}
@@ -327,9 +326,4 @@ func CutForSearch(sentence string, hmm bool) []string {
 		result = append(result, word)
 	}
 	return result
-}
-
-func SetDictionary(dict_path string) (err error) {
-	trie, err = newTrie(dict_path)
-	return
 }

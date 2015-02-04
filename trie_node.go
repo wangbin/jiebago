@@ -15,6 +15,8 @@ import (
 	"strings"
 )
 
+var T *Trie
+
 type Trie struct {
 	Nodes   mapset.Set
 	MinFreq float64
@@ -181,7 +183,7 @@ func addWord(word string, freq float64, tag string) {
 	if len(tag) > 0 {
 		UserWordTagTab[word] = strings.TrimSpace(tag)
 	}
-	trie.addWord(word, freq)
+	T.addWord(word, freq)
 }
 
 func LoadUserDict(filePath string) error {
@@ -209,4 +211,9 @@ func LoadUserDict(filePath string) error {
 	}
 
 	return scanner.Err()
+}
+
+func SetDictionary(dict_path string) (err error) {
+	T, err = newTrie(dict_path)
+	return
 }

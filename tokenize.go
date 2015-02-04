@@ -24,7 +24,7 @@ func Tokenize(sentence string, mode string, HMM bool) []Token {
 				if width > step {
 					for i := 0; i < width-step+1; i++ {
 						gram := string(runes[i : i+step])
-						if _, ok := trie.Freq[gram]; ok {
+						if _, ok := T.Freq[gram]; ok {
 							tokens = append(tokens, Token{gram, start + i, start + i + step})
 						}
 					}
