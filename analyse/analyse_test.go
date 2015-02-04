@@ -2,6 +2,7 @@ package analyse
 
 import (
 	"github.com/wangbin/jiebago"
+	"math"
 	"testing"
 )
 
@@ -180,6 +181,65 @@ var (
 		[]string{"的士", "的哥", "他开", "握手", "一辆", "黑色", "主席", "认识", "那个"},
 		[]string{"枪杆子", "政权"},
 	}
+
+	Lyric = `
+我沒有心
+我沒有真實的自我
+我只有消瘦的臉孔
+所謂軟弱
+所謂的順從一向是我
+的座右銘
+
+而我
+沒有那海洋的寬闊
+我只要熱情的撫摸
+所謂空洞
+所謂不安全感是我
+的墓誌銘
+
+而你
+是否和我一般怯懦
+是否和我一般矯作
+和我一般囉唆
+
+而你
+是否和我一般退縮
+是否和我一般肌迫
+一般地困惑
+
+我沒有力
+我沒有滿腔的熱火
+我只有滿肚的如果
+所謂勇氣
+所謂的認同感是我
+隨便說說
+
+而你
+是否和我一般怯懦
+是否和我一般矯作
+是否對你來說
+只是一場遊戲
+雖然沒有把握
+
+而你
+是否和我一般退縮
+是否和我一般肌迫
+是否對你來說
+只是逼不得已
+雖然沒有藉口
+`
+	LyciWeight = []TfIdf{
+		TfIdf{Word: "所謂", Freq: 1.010262},
+		TfIdf{Word: "是否", Freq: 0.738650},
+		TfIdf{Word: "一般", Freq: 0.607600},
+		TfIdf{Word: "雖然", Freq: 0.336754},
+		TfIdf{Word: "退縮", Freq: 0.336754},
+		TfIdf{Word: "肌迫", Freq: 0.336754},
+		TfIdf{Word: "矯作", Freq: 0.336754},
+		TfIdf{Word: "沒有", Freq: 0.336754},
+		TfIdf{Word: "怯懦", Freq: 0.271099},
+		TfIdf{Word: "隨便", Freq: 0.168377},
+	}
 )
 
 func TestExtractTags(t *testing.T) {
@@ -192,10 +252,21 @@ func TestExtractTags(t *testing.T) {
 			t.Errorf("%s = %v", sentence, result)
 		}
 		for i, tag := range result {
-			if tag != Tags[index][i] {
+			if tag.Word != Tags[index][i] {
 				t.Errorf("%s != %s", tag, Tags[index][i])
 			}
 		}
 	}
+}
 
+func TestExtratTagsWithWeight(t *testing.T) {
+	jiebago.SetDictionary("../dict.txt")
+	SetIdf("idf.txt")
+	result := ExtractTags(Lyric, 10)
+	for index, tag := range result {
+		if LyciWeight[index].Word != tag.Word ||
+			math.Abs(LyciWeight[index].Freq-tag.Freq) > 1e-6 {
+			t.Errorf("%v != %v", tag, LyciWeight[index])
+		}
+	}
 }

@@ -1,6 +1,7 @@
 package analyse
 
 import (
+	//	"fmt"
 	"github.com/wangbin/jiebago"
 	"sort"
 	"strings"
@@ -8,9 +9,13 @@ import (
 )
 
 type TfIdf struct {
-	word string
-	freq float64
+	Word string
+	Freq float64
 }
+
+//func (t TfIdf) String() string {
+//	return fmt.Sprintf("{%s: %f}", t.Word, t.Freq)
+//}
 
 type TfIdfs []TfIdf
 
@@ -19,17 +24,18 @@ func (tis TfIdfs) Len() int {
 }
 
 func (tis TfIdfs) Less(i, j int) bool {
-	if tis[i].freq == tis[j].freq {
-		return tis[i].word < tis[j].word
+	if tis[i].Freq == tis[j].Freq {
+		return tis[i].Word < tis[j].Word
 	}
-	return tis[i].freq < tis[j].freq
+
+	return tis[i].Freq < tis[j].Freq
 }
 
 func (tis TfIdfs) Swap(i, j int) {
 	tis[i], tis[j] = tis[j], tis[i]
 }
 
-func ExtractTags(sentence string, topK int) []string {
+func ExtractTags(sentence string, topK int) (tags TfIdfs) {
 	words := jiebago.Cut(sentence, false, true)
 	freq := make(map[string]float64)
 
@@ -58,22 +64,17 @@ func ExtractTags(sentence string, topK int) []string {
 	for k, v := range freq {
 		var ti TfIdf
 		if freq_, ok := idfLoader.Freq[k]; ok {
-			ti = TfIdf{word: k, freq: freq_ * v}
+			ti = TfIdf{Word: k, Freq: freq_ * v}
 		} else {
-			ti = TfIdf{word: k, freq: idfLoader.Median * v}
+			ti = TfIdf{Word: k, Freq: idfLoader.Median * v}
 		}
 		tis = append(tis, ti)
 	}
 	sort.Sort(sort.Reverse(tis))
-	var topTfIdfs TfIdfs
 	if len(tis) > topK {
-		topTfIdfs = tis[:topK]
+		tags = tis[:topK]
 	} else {
-		topTfIdfs = tis
-	}
-	tags := make([]string, len(topTfIdfs))
-	for index, ti := range topTfIdfs {
-		tags[index] = ti.word
+		tags = tis
 	}
 	return tags
 }
