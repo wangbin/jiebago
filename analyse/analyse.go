@@ -1,7 +1,7 @@
 package analyse
 
 import (
-	//	"fmt"
+	"fmt"
 	"github.com/wangbin/jiebago"
 	"sort"
 	"strings"
@@ -13,9 +13,9 @@ type TfIdf struct {
 	Freq float64
 }
 
-//func (t TfIdf) String() string {
-//	return fmt.Sprintf("{%s: %f}", t.Word, t.Freq)
-//}
+func (t TfIdf) String() string {
+	return fmt.Sprintf("{%s: %f}", t.Word, t.Freq)
+}
 
 type TfIdfs []TfIdf
 
