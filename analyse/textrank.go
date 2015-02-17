@@ -1,6 +1,7 @@
 package analyse
 
 import (
+	"fmt"
 	mapset "github.com/deckarep/golang-set"
 	"github.com/wangbin/jiebago/posseg"
 	"math"
@@ -21,26 +22,57 @@ type edge struct {
 	weight float64
 }
 
+func (e edge) String() string {
+	return fmt.Sprintf("(%s %s): %f", e.start, e.end, e.weight)
+}
+
+type edges []edge
+
+func (es edges) Len() int {
+	return len(es)
+}
+
+func (es edges) Less(i, j int) bool {
+	return es[i].weight < es[j].weight
+}
+
+func (es edges) Swap(i, j int) {
+	es[i], es[j] = es[j], es[i]
+}
+
 type undirectWeightedGraph struct {
-	graph map[string][]edge
+	graph map[string]edges
+	keys  sort.StringSlice
+}
+
+func newUndirectWeightedGraph() *undirectWeightedGraph {
+	u := new(undirectWeightedGraph)
+	u.graph = make(map[string]edges)
+	u.keys = make(sort.StringSlice, 0)
+	return u
 }
 
 func (u *undirectWeightedGraph) addEdge(start, end string, weight float64) {
 	if _, ok := u.graph[start]; !ok {
-		u.graph[start] = []edge{edge{start: start, end: end, weight: weight}}
+		u.keys = append(u.keys, start)
+		u.graph[start] = edges{edge{start: start, end: end, weight: weight}}
 	} else {
 		u.graph[start] = append(u.graph[start], edge{start: start, end: end, weight: weight})
 	}
 
 	if _, ok := u.graph[end]; !ok {
-		u.graph[start] = []edge{edge{start: end, end: start, weight: weight}}
+		u.keys = append(u.keys, end)
+		u.graph[end] = edges{edge{start: end, end: start, weight: weight}}
 	} else {
-		u.graph[start] = append(u.graph[start], edge{start: end, end: start, weight: weight})
+		u.graph[end] = append(u.graph[end], edge{start: end, end: start, weight: weight})
 	}
-
 }
 
 func (u *undirectWeightedGraph) rank() TfIdfs {
+	if !sort.IsSorted(u.keys) {
+		sort.Sort(u.keys)
+	}
+
 	ws := make(map[string]float64)
 	outSum := make(map[string]float64)
 
@@ -48,7 +80,6 @@ func (u *undirectWeightedGraph) rank() TfIdfs {
 	if len(u.graph) > 0 {
 		wsdef /= float64(len(u.graph))
 	}
-
 	for n, out := range u.graph {
 		ws[n] = wsdef
 		sum := 0.0
@@ -59,15 +90,15 @@ func (u *undirectWeightedGraph) rank() TfIdfs {
 	}
 
 	for x := 0; x < 10; x++ {
-		for n, inedges := range u.graph {
+		for _, n := range u.keys {
 			s := 0.0
+			inedges := u.graph[n]
 			for _, e := range inedges {
-				s += e.weight / outSum[e.end] * ws[e.start]
+				s += e.weight / outSum[e.end] * ws[e.end]
 			}
 			ws[n] = (1 - DampingFactor) + DampingFactor*s
 		}
 	}
-
 	minRank := math.MaxFloat64
 	maxRank := math.SmallestNonzeroFloat64
 	for _, w := range ws {
@@ -90,13 +121,13 @@ func TextRankWithPOS(sentence string, topK int, allowPOS []string) TfIdfs {
 	for _, pos := range allowPOS {
 		posFilt.Add(pos)
 	}
-	g := new(undirectWeightedGraph)
+	g := newUndirectWeightedGraph()
 	cm := make(map[[2]string]float64)
 	span := 5
 	wordTags := posseg.Cut(sentence, true)
-	for i := range wordTags {
+	for i, _ := range wordTags {
 		if posFilt.Contains(wordTags[i].Tag) {
-			for j := i + 1; j < i+span; i++ {
+			for j := i + 1; j < i+span; j++ {
 				if j > len(wordTags) {
 					break
 				}
