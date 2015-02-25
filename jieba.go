@@ -3,6 +3,7 @@ package jiebago
 import (
 	"fmt"
 	"github.com/wangbin/jiebago/finalseg"
+	"math"
 	"regexp"
 	"sort"
 )
@@ -100,21 +101,17 @@ func Calc(sentence string, dag map[int][]int) map[int]*Route {
 	runes := []rune(sentence)
 	number := len(runes)
 	routes := make(map[int]*Route)
-	routes[number] = &Route{0.0, 0}
+	routes[number] = &Route{Freq: 0.0, Index: 0}
+	logTotal := math.Log(T.Total)
 	for idx := number - 1; idx >= 0; idx-- {
 		candidates := make(Routes, 0)
 		for _, i := range dag[idx] {
-			var word string
-			if i <= idx-1 {
-				word = string(runes[i+1 : idx])
-			} else {
-				word = string(runes[idx : i+1])
-			}
+			word := string(runes[idx : i+1])
 			var route *Route
 			if _, ok := T.Freq[word]; ok {
-				route = &Route{T.Freq[word] + routes[i+1].Freq, i}
+				route = &Route{Freq: math.Log(T.Freq[word]) - logTotal + routes[i+1].Freq, Index: i}
 			} else {
-				route = &Route{T.MinFreq + routes[i+1].Freq, i}
+				route = &Route{Freq: math.Log(1.0) - logTotal + routes[i+1].Freq, Index: i}
 			}
 			candidates = append(candidates, route)
 		}

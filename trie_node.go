@@ -8,7 +8,6 @@ import (
 	"fmt"
 	mapset "github.com/deckarep/golang-set"
 	"log"
-	"math"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -18,20 +17,15 @@ import (
 var T *Trie
 
 type Trie struct {
-	Nodes   mapset.Set
-	MinFreq float64
-	Total   float64
-	Freq    map[string]float64
+	Nodes mapset.Set
+	Total float64
+	Freq  map[string]float64
 }
 
 func (t Trie) MarshalBinary() ([]byte, error) {
 	var b bytes.Buffer
 	enc := gob.NewEncoder(&b)
 	err := enc.Encode(t.Nodes.ToSlice())
-	if err != nil {
-		return nil, err
-	}
-	err = enc.Encode(t.MinFreq)
 	if err != nil {
 		return nil, err
 	}
@@ -55,10 +49,6 @@ func (t *Trie) UnmarshalBinary(data []byte) error {
 		return err
 	}
 	t.Nodes = mapset.NewSetFromSlice(nodes)
-	err = dec.Decode(&t.MinFreq)
-	if err != nil {
-		return err
-	}
 	err = dec.Decode(&t.Total)
 	if err != nil {
 		return err
@@ -121,7 +111,7 @@ func newTrie(fileName string) (*Trie, error) {
 	}
 
 	if !isDictCached {
-		trie = &Trie{Nodes: mapset.NewSet(), MinFreq: 0.0, Total: 0.0,
+		trie = &Trie{Nodes: mapset.NewSet(), Total: 0.0,
 			Freq: make(map[string]float64)}
 
 		file, openError := os.Open(filePath)
@@ -140,15 +130,6 @@ func newTrie(fileName string) (*Trie, error) {
 		}
 		if scanErr := scanner.Err(); scanErr != nil {
 			return nil, scanErr
-		}
-
-		var val float64
-		for key := range trie.Freq {
-			val = math.Log(trie.Freq[key] / trie.Total)
-			if val < trie.MinFreq {
-				trie.MinFreq = val
-			}
-			trie.Freq[key] = val
 		}
 
 		// dump trie
