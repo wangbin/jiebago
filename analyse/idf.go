@@ -29,7 +29,7 @@ func NewIDFLoader() *IDFLoader {
 	return loader
 }
 
-func (loader *IDFLoader) NewPath(idfFilePath string) error {
+func (loader *IDFLoader) newPath(idfFilePath string) error {
 	if loader.Path == idfFilePath {
 		return nil
 	}
@@ -67,5 +67,5 @@ func SetIdf(idfFilePath string) error {
 		}
 		idfFilePath = filepath.Clean(filepath.Join(pwd, idfFilePath))
 	}
-	return idfLoader.NewPath(idfFilePath)
+	return idfLoader.newPath(idfFilePath)
 }

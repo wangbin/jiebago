@@ -240,6 +240,19 @@ var (
 		TfIdf{Word: "怯懦", Freq: 0.271099},
 		TfIdf{Word: "隨便", Freq: 0.168377},
 	}
+
+	LyciWeight2 = []TfIdf{
+		TfIdf{Word: "所謂", Freq: 1.215739},
+		TfIdf{Word: "一般", Freq: 0.731179},
+		TfIdf{Word: "雖然", Freq: 0.405246},
+		TfIdf{Word: "退縮", Freq: 0.405246},
+		TfIdf{Word: "肌迫", Freq: 0.405246},
+		TfIdf{Word: "矯作", Freq: 0.405246},
+		TfIdf{Word: "怯懦", Freq: 0.326238},
+		TfIdf{Word: "逼不得已", Freq: 0.202623},
+		TfIdf{Word: "右銘", Freq: 0.202623},
+		TfIdf{Word: "寬闊", Freq: 0.202623},
+	}
 )
 
 func TestExtractTags(t *testing.T) {
@@ -267,6 +280,19 @@ func TestExtratTagsWithWeight(t *testing.T) {
 		if LyciWeight[index].Word != tag.Word ||
 			math.Abs(LyciWeight[index].Freq-tag.Freq) > 1e-6 {
 			t.Errorf("%v != %v", tag, LyciWeight[index])
+		}
+	}
+}
+
+func TestExtractTagsWithStopWordsFile(t *testing.T) {
+	jiebago.SetDictionary("../dict.txt")
+	SetIdf("idf.txt")
+	SetStopWords("stop_words.txt")
+	result := ExtractTags(Lyric, 7)
+	for index, tag := range result {
+		if LyciWeight2[index].Word != tag.Word ||
+			math.Abs(LyciWeight2[index].Freq-tag.Freq) > 1e-6 {
+			t.Errorf("%v != %v", tag, LyciWeight2[index])
 		}
 	}
 }
