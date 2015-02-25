@@ -4,6 +4,11 @@ import (
 	"regexp"
 )
 
+var (
+	reHan  = regexp.MustCompile(`\p{Han}+`)
+	reSkip = regexp.MustCompile(`(\d+\.\d+|[a-zA-Z0-9]+)`)
+)
+
 func cutHan(sentence string) []string {
 	runes := []rune(sentence)
 	result := make([]string, 0)
@@ -30,14 +35,12 @@ func cutHan(sentence string) []string {
 
 func Cut(sentence string) []string {
 	result := make([]string, 0)
-	re_han := regexp.MustCompile(`\p{Han}+`)
-	re_skip := regexp.MustCompile(`(\d+\.\d+|[a-zA-Z0-9]+)`)
 	s := sentence
 	var hans string
 	var hanLoc []int
 	var nonhanLoc []int
 	for {
-		hanLoc = re_han.FindStringIndex(s)
+		hanLoc = reHan.FindStringIndex(s)
 		if hanLoc == nil {
 			if len(s) == 0 {
 				break
@@ -50,7 +53,7 @@ func Cut(sentence string) []string {
 			}
 			continue
 		}
-		nonhanLoc = re_skip.FindStringIndex(s)
+		nonhanLoc = reSkip.FindStringIndex(s)
 		if nonhanLoc == nil {
 			if len(s) == 0 {
 				break

@@ -12,7 +12,14 @@ import (
 )
 
 var (
-	WordTagTab = make(map[string]string)
+	WordTagTab     = make(map[string]string)
+	reHanDetail    = regexp.MustCompile(`\p{Han}+`)
+	reSkipDetail   = regexp.MustCompile(`[[\.[:digit:]]+|[:alnum:]]+`)
+	reEng          = regexp.MustCompile(`[[:alnum:]]`)
+	reNum          = regexp.MustCompile(`[\.[:digit:]]+`)
+	reEng1         = regexp.MustCompile(`[[:alnum:]]$`)
+	reHanInternal  = regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
+	reSkipInternal = regexp.MustCompile(`(\r\n|\s)`)
 )
 
 type WordTag struct {
@@ -80,26 +87,21 @@ func __cut(sentence string) []WordTag {
 
 func cutDetail(sentence string) []WordTag {
 	result := make([]WordTag, 0)
-	re_han := regexp.MustCompile(`\p{Han}+`)
-	re_skip := regexp.MustCompile(`[[\.[:digit:]]+|[:alnum:]]+`)
-
-	re_eng := regexp.MustCompile(`[[:alnum:]]`)
-	re_num := regexp.MustCompile(`[\.[:digit:]]+`)
-	blocks := jiebago.RegexpSplit(re_han, sentence)
+	blocks := jiebago.RegexpSplit(reHanDetail, sentence)
 	for _, blk := range blocks {
-		if re_han.MatchString(blk) {
+		if reHanDetail.MatchString(blk) {
 			for _, wordTag := range __cut(blk) {
 				result = append(result, wordTag)
 			}
 		} else {
-			for _, x := range jiebago.RegexpSplit(re_skip, blk) {
+			for _, x := range jiebago.RegexpSplit(reSkipDetail, blk) {
 				if len(x) == 0 {
 					continue
 				}
 				switch {
-				case re_num.MatchString(x):
+				case reNum.MatchString(x):
 					result = append(result, WordTag{x, "m"})
-				case re_eng.MatchString(x):
+				case reEng.MatchString(x):
 					result = append(result, WordTag{x, "eng"})
 				default:
 					result = append(result, WordTag{x, "x"})
@@ -203,7 +205,6 @@ func cut_DAG(sentence string) []WordTag {
 
 func cut_DAG_NO_HMM(sentence string) []WordTag {
 	result := make([]WordTag, 0)
-	re_eng := regexp.MustCompile(`[[:alnum:]]`)
 	dag := jiebago.GetDAG(sentence)
 	routes := jiebago.Calc(sentence, dag)
 	x := 0
@@ -217,7 +218,7 @@ func cut_DAG_NO_HMM(sentence string) []WordTag {
 		}
 		y = routes[x].Index + 1
 		l_word := runes[x:y]
-		if re_eng.MatchString(string(l_word)) && len(l_word) == 1 {
+		if reEng1.MatchString(string(l_word)) && len(l_word) == 1 {
 			buf = append(buf, l_word...)
 			x = y
 		} else {
@@ -243,11 +244,7 @@ func cut_DAG_NO_HMM(sentence string) []WordTag {
 
 func cut(sentence string, HMM bool) []WordTag {
 	result := make([]WordTag, 0)
-	re_han := regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
-	re_skip := regexp.MustCompile(`(\r\n|\s)`)
-	re_eng := regexp.MustCompile(`[[:alnum:]]`)
-	re_num := regexp.MustCompile(`[\.[:digit:]]+`)
-	blocks := jiebago.RegexpSplit(re_han, sentence)
+	blocks := jiebago.RegexpSplit(reHanInternal, sentence)
 	var cut_block cutAction
 	if HMM {
 		cut_block = cut_DAG
@@ -255,21 +252,21 @@ func cut(sentence string, HMM bool) []WordTag {
 		cut_block = cut_DAG_NO_HMM
 	}
 	for _, blk := range blocks {
-		if re_han.MatchString(blk) {
+		if reHanInternal.MatchString(blk) {
 			for _, wordTag := range cut_block(blk) {
 				result = append(result, wordTag)
 			}
 		} else {
-			for _, x := range jiebago.RegexpSplit(re_skip, blk) {
-				if re_skip.MatchString(x) {
+			for _, x := range jiebago.RegexpSplit(reSkipInternal, blk) {
+				if reSkipInternal.MatchString(x) {
 					result = append(result, WordTag{x, "x"})
 				} else {
 					for _, xx := range x {
 						s := string(xx)
 						switch {
-						case re_num.MatchString(s):
+						case reNum.MatchString(s):
 							result = append(result, WordTag{s, "m"})
-						case re_eng.MatchString(x):
+						case reEng.MatchString(x):
 							result = append(result, WordTag{x, "eng"})
 							break
 						default:

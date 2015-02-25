@@ -11,6 +11,11 @@ import (
 var (
 	Dictionary     = "dict.txt"
 	UserWordTagTab = make(map[string]string)
+	reEng          = regexp.MustCompile(`[[:alnum:]]`)
+	reHanCutAll    = regexp.MustCompile(`\p{Han}+`)
+	reSkipCutAll   = regexp.MustCompile(`[^[:alnum:]+#\n]`)
+	reHanDefault   = regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
+	reSkipDefault  = regexp.MustCompile(`(\r\n|\s)`)
 )
 
 type Route struct {
@@ -187,7 +192,7 @@ func cut_DAG(sentence string) []string {
 
 func cut_DAG_NO_HMM(sentence string) []string {
 	result := make([]string, 0)
-	re_eng := regexp.MustCompile(`[[:alnum:]]`)
+
 	dag := GetDAG(sentence)
 	routes := Calc(sentence, dag)
 	x := 0
@@ -201,7 +206,7 @@ func cut_DAG_NO_HMM(sentence string) []string {
 		}
 		y = routes[x].Index + 1
 		l_word := runes[x:y]
-		if re_eng.MatchString(string(l_word)) && len(l_word) == 1 {
+		if reEng.MatchString(string(l_word)) && len(l_word) == 1 {
 			buf = append(buf, l_word...)
 			x = y
 		} else {
@@ -220,7 +225,7 @@ func cut_DAG_NO_HMM(sentence string) []string {
 	return result
 }
 
-func cut_All(sentence string) []string {
+func cutAll(sentence string) []string {
 	result := make([]string, 0)
 	runes := []rune(sentence)
 	dag := GetDAG(sentence)
@@ -247,51 +252,51 @@ func cut_All(sentence string) []string {
 	return result
 }
 
-func Cut(sentence string, cut_all bool, HMM bool) []string {
+func Cut(sentence string, isCutAll bool, HMM bool) []string {
 	result := make([]string, 0)
-	var re_han, re_skip *regexp.Regexp
-	if cut_all {
-		re_han = regexp.MustCompile(`\p{Han}+`)
-		re_skip = regexp.MustCompile(`[^[:alnum:]+#\n]`)
+	var reHan, reSkip *regexp.Regexp
+	if isCutAll {
+		reHan = reHanCutAll
+		reSkip = reSkipCutAll
 	} else {
-		re_han = regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
-		re_skip = regexp.MustCompile(`(\r\n|\s)`)
+		reHan = reHanDefault
+		reSkip = reSkipDefault
 	}
-	blocks := RegexpSplit(re_han, sentence)
+	blocks := RegexpSplit(reHan, sentence)
 	var cut_block cutAction
 	if HMM {
 		cut_block = cut_DAG
 	} else {
 		cut_block = cut_DAG_NO_HMM
 	}
-	if cut_all {
-		cut_block = cut_All
+	if isCutAll {
+		cut_block = cutAll
 	}
 	for _, blk := range blocks {
 		if len(blk) == 0 {
 			continue
 		}
-		if re_han.MatchString(blk) {
+		if reHan.MatchString(blk) {
 			for _, word := range cut_block(blk) {
 				result = append(result, word)
 			}
 		} else {
 			type skipSplitFunc func(sentence string) []string
 			var ssf skipSplitFunc
-			if cut_all {
+			if isCutAll {
 				ssf = func(sentence string) []string {
-					return re_skip.Split(sentence, -1)
+					return reSkip.Split(sentence, -1)
 				}
 			} else {
 				ssf = func(sentence string) []string {
-					return RegexpSplit(re_skip, sentence)
+					return RegexpSplit(reSkip, sentence)
 				}
 			}
 
 			for _, x := range ssf(blk) {
-				if re_skip.MatchString(x) {
+				if reSkip.MatchString(x) {
 					result = append(result, x)
-				} else if !cut_all {
+				} else if !isCutAll {
 					for _, xx := range x {
 						result = append(result, string(xx))
 					}
