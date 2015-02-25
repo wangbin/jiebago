@@ -6,7 +6,6 @@ import (
 	"crypto/md5"
 	"encoding/gob"
 	"fmt"
-	mapset "github.com/deckarep/golang-set"
 	"log"
 	"os"
 	"path/filepath"
@@ -17,7 +16,6 @@ import (
 var T *Trie
 
 type Trie struct {
-	Nodes mapset.Set
 	Total float64
 	Freq  map[string]float64
 }
@@ -25,11 +23,7 @@ type Trie struct {
 func (t Trie) MarshalBinary() ([]byte, error) {
 	var b bytes.Buffer
 	enc := gob.NewEncoder(&b)
-	err := enc.Encode(t.Nodes.ToSlice())
-	if err != nil {
-		return nil, err
-	}
-	err = enc.Encode(t.Total)
+	err := enc.Encode(t.Total)
 	if err != nil {
 		return nil, err
 	}
@@ -43,13 +37,7 @@ func (t Trie) MarshalBinary() ([]byte, error) {
 func (t *Trie) UnmarshalBinary(data []byte) error {
 	b := bytes.NewBuffer(data)
 	dec := gob.NewDecoder(b)
-	var nodes []interface{}
-	err := dec.Decode(&nodes)
-	if err != nil {
-		return err
-	}
-	t.Nodes = mapset.NewSetFromSlice(nodes)
-	err = dec.Decode(&t.Total)
+	err := dec.Decode(&t.Total)
 	if err != nil {
 		return err
 	}
@@ -111,8 +99,7 @@ func newTrie(fileName string) (*Trie, error) {
 	}
 
 	if !isDictCached {
-		trie = &Trie{Nodes: mapset.NewSet(), Total: 0.0,
-			Freq: make(map[string]float64)}
+		trie = &Trie{Total: 0.0, Freq: make(map[string]float64)}
 
 		file, openError := os.Open(filePath)
 		if openError != nil {
@@ -125,7 +112,10 @@ func newTrie(fileName string) (*Trie, error) {
 			line := scanner.Text()
 			words := strings.Split(line, " ")
 			word, freqStr := words[0], words[1]
-			freq, _ := strconv.ParseFloat(freqStr, 64)
+			freq, err := strconv.ParseFloat(freqStr, 64)
+			if err != nil {
+				return nil, err
+			}
 			trie.addWord(word, freq)
 		}
 		if scanErr := scanner.Err(); scanErr != nil {
@@ -155,10 +145,12 @@ func (t *Trie) addWord(word string, freq float64) {
 	runes := []rune(word)
 	count := len(runes)
 	for i := 0; i < count; i++ {
-		t.Nodes.Add(string(runes[:i+1]))
+		wfrag := string(runes[0 : i+1])
+		if _, ok := t.Freq[wfrag]; !ok {
+			t.Freq[wfrag] = 0.0
+		}
 	}
 }
-
 func addWord(word string, freq float64, tag string) {
 	if len(tag) > 0 {
 		UserWordTagTab[word] = strings.TrimSpace(tag)

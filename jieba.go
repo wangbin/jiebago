@@ -82,11 +82,12 @@ func GetDAG(sentence string) map[int][]int {
 		i = k
 		frag = string(runes[k])
 		for {
-			if !T.Nodes.Contains(frag) {
+			if freq, ok := T.Freq[frag]; !ok {
 				break
-			}
-			if _, ok := T.Freq[frag]; ok {
-				tmpList = append(tmpList, i)
+			} else {
+				if freq > 0.0 {
+					tmpList = append(tmpList, i)
+				}
 			}
 			i += 1
 			if i >= n {
@@ -152,7 +153,7 @@ func cut_DAG(sentence string) []string {
 					buf = make([]rune, 0)
 				} else {
 					bufString := string(buf)
-					if _, ok := T.Freq[bufString]; !ok {
+					if v, ok := T.Freq[bufString]; !ok || v == 0.0 {
 						recognized := finalseg.Cut(bufString)
 						for _, t := range recognized {
 							result = append(result, t)
@@ -175,7 +176,7 @@ func cut_DAG(sentence string) []string {
 			result = append(result, string(buf))
 		} else {
 			bufString := string(buf)
-			if _, ok := T.Freq[bufString]; !ok {
+			if v, ok := T.Freq[bufString]; !ok || v == 0.0 {
 				recognized := finalseg.Cut(bufString)
 				for _, t := range recognized {
 					result = append(result, t)
@@ -319,7 +320,7 @@ func CutForSearch(sentence string, hmm bool) []string {
 				var gram2 string
 				for i := 0; i < len(runes)-increment+1; i++ {
 					gram2 = string(runes[i : i+increment])
-					if _, ok := T.Freq[gram2]; ok {
+					if v, ok := T.Freq[gram2]; ok && v > 0.0 {
 						result = append(result, gram2)
 					}
 				}
