@@ -28,7 +28,6 @@ func (t Trie) MarshalBinary() ([]byte, error) {
 	var b bytes.Buffer
 	enc := gob.NewEncoder(&b)
 	err := enc.Encode(t.Nodes.ToSlice())
-	log.Println(err)
 	if err != nil {
 		return nil, err
 	}

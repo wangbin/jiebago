@@ -115,7 +115,7 @@ type cutAction func(sentence string) []WordTag
 
 func cut_DAG(sentence string) []WordTag {
 	dag := jiebago.GetDAG(sentence)
-	routes := jiebago.Calc(sentence, dag, 0)
+	routes := jiebago.Calc(sentence, dag)
 	x := 0
 	var y int
 	runes := []rune(sentence)
@@ -205,7 +205,7 @@ func cut_DAG_NO_HMM(sentence string) []WordTag {
 	result := make([]WordTag, 0)
 	re_eng := regexp.MustCompile(`[[:alnum:]]`)
 	dag := jiebago.GetDAG(sentence)
-	routes := jiebago.Calc(sentence, dag, 0)
+	routes := jiebago.Calc(sentence, dag)
 	x := 0
 	var y int
 	runes := []rune(sentence)

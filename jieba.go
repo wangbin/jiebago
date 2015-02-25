@@ -96,7 +96,7 @@ func GetDAG(sentence string) map[int][]int {
 	return dag
 }
 
-func Calc(sentence string, dag map[int][]int, idx int) map[int]*Route {
+func Calc(sentence string, dag map[int][]int) map[int]*Route {
 	runes := []rune(sentence)
 	number := len(runes)
 	routes := make(map[int]*Route)
@@ -128,7 +128,7 @@ type cutAction func(sentence string) []string
 
 func cut_DAG(sentence string) []string {
 	dag := GetDAG(sentence)
-	routes := Calc(sentence, dag, 0)
+	routes := Calc(sentence, dag)
 	x := 0
 	var y int
 	runes := []rune(sentence)
@@ -192,7 +192,7 @@ func cut_DAG_NO_HMM(sentence string) []string {
 	result := make([]string, 0)
 	re_eng := regexp.MustCompile(`[[:alnum:]]`)
 	dag := GetDAG(sentence)
-	routes := Calc(sentence, dag, 0)
+	routes := Calc(sentence, dag)
 	x := 0
 	var y int
 	runes := []rune(sentence)
