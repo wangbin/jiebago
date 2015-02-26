@@ -37,7 +37,8 @@ func (routes Routes) Less(i, j int) bool {
 	routej := routes[j]
 	if routei.Freq < routej.Freq {
 		return true
-	} else if routei.Freq == routej.Freq {
+	}
+	if routei.Freq == routej.Freq {
 		return routei.Index < routej.Index
 	}
 	return false
