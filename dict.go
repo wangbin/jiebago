@@ -32,7 +32,7 @@ func ParseDictFile(dictFilePath string) (wtfs []*WordTagFreq, err error) {
 	if err != nil {
 		return
 	}
-
+	defer dictFile.Close()
 	scanner := bufio.NewScanner(dictFile)
 	for scanner.Scan() {
 		line := scanner.Text()
