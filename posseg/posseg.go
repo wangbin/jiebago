@@ -41,6 +41,26 @@ func init() {
 	}
 }
 
+/*
+func SetDictionary(dictFileName string) error {
+	err := jiebago.SetDictionary(dictFileName)
+	if err != nil {
+		return err
+	}
+	dictFilePath, err := jiebago.DictPath(dictFileName)
+	if err != nil {
+		return err
+	}
+	dictFile, err := os.Open(dictFilePath)
+	if err != nil {
+		return err
+	}
+	defer dictFile.Close()
+
+	wtfs, err := ParseDictFile(dictFile)
+
+}
+*/
 func load_model(f_name string) error {
 	file, openError := os.Open(f_name)
 	if openError != nil {

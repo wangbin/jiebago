@@ -26,7 +26,13 @@ func DictPath(dictFileName string) (string, error) {
 	return dictFilePath, nil
 }
 
-func ParseDictFile(dictFile *os.File) (wtfs []*WordTagFreq, err error) {
+func ParseDictFile(dictFilePath string) (wtfs []*WordTagFreq, err error) {
+	var dictFile *os.File
+	dictFile, err = os.Open(dictFilePath)
+	if err != nil {
+		return
+	}
+
 	scanner := bufio.NewScanner(dictFile)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -38,7 +44,7 @@ func ParseDictFile(dictFile *os.File) (wtfs []*WordTagFreq, err error) {
 		if length > 1 {
 			wtf.Freq, err = strconv.ParseFloat(fields[1], 64)
 			if err != nil {
-				return nil, err
+				return
 			}
 		}
 		if length > 2 {
@@ -46,8 +52,6 @@ func ParseDictFile(dictFile *os.File) (wtfs []*WordTagFreq, err error) {
 		}
 		wtfs = append(wtfs, wtf)
 	}
-	if err = scanner.Err(); err != nil {
-		return nil, err
-	}
-	return wtfs, nil
+	err = scanner.Err()
+	return
 }

@@ -96,13 +96,7 @@ func newTrie(dictFileName string) (*Trie, error) {
 	if !isDictCached {
 		trie = &Trie{Total: 0.0, Freq: make(map[string]float64)}
 
-		dictFile, err := os.Open(dictFilePath)
-		if err != nil {
-			return nil, err
-		}
-		defer dictFile.Close()
-
-		wtfs, err := ParseDictFile(dictFile)
+		wtfs, err := ParseDictFile(dictFilePath)
 		if err != nil {
 			return nil, err
 		}
@@ -147,13 +141,7 @@ func addWord(wtf *WordTagFreq) {
 }
 
 func LoadUserDict(dictFilePath string) error {
-	dictFile, err := os.Open(dictFilePath)
-	if err != nil {
-		return err
-	}
-	defer dictFile.Close()
-
-	wtfs, err := ParseDictFile(dictFile)
+	wtfs, err := ParseDictFile(dictFilePath)
 	if err != nil {
 		return err
 	}
@@ -163,7 +151,7 @@ func LoadUserDict(dictFilePath string) error {
 	return nil
 }
 
-func SetDictionary(dict_path string) (err error) {
-	T, err = newTrie(dict_path)
+func SetDictionary(dictFileName string) (err error) {
+	T, err = newTrie(dictFileName)
 	return
 }
