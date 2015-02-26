@@ -22,7 +22,7 @@ type Viterbi struct {
 }
 
 func (v Viterbi) String() string {
-	return fmt.Sprintf("(%f, %s)", v.prob, v.state)
+	return fmt.Sprintf("(%f, %x)", v.prob, v.state)
 }
 
 type Viterbis []*Viterbi
