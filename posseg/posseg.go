@@ -20,6 +20,7 @@ var (
 	reEng1         = regexp.MustCompile(`[[:alnum:]]$`)
 	reHanInternal  = regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
 	reSkipInternal = regexp.MustCompile(`(\r\n|\s)`)
+	dictionary     = "dict.txt"
 )
 
 type WordTag struct {
@@ -33,7 +34,7 @@ func (wt WordTag) String() string {
 func init() {
 	_, filename, _, _ := runtime.Caller(1)
 	dict_dir := filepath.Dir(filepath.Dir(filename))
-	dict_path := filepath.Join(dict_dir, jiebago.Dictionary)
+	dict_path := filepath.Join(dict_dir, dictionary)
 	err := load_model(dict_path)
 	if err != nil {
 		panic(err)

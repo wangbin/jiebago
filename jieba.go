@@ -9,7 +9,6 @@ import (
 )
 
 var (
-	Dictionary     = "dict.txt"
 	UserWordTagTab = make(map[string]string)
 	reEng          = regexp.MustCompile(`[[:alnum:]]`)
 	reHanCutAll    = regexp.MustCompile(`\p{Han}+`)
