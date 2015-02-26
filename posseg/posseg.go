@@ -93,7 +93,7 @@ func cutDetail(sentence string) []WordTag {
 type cutAction func(sentence string) []WordTag
 
 func cut_DAG(sentence string) []WordTag {
-	dag := jiebago.GetDAG(sentence)
+	dag := jiebago.DAG(sentence)
 	routes := jiebago.Calc(sentence, dag)
 	x := 0
 	var y int
@@ -182,7 +182,7 @@ func cut_DAG(sentence string) []WordTag {
 
 func cut_DAG_NO_HMM(sentence string) []WordTag {
 	result := make([]WordTag, 0)
-	dag := jiebago.GetDAG(sentence)
+	dag := jiebago.DAG(sentence)
 	routes := jiebago.Calc(sentence, dag)
 	x := 0
 	var y int

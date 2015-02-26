@@ -71,7 +71,7 @@ func RegexpSplit(r *regexp.Regexp, sentence string) []string {
 	return result
 }
 
-func GetDAG(sentence string) map[int][]int {
+func DAG(sentence string) map[int][]int {
 	dag := make(map[int][]int)
 	runes := []rune(sentence)
 	n := len(runes)
@@ -127,10 +127,10 @@ func Calc(sentence string, dag map[int][]int) map[int]*Route {
 	return routes
 }
 
-type cutAction func(sentence string) []string
+type cutFunc func(sentence string) []string
 
 func cut_DAG(sentence string) []string {
-	dag := GetDAG(sentence)
+	dag := DAG(sentence)
 	routes := Calc(sentence, dag)
 	x := 0
 	var y int
@@ -194,7 +194,7 @@ func cut_DAG(sentence string) []string {
 func cut_DAG_NO_HMM(sentence string) []string {
 	result := make([]string, 0)
 
-	dag := GetDAG(sentence)
+	dag := DAG(sentence)
 	routes := Calc(sentence, dag)
 	x := 0
 	var y int
@@ -229,7 +229,7 @@ func cut_DAG_NO_HMM(sentence string) []string {
 func cutAll(sentence string) []string {
 	result := make([]string, 0)
 	runes := []rune(sentence)
-	dag := GetDAG(sentence)
+	dag := DAG(sentence)
 	old_j := -1
 	ks := make([]int, 0)
 	for k := range dag {
@@ -264,7 +264,7 @@ func Cut(sentence string, isCutAll bool, HMM bool) []string {
 		reSkip = reSkipDefault
 	}
 	blocks := RegexpSplit(reHan, sentence)
-	var cut_block cutAction
+	var cut_block cutFunc
 	if HMM {
 		cut_block = cut_DAG
 	} else {
