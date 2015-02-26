@@ -2,7 +2,6 @@ package analyse
 
 import (
 	"fmt"
-	mapset "github.com/deckarep/golang-set"
 	"github.com/wangbin/jiebago/posseg"
 	"math"
 	"sort"
@@ -117,21 +116,21 @@ func (u *undirectWeightedGraph) rank() TfIdfs {
 }
 
 func TextRankWithPOS(sentence string, topK int, allowPOS []string) TfIdfs {
-	posFilt := mapset.NewSet()
+	posFilt := make(map[string]int)
 	for _, pos := range allowPOS {
-		posFilt.Add(pos)
+		posFilt[pos] = 1
 	}
 	g := newUndirectWeightedGraph()
 	cm := make(map[[2]string]float64)
 	span := 5
 	wordTags := posseg.Cut(sentence, true)
 	for i, _ := range wordTags {
-		if posFilt.Contains(wordTags[i].Tag) {
+		if _, ok := posFilt[wordTags[i].Tag]; ok {
 			for j := i + 1; j < i+span; j++ {
 				if j > len(wordTags) {
 					break
 				}
-				if !posFilt.Contains(wordTags[j].Tag) {
+				if _, ok := posFilt[wordTags[j].Tag]; !ok {
 					continue
 				}
 				if _, ok := cm[[2]string{wordTags[i].Word, wordTags[j].Word}]; !ok {
