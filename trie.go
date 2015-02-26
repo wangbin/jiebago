@@ -46,15 +46,15 @@ func (t *Trie) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func newTrie(dictFileName string) (*Trie, error) {
+func newTrie(dictFileName string) error {
 	dictFilePath, err := DictPath(dictFileName)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	dictFileInfo, err := os.Stat(dictFilePath)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	log.Printf("Building Trie..., from %s\n", dictFilePath)
@@ -81,11 +81,9 @@ func newTrie(dictFileName string) (*Trie, error) {
 		defer cacheFile.Close()
 	}
 
-	var trie *Trie
-
 	if isDictCached {
 		dec := gob.NewDecoder(cacheFile)
-		err = dec.Decode(&trie)
+		err = dec.Decode(&T)
 		if err != nil {
 			isDictCached = false
 		} else {
@@ -94,31 +92,29 @@ func newTrie(dictFileName string) (*Trie, error) {
 	}
 
 	if !isDictCached {
-		trie = &Trie{Total: 0.0, Freq: make(map[string]float64)}
-
 		wtfs, err := ParseDictFile(dictFilePath)
 		if err != nil {
-			return nil, err
+			return err
 		}
 
 		for _, wtf := range wtfs {
-			trie.addWord(wtf)
+			T.addWord(wtf)
 		}
 		// dump trie
 		cacheFile, err = os.OpenFile(cacheFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 		if err != nil {
-			return trie, err
+			return err
 		}
 		defer cacheFile.Close()
 		enc := gob.NewEncoder(cacheFile)
-		err = enc.Encode(trie)
+		err = enc.Encode(T)
 		if err != nil {
-			return trie, err
+			return err
 		} else {
 			log.Printf("dumped model from cache %s\n", cacheFilePath)
 		}
 	}
-	return trie, nil
+	return nil
 }
 
 func (t *Trie) addWord(wtf *WordTagFreq) {
@@ -151,7 +147,7 @@ func LoadUserDict(dictFilePath string) error {
 	return nil
 }
 
-func SetDictionary(dictFileName string) (err error) {
-	T, err = newTrie(dictFileName)
-	return
+func SetDictionary(dictFileName string) error {
+	T = &Trie{Total: 0.0, Freq: make(map[string]float64)}
+	return newTrie(dictFileName)
 }
