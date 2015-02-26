@@ -11,14 +11,14 @@ import (
 	"strings"
 )
 
-var T *Trie
+var Trie *trie
 
-type Trie struct {
+type trie struct {
 	Total float64
 	Freq  map[string]float64
 }
 
-func (t Trie) MarshalBinary() ([]byte, error) {
+func (t trie) MarshalBinary() ([]byte, error) {
 	var b bytes.Buffer
 	enc := gob.NewEncoder(&b)
 	err := enc.Encode(t.Total)
@@ -32,7 +32,7 @@ func (t Trie) MarshalBinary() ([]byte, error) {
 	return b.Bytes(), nil
 }
 
-func (t *Trie) UnmarshalBinary(data []byte) error {
+func (t *trie) UnmarshalBinary(data []byte) error {
 	b := bytes.NewBuffer(data)
 	dec := gob.NewDecoder(b)
 	err := dec.Decode(&t.Total)
@@ -46,7 +46,7 @@ func (t *Trie) UnmarshalBinary(data []byte) error {
 	return nil
 }
 
-func newTrie(dictFileName string) error {
+func (t *trie) load(dictFileName string) error {
 	dictFilePath, err := DictPath(dictFileName)
 	if err != nil {
 		return err
@@ -83,7 +83,7 @@ func newTrie(dictFileName string) error {
 
 	if isDictCached {
 		dec := gob.NewDecoder(cacheFile)
-		err = dec.Decode(&T)
+		err = dec.Decode(&t)
 		if err != nil {
 			isDictCached = false
 		} else {
@@ -98,7 +98,7 @@ func newTrie(dictFileName string) error {
 		}
 
 		for _, wtf := range wtfs {
-			T.addWord(wtf)
+			t.addWord(wtf)
 		}
 		// dump trie
 		cacheFile, err = os.OpenFile(cacheFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
@@ -107,7 +107,7 @@ func newTrie(dictFileName string) error {
 		}
 		defer cacheFile.Close()
 		enc := gob.NewEncoder(cacheFile)
-		err = enc.Encode(T)
+		err = enc.Encode(t)
 		if err != nil {
 			return err
 		} else {
@@ -117,7 +117,7 @@ func newTrie(dictFileName string) error {
 	return nil
 }
 
-func (t *Trie) addWord(wtf *WordTagFreq) {
+func (t *trie) addWord(wtf *WordTagFreq) {
 	t.Freq[wtf.Word] = wtf.Freq
 	t.Total += wtf.Freq
 	runes := []rune(wtf.Word)
@@ -129,12 +129,6 @@ func (t *Trie) addWord(wtf *WordTagFreq) {
 		}
 	}
 }
-func addWord(wtf *WordTagFreq) {
-	if len(wtf.Tag) > 0 {
-		UserWordTagTab[wtf.Word] = strings.TrimSpace(wtf.Tag)
-	}
-	T.addWord(wtf)
-}
 
 func LoadUserDict(dictFilePath string) error {
 	wtfs, err := ParseDictFile(dictFilePath)
@@ -142,12 +136,15 @@ func LoadUserDict(dictFilePath string) error {
 		return err
 	}
 	for _, wtf := range wtfs {
-		addWord(wtf)
+		if len(wtf.Tag) > 0 {
+			UserWordTagTab[wtf.Word] = strings.TrimSpace(wtf.Tag)
+		}
+		Trie.addWord(wtf)
 	}
 	return nil
 }
 
 func SetDictionary(dictFileName string) error {
-	T = &Trie{Total: 0.0, Freq: make(map[string]float64)}
-	return newTrie(dictFileName)
+	Trie = &trie{Total: 0.0, Freq: make(map[string]float64)}
+	return Trie.load(dictFileName)
 }

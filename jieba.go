@@ -82,7 +82,7 @@ func GetDAG(sentence string) map[int][]int {
 		i = k
 		frag = string(runes[k])
 		for {
-			if freq, ok := T.Freq[frag]; !ok {
+			if freq, ok := Trie.Freq[frag]; !ok {
 				break
 			} else {
 				if freq > 0.0 {
@@ -108,14 +108,14 @@ func Calc(sentence string, dag map[int][]int) map[int]*Route {
 	number := len(runes)
 	routes := make(map[int]*Route)
 	routes[number] = &Route{Freq: 0.0, Index: 0}
-	logTotal := math.Log(T.Total)
+	logTotal := math.Log(Trie.Total)
 	for idx := number - 1; idx >= 0; idx-- {
 		candidates := make(Routes, 0)
 		for _, i := range dag[idx] {
 			word := string(runes[idx : i+1])
 			var route *Route
-			if _, ok := T.Freq[word]; ok {
-				route = &Route{Freq: math.Log(T.Freq[word]) - logTotal + routes[i+1].Freq, Index: i}
+			if _, ok := Trie.Freq[word]; ok {
+				route = &Route{Freq: math.Log(Trie.Freq[word]) - logTotal + routes[i+1].Freq, Index: i}
 			} else {
 				route = &Route{Freq: math.Log(1.0) - logTotal + routes[i+1].Freq, Index: i}
 			}
@@ -153,7 +153,7 @@ func cut_DAG(sentence string) []string {
 					buf = make([]rune, 0)
 				} else {
 					bufString := string(buf)
-					if v, ok := T.Freq[bufString]; !ok || v == 0.0 {
+					if v, ok := Trie.Freq[bufString]; !ok || v == 0.0 {
 						recognized := finalseg.Cut(bufString)
 						for _, t := range recognized {
 							result = append(result, t)
@@ -176,7 +176,7 @@ func cut_DAG(sentence string) []string {
 			result = append(result, string(buf))
 		} else {
 			bufString := string(buf)
-			if v, ok := T.Freq[bufString]; !ok || v == 0.0 {
+			if v, ok := Trie.Freq[bufString]; !ok || v == 0.0 {
 				recognized := finalseg.Cut(bufString)
 				for _, t := range recognized {
 					result = append(result, t)
@@ -320,7 +320,7 @@ func CutForSearch(sentence string, hmm bool) []string {
 				var gram2 string
 				for i := 0; i < len(runes)-increment+1; i++ {
 					gram2 = string(runes[i : i+increment])
-					if v, ok := T.Freq[gram2]; ok && v > 0.0 {
+					if v, ok := Trie.Freq[gram2]; ok && v > 0.0 {
 						result = append(result, gram2)
 					}
 				}
