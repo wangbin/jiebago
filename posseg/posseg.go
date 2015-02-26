@@ -1,18 +1,12 @@
 package posseg
 
 import (
-	"bufio"
-	"fmt"
 	"github.com/wangbin/jiebago"
-	"os"
-	"path/filepath"
 	"regexp"
-	"runtime"
-	"strings"
 )
 
 var (
-	WordTagTab     = make(map[string]string)
+	wordTagMap     = make(map[string]string)
 	reHanDetail    = regexp.MustCompile(`\p{Han}+`)
 	reSkipDetail   = regexp.MustCompile(`[[\.[:digit:]]+|[:alnum:]]+`)
 	reEng          = regexp.MustCompile(`[[:alnum:]]`)
@@ -20,28 +14,12 @@ var (
 	reEng1         = regexp.MustCompile(`[[:alnum:]]$`)
 	reHanInternal  = regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
 	reSkipInternal = regexp.MustCompile(`(\r\n|\s)`)
-	dictionary     = "dict.txt"
 )
 
 type WordTag struct {
 	Word, Tag string
 }
 
-func (wt WordTag) String() string {
-	return fmt.Sprintf("%s/%s", wt.Word, wt.Tag)
-}
-
-func init() {
-	_, filename, _, _ := runtime.Caller(1)
-	dict_dir := filepath.Dir(filepath.Dir(filename))
-	dict_path := filepath.Join(dict_dir, dictionary)
-	err := load_model(dict_path)
-	if err != nil {
-		panic(err)
-	}
-}
-
-/*
 func SetDictionary(dictFileName string) error {
 	err := jiebago.SetDictionary(dictFileName)
 	if err != nil {
@@ -51,32 +29,10 @@ func SetDictionary(dictFileName string) error {
 	if err != nil {
 		return err
 	}
-	dictFile, err := os.Open(dictFilePath)
-	if err != nil {
-		return err
-	}
-	defer dictFile.Close()
+	wtfs, err := jiebago.ParseDictFile(dictFilePath)
 
-	wtfs, err := ParseDictFile(dictFile)
-
-}
-*/
-func load_model(f_name string) error {
-	file, openError := os.Open(f_name)
-	if openError != nil {
-		return openError
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		words := strings.Split(strings.TrimSpace(line), " ")
-		word, tag := words[0], words[2]
-		WordTagTab[word] = tag
-	}
-	if err := scanner.Err(); err != nil {
-		return err
+	for _, wtf := range wtfs {
+		wordTagMap[wtf.Word] = wtf.Tag
 	}
 	return nil
 }
@@ -157,7 +113,7 @@ func cut_DAG(sentence string) []WordTag {
 			if len(buf) > 0 {
 				if len(buf) == 1 {
 					sbuf := string(buf)
-					if tag, ok := WordTagTab[sbuf]; ok {
+					if tag, ok := wordTagMap[sbuf]; ok {
 						result = append(result, WordTag{sbuf, tag})
 					} else {
 						result = append(result, WordTag{sbuf, "x"})
@@ -173,7 +129,7 @@ func cut_DAG(sentence string) []WordTag {
 					} else {
 						for _, elem := range buf {
 							selem := string(elem)
-							if tag, ok := WordTagTab[selem]; ok {
+							if tag, ok := wordTagMap[selem]; ok {
 								result = append(result, WordTag{string(elem), tag})
 							} else {
 								result = append(result, WordTag{string(elem), "x"})
@@ -185,7 +141,7 @@ func cut_DAG(sentence string) []WordTag {
 				}
 			}
 			sl_word := string(l_word)
-			if tag, ok := WordTagTab[sl_word]; ok {
+			if tag, ok := wordTagMap[sl_word]; ok {
 				result = append(result, WordTag{sl_word, tag})
 			} else {
 				result = append(result, WordTag{sl_word, "x"})
@@ -197,7 +153,7 @@ func cut_DAG(sentence string) []WordTag {
 	if len(buf) > 0 {
 		if len(buf) == 1 {
 			sbuf := string(buf)
-			if tag, ok := WordTagTab[sbuf]; ok {
+			if tag, ok := wordTagMap[sbuf]; ok {
 				result = append(result, WordTag{sbuf, tag})
 			} else {
 				result = append(result, WordTag{sbuf, "x"})
@@ -212,7 +168,7 @@ func cut_DAG(sentence string) []WordTag {
 			} else {
 				for _, elem := range buf {
 					selem := string(elem)
-					if tag, ok := WordTagTab[selem]; ok {
+					if tag, ok := wordTagMap[selem]; ok {
 						result = append(result, WordTag{selem, tag})
 					} else {
 						result = append(result, WordTag{selem, "x"})
@@ -248,7 +204,7 @@ func cut_DAG_NO_HMM(sentence string) []WordTag {
 				buf = make([]rune, 0)
 			}
 			sl_word := string(l_word)
-			if tag, ok := WordTagTab[sl_word]; ok {
+			if tag, ok := wordTagMap[sl_word]; ok {
 				result = append(result, WordTag{sl_word, tag})
 			} else {
 				result = append(result, WordTag{sl_word, "x"})
@@ -303,7 +259,7 @@ func cut(sentence string, HMM bool) []WordTag {
 
 func Cut(sentence string, HMM bool) []WordTag {
 	for key := range jiebago.UserWordTagTab {
-		WordTagTab[key] = jiebago.UserWordTagTab[key]
+		wordTagMap[key] = jiebago.UserWordTagTab[key]
 		delete(jiebago.UserWordTagTab, key)
 	}
 	return cut(sentence, HMM)

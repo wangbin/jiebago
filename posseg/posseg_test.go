@@ -269,7 +269,7 @@ var (
 )
 
 func TestCut(t *testing.T) {
-	jiebago.SetDictionary("../dict.txt")
+	SetDictionary("../dict.txt")
 	for index, content := range test_contents {
 		result := Cut(content, true)
 		if len(defaultCutResult[index]) != len(result) {
@@ -297,7 +297,7 @@ func TestBug132(t *testing.T) {
 	/*
 		https://github.com/fxsjy/jieba/issues/132
 	*/
-	jiebago.SetDictionary("../dict.txt")
+	SetDictionary("../dict.txt")
 	sentence := "又跛又啞"
 	cutResult := []WordTag{
 		WordTag{"又", "d"},
@@ -320,7 +320,7 @@ func TestBug137(t *testing.T) {
 	/*
 		https://github.com/fxsjy/jieba/issues/137
 	*/
-	jiebago.SetDictionary("../dict.txt")
+	SetDictionary("../dict.txt")
 	sentence := "前港督衛奕信在八八年十月宣布成立中央政策研究組"
 	cutResult := []WordTag{
 		WordTag{"前", "f"},
@@ -349,7 +349,7 @@ func TestBug137(t *testing.T) {
 }
 
 func TestUserDict(t *testing.T) {
-	jiebago.SetDictionary("../dict.txt")
+	SetDictionary("../dict.txt")
 	jiebago.LoadUserDict("../userdict.txt")
 	sentence := "李小福是创新办主任也是云计算方面的专家; 什么是八一双鹿例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
 
