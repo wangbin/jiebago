@@ -144,7 +144,7 @@ func cut_DAG(sentence string) []WordTag {
 					buf = make([]rune, 0)
 				} else {
 					bufString := string(buf)
-					if _, ok := jiebago.T.Freq[bufString]; !ok {
+					if v, ok := jiebago.T.Freq[bufString]; !ok || v == 0.0 {
 						recognized := cutDetail(bufString)
 						for _, t := range recognized {
 							result = append(result, t)
@@ -183,7 +183,7 @@ func cut_DAG(sentence string) []WordTag {
 			}
 		} else {
 			bufString := string(buf)
-			if _, ok := jiebago.T.Freq[bufString]; !ok {
+			if v, ok := jiebago.T.Freq[bufString]; !ok || v == 0.0 {
 				recognized := cutDetail(bufString)
 				for _, t := range recognized {
 					result = append(result, t)
