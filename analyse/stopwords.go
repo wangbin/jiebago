@@ -1,10 +1,7 @@
 package analyse
 
 import (
-	"bufio"
-	"os"
-	"path/filepath"
-	"strings"
+	"github.com/wangbin/jiebago"
 )
 
 var stopWords map[string]string
@@ -45,26 +42,15 @@ func init() {
 	}
 }
 
-func SetStopWords(stopWordsFilePath string) error {
-	if !filepath.IsAbs(stopWordsFilePath) {
-		pwd, err := os.Getwd()
-		if err != nil {
-			return err
-		}
-		stopWordsFilePath = filepath.Clean(filepath.Join(pwd, stopWordsFilePath))
-	}
-	stopWordsFile, err := os.Open(stopWordsFilePath)
+func SetStopWords(stopWordsFileName string) error {
+	stopWordsFilePath, err := jiebago.DictPath(stopWordsFileName)
 	if err != nil {
 		return err
 	}
-	scanner := bufio.NewScanner(stopWordsFile)
-	for scanner.Scan() {
-		stopWord := scanner.Text()
-		stopWord = strings.TrimSpace(stopWord)
-		stopWords[stopWord] = stopWord
-	}
-	if err := scanner.Err(); err != nil {
-		return err
+
+	wtfs, err := jiebago.ParseDictFile(stopWordsFilePath)
+	for _, wtf := range wtfs {
+		stopWords[wtf.Word] = wtf.Word
 	}
 	return nil
 }
