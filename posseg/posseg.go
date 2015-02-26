@@ -37,7 +37,7 @@ func SetDictionary(dictFileName string) error {
 	return nil
 }
 
-func __cut(sentence string) []WordTag {
+func cutDetailInternal(sentence string) []WordTag {
 	result := make([]WordTag, 0)
 	runes := []rune(sentence)
 	_, posList := Viterbi(runes)
@@ -67,7 +67,7 @@ func cutDetail(sentence string) []WordTag {
 	blocks := jiebago.RegexpSplit(reHanDetail, sentence)
 	for _, blk := range blocks {
 		if reHanDetail.MatchString(blk) {
-			for _, wordTag := range __cut(blk) {
+			for _, wordTag := range cutDetailInternal(blk) {
 				result = append(result, wordTag)
 			}
 		} else {

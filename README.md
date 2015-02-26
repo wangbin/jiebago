@@ -107,7 +107,7 @@
     var sentence = "我爱北京天安门"
 
     func main() {
-        jiebago.SetDictionary("/Path/to/default/dictionary/file")
+        posseg.SetDictionary("/Path/to/default/dictionary/file")
         for _, wt := range posseg.Cut(sentence, true) {
             fmt.Printf("%s %s\n", wt.Word, wt.Tag)
         }
