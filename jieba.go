@@ -129,7 +129,7 @@ func Calc(sentence string, dag map[int][]int) map[int]*Route {
 
 type cutFunc func(sentence string) []string
 
-func cut_DAG(sentence string) []string {
+func cutDAG(sentence string) []string {
 	dag := DAG(sentence)
 	routes := Calc(sentence, dag)
 	x := 0
@@ -191,7 +191,7 @@ func cut_DAG(sentence string) []string {
 	return result
 }
 
-func cut_DAG_NO_HMM(sentence string) []string {
+func cutDAGNoHMM(sentence string) []string {
 	result := make([]string, 0)
 
 	dag := DAG(sentence)
@@ -264,21 +264,21 @@ func Cut(sentence string, isCutAll bool, HMM bool) []string {
 		reSkip = reSkipDefault
 	}
 	blocks := RegexpSplit(reHan, sentence)
-	var cut_block cutFunc
+	var cut cutFunc
 	if HMM {
-		cut_block = cut_DAG
+		cut = cutDAG
 	} else {
-		cut_block = cut_DAG_NO_HMM
+		cut = cutDAGNoHMM
 	}
 	if isCutAll {
-		cut_block = cutAll
+		cut = cutAll
 	}
 	for _, blk := range blocks {
 		if len(blk) == 0 {
 			continue
 		}
 		if reHan.MatchString(blk) {
-			for _, word := range cut_block(blk) {
+			for _, word := range cut(blk) {
 				result = append(result, word)
 			}
 		} else {

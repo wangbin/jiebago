@@ -622,14 +622,14 @@ func init() {
 }
 
 func TestCutDAG(t *testing.T) {
-	result := cut_DAG("BP神经网络如何训练才能在分类时增加区分度？")
+	result := cutDAG("BP神经网络如何训练才能在分类时增加区分度？")
 	if len(result) != 11 {
 		t.Error(result)
 	}
 }
 
 func TestCutDAGNoHmm(t *testing.T) {
-	result := cut_DAG_NO_HMM("BP神经网络如何训练才能在分类时增加区分度？")
+	result := cutDAGNoHMM("BP神经网络如何训练才能在分类时增加区分度？")
 	if len(result) != 11 {
 		t.Error(result)
 	}

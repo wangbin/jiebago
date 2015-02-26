@@ -90,9 +90,9 @@ func cutDetail(sentence string) []WordTag {
 	return result
 }
 
-type cutAction func(sentence string) []WordTag
+type cutFunc func(sentence string) []WordTag
 
-func cut_DAG(sentence string) []WordTag {
+func cutDAG(sentence string) []WordTag {
 	dag := jiebago.DAG(sentence)
 	routes := jiebago.Calc(sentence, dag)
 	x := 0
@@ -180,7 +180,7 @@ func cut_DAG(sentence string) []WordTag {
 	return result
 }
 
-func cut_DAG_NO_HMM(sentence string) []WordTag {
+func cutDAGNoHMM(sentence string) []WordTag {
 	result := make([]WordTag, 0)
 	dag := jiebago.DAG(sentence)
 	routes := jiebago.Calc(sentence, dag)
@@ -219,18 +219,22 @@ func cut_DAG_NO_HMM(sentence string) []WordTag {
 	return result
 }
 
-func cut(sentence string, HMM bool) []WordTag {
+func Cut(sentence string, HMM bool) []WordTag {
+	for key := range jiebago.UserWordTagTab {
+		wordTagMap[key] = jiebago.UserWordTagTab[key]
+		delete(jiebago.UserWordTagTab, key)
+	}
 	result := make([]WordTag, 0)
 	blocks := jiebago.RegexpSplit(reHanInternal, sentence)
-	var cut_block cutAction
+	var cut cutFunc
 	if HMM {
-		cut_block = cut_DAG
+		cut = cutDAG
 	} else {
-		cut_block = cut_DAG_NO_HMM
+		cut = cutDAGNoHMM
 	}
 	for _, blk := range blocks {
 		if reHanInternal.MatchString(blk) {
-			for _, wordTag := range cut_block(blk) {
+			for _, wordTag := range cut(blk) {
 				result = append(result, wordTag)
 			}
 		} else {
@@ -255,12 +259,4 @@ func cut(sentence string, HMM bool) []WordTag {
 		}
 	}
 	return result
-}
-
-func Cut(sentence string, HMM bool) []WordTag {
-	for key := range jiebago.UserWordTagTab {
-		wordTagMap[key] = jiebago.UserWordTagTab[key]
-		delete(jiebago.UserWordTagTab, key)
-	}
-	return cut(sentence, HMM)
 }
