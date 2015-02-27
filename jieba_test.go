@@ -621,15 +621,23 @@ func init() {
 	SetDictionary("dict.txt")
 }
 
+func chanToArray(ch chan string) []string {
+	result := make([]string, 0)
+	for word := range ch {
+		result = append(result, word)
+	}
+	return result
+}
+
 func TestCutDAG(t *testing.T) {
-	result := cutDAG("BP神经网络如何训练才能在分类时增加区分度？")
+	result := chanToArray(cutDAG("BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 11 {
 		t.Error(result)
 	}
 }
 
 func TestCutDAGNoHmm(t *testing.T) {
-	result := cutDAGNoHMM("BP神经网络如何训练才能在分类时增加区分度？")
+	result := chanToArray(cutDAGNoHMM("BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 11 {
 		t.Error(result)
 	}
@@ -646,14 +654,6 @@ func TestRegexpSplit(t *testing.T) {
 	if len(result) != 3 {
 		t.Error(result)
 	}
-}
-
-func chanToArray(ch chan string) []string {
-	result := make([]string, 0)
-	for word := range ch {
-		result = append(result, word)
-	}
-	return result
 }
 
 func TestDefaultCut(t *testing.T) {

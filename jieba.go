@@ -127,127 +127,137 @@ func Calc(sentence string, dag map[int][]int) map[int]*Route {
 	return routes
 }
 
-type cutFunc func(sentence string) []string
+type cutFunc func(sentence string) chan string
 
-func cutDAG(sentence string) []string {
-	dag := DAG(sentence)
-	routes := Calc(sentence, dag)
-	x := 0
-	var y int
-	runes := []rune(sentence)
-	length := len(runes)
-	result := make([]string, 0)
-	buf := make([]rune, 0)
-	for {
-		if x >= length {
-			break
-		}
-		y = routes[x].Index + 1
-		l_word := runes[x:y]
-		if y-x == 1 {
-			buf = append(buf, l_word...)
-		} else {
-			if len(buf) > 0 {
-				if len(buf) == 1 {
-					result = append(result, string(buf))
-					buf = make([]rune, 0)
-				} else {
-					bufString := string(buf)
-					if v, ok := Trie.Freq[bufString]; !ok || v == 0.0 {
-						for t := range finalseg.Cut(bufString) {
-							result = append(result, t)
-						}
-					} else {
-						for _, elem := range buf {
-							result = append(result, string(elem)) // TODO: I don't get this?
-						}
-					}
-					buf = make([]rune, 0)
-				}
+func cutDAG(sentence string) chan string {
+	result := make(chan string)
+	go func() {
+		dag := DAG(sentence)
+		routes := Calc(sentence, dag)
+		x := 0
+		var y int
+		runes := []rune(sentence)
+		length := len(runes)
+		buf := make([]rune, 0)
+		for {
+			if x >= length {
+				break
 			}
-			result = append(result, string(l_word))
-		}
-		x = y
-	}
-
-	if len(buf) > 0 {
-		if len(buf) == 1 {
-			result = append(result, string(buf))
-		} else {
-			bufString := string(buf)
-			if v, ok := Trie.Freq[bufString]; !ok || v == 0.0 {
-				for t := range finalseg.Cut(bufString) {
-					result = append(result, t)
-				}
+			y = routes[x].Index + 1
+			l_word := runes[x:y]
+			if y-x == 1 {
+				buf = append(buf, l_word...)
 			} else {
-				for _, elem := range buf {
-					result = append(result, string(elem)) // TODO: I don't get this?
+				if len(buf) > 0 {
+					if len(buf) == 1 {
+						result <- string(buf)
+						buf = make([]rune, 0)
+					} else {
+						bufString := string(buf)
+						if v, ok := Trie.Freq[bufString]; !ok || v == 0.0 {
+							for x := range finalseg.Cut(bufString) {
+								result <- x
+							}
+						} else {
+							for _, elem := range buf {
+								result <- string(elem) // TODO: I don't get this?
+							}
+						}
+						buf = make([]rune, 0)
+					}
+				}
+				result <- string(l_word)
+			}
+			x = y
+		}
+
+		if len(buf) > 0 {
+			if len(buf) == 1 {
+				result <- string(buf)
+			} else {
+				bufString := string(buf)
+				if v, ok := Trie.Freq[bufString]; !ok || v == 0.0 {
+					for t := range finalseg.Cut(bufString) {
+						result <- t
+					}
+				} else {
+					for _, elem := range buf {
+						result <- string(elem) // TODO: I don't get this?
+					}
 				}
 			}
 		}
-	}
+		close(result)
+	}()
 	return result
 }
 
-func cutDAGNoHMM(sentence string) []string {
-	result := make([]string, 0)
+func cutDAGNoHMM(sentence string) chan string {
+	result := make(chan string)
 
-	dag := DAG(sentence)
-	routes := Calc(sentence, dag)
-	x := 0
-	var y int
-	runes := []rune(sentence)
-	length := len(runes)
-	buf := make([]rune, 0)
-	for {
-		if x >= length {
-			break
-		}
-		y = routes[x].Index + 1
-		l_word := runes[x:y]
-		if reEng.MatchString(string(l_word)) && len(l_word) == 1 {
-			buf = append(buf, l_word...)
-			x = y
-		} else {
-			if len(buf) > 0 {
-				result = append(result, string(buf))
-				buf = make([]rune, 0)
+	go func() {
+		dag := DAG(sentence)
+		routes := Calc(sentence, dag)
+		x := 0
+		var y int
+		runes := []rune(sentence)
+		length := len(runes)
+		buf := make([]rune, 0)
+		for {
+			if x >= length {
+				break
 			}
-			result = append(result, string(l_word))
-			x = y
+			y = routes[x].Index + 1
+			l_word := runes[x:y]
+			if reEng.MatchString(string(l_word)) && len(l_word) == 1 {
+				buf = append(buf, l_word...)
+				x = y
+			} else {
+				if len(buf) > 0 {
+					result <- string(buf)
+					buf = make([]rune, 0)
+				}
+				result <- string(l_word)
+				x = y
+			}
 		}
-	}
-	if len(buf) > 0 {
-		result = append(result, string(buf))
-		buf = make([]rune, 0)
-	}
+		if len(buf) > 0 {
+			result <- string(buf)
+			buf = make([]rune, 0)
+		}
+		close(result)
+	}()
 	return result
 }
 
-func cutAll(sentence string) []string {
-	result := make([]string, 0)
-	runes := []rune(sentence)
-	dag := DAG(sentence)
-	old_j := -1
-	ks := make([]int, 0)
-	for k := range dag {
-		ks = append(ks, k)
-	}
-	sort.Ints(ks)
-	for k := range ks {
-		l := dag[k]
-		if len(l) == 1 && k > old_j {
-			result = append(result, string(runes[k:l[0]+1]))
-			old_j = l[0]
-		} else {
-			for _, j := range l {
-				if j > k {
-					result = append(result, string(runes[k:j+1]))
-					old_j = j
+func cutAll(sentence string) chan string {
+	result := make(chan string)
+
+	go func() {
+		runes := []rune(sentence)
+		dag := DAG(sentence)
+		old_j := -1
+		ks := make([]int, 0)
+		for k := range dag {
+			ks = append(ks, k)
+		}
+		sort.Ints(ks)
+		for k := range ks {
+			l := dag[k]
+			if len(l) == 1 && k > old_j {
+				result <- string(runes[k : l[0]+1])
+				old_j = l[0]
+			} else {
+				for _, j := range l {
+					if j > k {
+						result <- string(runes[k : j+1])
+						old_j = j
+					}
 				}
 			}
 		}
-	}
+		close(result)
+	}()
 	return result
 }
 
@@ -277,8 +287,8 @@ func Cut(sentence string, isCutAll bool, HMM bool) chan string {
 				continue
 			}
 			if reHan.MatchString(blk) {
-				for _, word := range cut(blk) {
-					result <- word
+				for x := range cut(blk) {
+					result <- x
 				}
 			} else {
 				type skipSplitFunc func(sentence string) []string
