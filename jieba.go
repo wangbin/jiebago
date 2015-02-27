@@ -154,8 +154,7 @@ func cutDAG(sentence string) []string {
 				} else {
 					bufString := string(buf)
 					if v, ok := Trie.Freq[bufString]; !ok || v == 0.0 {
-						recognized := finalseg.Cut(bufString)
-						for _, t := range recognized {
+						for t := range finalseg.Cut(bufString) {
 							result = append(result, t)
 						}
 					} else {
@@ -177,8 +176,7 @@ func cutDAG(sentence string) []string {
 		} else {
 			bufString := string(buf)
 			if v, ok := Trie.Freq[bufString]; !ok || v == 0.0 {
-				recognized := finalseg.Cut(bufString)
-				for _, t := range recognized {
+				for t := range finalseg.Cut(bufString) {
 					result = append(result, t)
 				}
 			} else {
