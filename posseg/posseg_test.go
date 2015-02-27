@@ -268,10 +268,18 @@ var (
 	}
 )
 
+func chanToArray(ch chan WordTag) []WordTag {
+	result := make([]WordTag, 0)
+	for word := range ch {
+		result = append(result, word)
+	}
+	return result
+}
+
 func TestCut(t *testing.T) {
 	SetDictionary("../dict.txt")
 	for index, content := range test_contents {
-		result := Cut(content, true)
+		result := chanToArray(Cut(content, true))
 		if len(defaultCutResult[index]) != len(result) {
 			t.Error(content)
 		}
@@ -280,7 +288,7 @@ func TestCut(t *testing.T) {
 				t.Error(content)
 			}
 		}
-		result = Cut(content, false)
+		result = chanToArray(Cut(content, false))
 		if len(noHMMCutResult[index]) != len(result) {
 			t.Error(content)
 		}
@@ -305,7 +313,7 @@ func TestBug132(t *testing.T) {
 		WordTag{"又", "d"},
 		WordTag{"啞", "v"},
 	}
-	result := Cut(sentence, true)
+	result := chanToArray(Cut(sentence, true))
 	if len(cutResult) != len(result) {
 		t.Error(result)
 	}
@@ -337,7 +345,7 @@ func TestBug137(t *testing.T) {
 		WordTag{"研究", "vn"},
 		WordTag{"組", "x"},
 	}
-	result := Cut(sentence, true)
+	result := chanToArray(Cut(sentence, true))
 	if len(cutResult) != len(result) {
 		t.Error(result)
 	}
@@ -392,7 +400,7 @@ func TestUserDict(t *testing.T) {
 		WordTag{"N", "eng"},
 		WordTag{"类型", "n"}}
 
-	result := Cut(sentence, true)
+	result := chanToArray(Cut(sentence, true))
 	if len(cutResult) != len(result) {
 		t.Error(result)
 	}

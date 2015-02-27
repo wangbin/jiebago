@@ -219,12 +219,12 @@ func cutDAGNoHMM(sentence string) []WordTag {
 	return result
 }
 
-func Cut(sentence string, HMM bool) []WordTag {
+func Cut(sentence string, HMM bool) chan WordTag {
 	for key := range jiebago.UserWordTagTab {
 		wordTagMap[key] = jiebago.UserWordTagTab[key]
 		delete(jiebago.UserWordTagTab, key)
 	}
-	result := make([]WordTag, 0)
+	result := make(chan WordTag)
 	blocks := jiebago.RegexpSplit(reHanInternal, sentence)
 	var cut cutFunc
 	if HMM {
@@ -232,31 +232,34 @@ func Cut(sentence string, HMM bool) []WordTag {
 	} else {
 		cut = cutDAGNoHMM
 	}
-	for _, blk := range blocks {
-		if reHanInternal.MatchString(blk) {
-			for _, wordTag := range cut(blk) {
-				result = append(result, wordTag)
-			}
-		} else {
-			for _, x := range jiebago.RegexpSplit(reSkipInternal, blk) {
-				if reSkipInternal.MatchString(x) {
-					result = append(result, WordTag{x, "x"})
-				} else {
-					for _, xx := range x {
-						s := string(xx)
-						switch {
-						case reNum.MatchString(s):
-							result = append(result, WordTag{s, "m"})
-						case reEng.MatchString(x):
-							result = append(result, WordTag{x, "eng"})
-							break
-						default:
-							result = append(result, WordTag{s, "x"})
+	go func() {
+		for _, blk := range blocks {
+			if reHanInternal.MatchString(blk) {
+				for _, wordTag := range cut(blk) {
+					result <- wordTag
+				}
+			} else {
+				for _, x := range jiebago.RegexpSplit(reSkipInternal, blk) {
+					if reSkipInternal.MatchString(x) {
+						result <- WordTag{x, "x"}
+					} else {
+						for _, xx := range x {
+							s := string(xx)
+							switch {
+							case reNum.MatchString(s):
+								result <- WordTag{s, "m"}
+							case reEng.MatchString(x):
+								result <- WordTag{x, "eng"}
+								break
+							default:
+								result <- WordTag{s, "x"}
+							}
 						}
 					}
 				}
 			}
 		}
-	}
+		close(result)
+	}()
 	return result
 }

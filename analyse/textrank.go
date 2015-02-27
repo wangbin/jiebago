@@ -123,7 +123,10 @@ func TextRankWithPOS(sentence string, topK int, allowPOS []string) TfIdfs {
 	g := newUndirectWeightedGraph()
 	cm := make(map[[2]string]float64)
 	span := 5
-	wordTags := posseg.Cut(sentence, true)
+	wordTags := make([]posseg.WordTag, 0)
+	for wordTag := range posseg.Cut(sentence, true) {
+		wordTags = append(wordTags, wordTag)
+	}
 	for i, _ := range wordTags {
 		if _, ok := posFilt[wordTags[i].Tag]; ok {
 			for j := i + 1; j < i+span; j++ {
