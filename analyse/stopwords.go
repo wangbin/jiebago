@@ -4,41 +4,41 @@ import (
 	"github.com/wangbin/jiebago"
 )
 
-var stopWords map[string]string
+var stopWords map[string]int
 
 func init() {
-	stopWords = map[string]string{
-		"the":   "the",
-		"of":    "of",
-		"is":    "is",
-		"and":   "and",
-		"to":    "to",
-		"in":    "in",
-		"that":  "that",
-		"we":    "we",
-		"for":   "for",
-		"an":    "an",
-		"are":   "are",
-		"by":    "bye",
-		"be":    "be",
-		"as":    "as",
-		"on":    "on",
-		"with":  "with",
-		"can":   "can",
-		"if":    "of",
-		"from":  "from",
-		"which": "which",
-		"you":   "you",
-		"it":    "it",
-		"this":  "this",
-		"then":  "then",
-		"at":    "at",
-		"have":  "have",
-		"all":   "all",
-		"not":   "not",
-		"one":   "one",
-		"has":   "has",
-		"or":    "or",
+	stopWords = map[string]int{
+		"the":   1,
+		"of":    1,
+		"is":    1,
+		"and":   1,
+		"to":    1,
+		"in":    1,
+		"that":  1,
+		"we":    1,
+		"for":   1,
+		"an":    1,
+		"are":   1,
+		"by":    1,
+		"be":    1,
+		"as":    1,
+		"on":    1,
+		"with":  1,
+		"can":   1,
+		"if":    1,
+		"from":  1,
+		"which": 1,
+		"you":   1,
+		"it":    1,
+		"this":  1,
+		"then":  1,
+		"at":    1,
+		"have":  1,
+		"all":   1,
+		"not":   1,
+		"one":   1,
+		"has":   1,
+		"or":    1,
 	}
 }
 
@@ -50,7 +50,7 @@ func SetStopWords(stopWordsFileName string) error {
 
 	wtfs, err := jiebago.ParseDictFile(stopWordsFilePath)
 	for _, wtf := range wtfs {
-		stopWords[wtf.Word] = wtf.Word
+		stopWords[wtf.Word] = 1
 	}
 	return nil
 }
