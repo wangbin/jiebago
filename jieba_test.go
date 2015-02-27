@@ -648,10 +648,18 @@ func TestRegexpSplit(t *testing.T) {
 	}
 }
 
+func chanToArray(ch chan string) []string {
+	result := make([]string, 0)
+	for word := range ch {
+		result = append(result, word)
+	}
+	return result
+}
+
 func TestDefaultCut(t *testing.T) {
 	var result []string
 	for index, content := range test_contents {
-		result = Cut(content, false, true)
+		result = chanToArray(Cut(content, false, true))
 		if len(result) != len(defaultCutResult[index]) {
 			t.Errorf("default cut for %s length should be %d not %d\n",
 				content, len(defaultCutResult[index]), len(result))
@@ -667,7 +675,7 @@ func TestDefaultCut(t *testing.T) {
 func TestCutAll(t *testing.T) {
 	var result []string
 	for index, content := range test_contents {
-		result = Cut(content, true, true)
+		result = chanToArray(Cut(content, true, true))
 		if len(result) != len(cutAllResult[index]) {
 			t.Errorf("cut all for %s length should be %d not %d\n",
 				content, len(cutAllResult[index]), len(result))
@@ -683,7 +691,7 @@ func TestCutAll(t *testing.T) {
 func TestDefaultCutNoHMM(t *testing.T) {
 	var result []string
 	for index, content := range test_contents {
-		result = Cut(content, false, false)
+		result = chanToArray(Cut(content, false, false))
 		if len(result) != len(defaultCutNoHMMResult[index]) {
 			t.Errorf("default cut no hmm for %s length should be %d not %d\n",
 				content, len(defaultCutNoHMMResult[index]), len(result))
@@ -699,7 +707,7 @@ func TestDefaultCutNoHMM(t *testing.T) {
 func TestCutForSearch(t *testing.T) {
 	var result []string
 	for index, content := range test_contents {
-		result = CutForSearch(content, true)
+		result = chanToArray(CutForSearch(content, true))
 		if len(result) != len(cutForSearchResult[index]) {
 			t.Errorf("cut for search for %s length should be %d not %d\n",
 				content, len(cutForSearchResult[index]), len(result))
@@ -711,7 +719,7 @@ func TestCutForSearch(t *testing.T) {
 		}
 	}
 	for index, content := range test_contents {
-		result = CutForSearch(content, false)
+		result = chanToArray(CutForSearch(content, false))
 		if len(result) != len(cutForSearchNoHMMResult[index]) {
 			t.Errorf("cut for search no hmm for %s length should be %d not %d\n",
 				content, len(cutForSearchNoHMMResult[index]), len(result))
@@ -728,7 +736,7 @@ func TestSetdictionary(t *testing.T) {
 	var result []string
 	SetDictionary("foobar.txt")
 	for index, content := range test_contents {
-		result = Cut(content, false, true)
+		result = chanToArray(Cut(content, false, true))
 		if len(result) != len(userDictCutResult[index]) {
 			t.Errorf("default cut with user dictionary for %s length should be %d not %d\n",
 				content, len(userDictCutResult[index]), len(result))
@@ -748,7 +756,7 @@ func TestLoadUserDict(t *testing.T) {
 	sentence := "李小福是创新办主任也是云计算方面的专家; 什么是八一双鹿例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
 	result := []string{"李小福", "是", "创新办", "主任", "也", "是", "云计算", "方面", "的", "专家", ";", " ", "什么", "是", "八一双鹿", "例如", "我", "输入", "一个", "带", "“", "韩玉赏鉴", "”", "的", "标题", "，", "在", "自定义词", "库中", "也", "增加", "了", "此", "词为", "N", "类型"}
 
-	words := Cut(sentence, false, true)
+	words := chanToArray(Cut(sentence, false, true))
 	if len(words) != len(result) {
 		t.Error(len(words))
 	}
@@ -760,7 +768,7 @@ func TestLoadUserDict(t *testing.T) {
 
 	sentence = "easy_install is great"
 	result = []string{"easy_install", " ", "is", " ", "great"}
-	words = Cut(sentence, false, true)
+	words = chanToArray(Cut(sentence, false, true))
 	if len(words) != len(result) {
 		t.Error(len(words))
 	}
@@ -772,7 +780,7 @@ func TestLoadUserDict(t *testing.T) {
 
 	sentence = "python 的正则表达式是好用的"
 	result = []string{"python", " ", "的", "正则表达式", "是", "好用", "的"}
-	words = Cut(sentence, false, true)
+	words = chanToArray(Cut(sentence, false, true))
 	if len(words) != len(result) {
 		t.Error(words)
 		t.Error(result)

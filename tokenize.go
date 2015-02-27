@@ -10,14 +10,13 @@ func Tokenize(sentence string, mode string, HMM bool) []Token {
 	tokens := make([]Token, 0)
 	start := 0
 	var width int
-	if mode == "default" {
-		for _, word := range Cut(sentence, false, HMM) {
+	for word := range Cut(sentence, false, HMM) {
+		if mode == "default" {
 			width = len([]rune(word))
 			tokens = append(tokens, Token{word, start, start + width})
 			start += width
-		}
-	} else {
-		for _, word := range Cut(sentence, false, HMM) {
+
+		} else {
 			runes := []rune(word)
 			width = len(runes)
 			for _, step := range []int{2, 3} {

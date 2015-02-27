@@ -36,10 +36,9 @@ func (tis TfIdfs) Swap(i, j int) {
 }
 
 func ExtractTags(sentence string, topK int) (tags TfIdfs) {
-	words := jiebago.Cut(sentence, false, true)
 	freq := make(map[string]float64)
 
-	for _, w := range words {
+	for w := range jiebago.Cut(sentence, false, true) {
 		w = strings.TrimSpace(w)
 		if utf8.RuneCountInString(w) < 2 {
 			continue

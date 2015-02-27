@@ -253,80 +253,85 @@ func cutAll(sentence string) []string {
 	return result
 }
 
-func Cut(sentence string, isCutAll bool, HMM bool) []string {
-	result := make([]string, 0)
-	var reHan, reSkip *regexp.Regexp
-	if isCutAll {
-		reHan = reHanCutAll
-		reSkip = reSkipCutAll
-	} else {
-		reHan = reHanDefault
-		reSkip = reSkipDefault
-	}
-	blocks := RegexpSplit(reHan, sentence)
-	var cut cutFunc
-	if HMM {
-		cut = cutDAG
-	} else {
-		cut = cutDAGNoHMM
-	}
-	if isCutAll {
-		cut = cutAll
-	}
-	for _, blk := range blocks {
-		if len(blk) == 0 {
-			continue
-		}
-		if reHan.MatchString(blk) {
-			for _, word := range cut(blk) {
-				result = append(result, word)
-			}
+func Cut(sentence string, isCutAll bool, HMM bool) chan string {
+	result := make(chan string)
+	go func() {
+		var reHan, reSkip *regexp.Regexp
+		if isCutAll {
+			reHan = reHanCutAll
+			reSkip = reSkipCutAll
 		} else {
-			type skipSplitFunc func(sentence string) []string
-			var ssf skipSplitFunc
-			if isCutAll {
-				ssf = func(sentence string) []string {
-					return reSkip.Split(sentence, -1)
+			reHan = reHanDefault
+			reSkip = reSkipDefault
+		}
+		blocks := RegexpSplit(reHan, sentence)
+		var cut cutFunc
+		if HMM {
+			cut = cutDAG
+		} else {
+			cut = cutDAGNoHMM
+		}
+		if isCutAll {
+			cut = cutAll
+		}
+		for _, blk := range blocks {
+			if len(blk) == 0 {
+				continue
+			}
+			if reHan.MatchString(blk) {
+				for _, word := range cut(blk) {
+					result <- word
 				}
 			} else {
-				ssf = func(sentence string) []string {
-					return RegexpSplit(reSkip, sentence)
-				}
-			}
-
-			for _, x := range ssf(blk) {
-				if reSkip.MatchString(x) {
-					result = append(result, x)
-				} else if !isCutAll {
-					for _, xx := range x {
-						result = append(result, string(xx))
+				type skipSplitFunc func(sentence string) []string
+				var ssf skipSplitFunc
+				if isCutAll {
+					ssf = func(sentence string) []string {
+						return reSkip.Split(sentence, -1)
 					}
 				} else {
-					result = append(result, x)
+					ssf = func(sentence string) []string {
+						return RegexpSplit(reSkip, sentence)
+					}
+				}
+
+				for _, x := range ssf(blk) {
+					if reSkip.MatchString(x) {
+						result <- x
+					} else if !isCutAll {
+						for _, xx := range x {
+							result <- string(xx)
+						}
+					} else {
+						result <- x
+					}
 				}
 			}
 		}
-	}
+		close(result)
+	}()
 	return result
 }
 
-func CutForSearch(sentence string, hmm bool) []string {
-	result := make([]string, 0)
-	words := Cut(sentence, false, hmm)
-	for _, word := range words {
-		runes := []rune(word)
-		for _, increment := range []int{2, 3} {
-			if len(runes) > increment {
-				var gram2 string
-				for i := 0; i < len(runes)-increment+1; i++ {
-					gram2 = string(runes[i : i+increment])
-					if v, ok := Trie.Freq[gram2]; ok && v > 0.0 {
-						result = append(result, gram2)
+func CutForSearch(sentence string, hmm bool) chan string {
+	result := make(chan string)
+	go func() {
+		for word := range Cut(sentence, false, hmm) {
+			runes := []rune(word)
+			for _, increment := range []int{2, 3} {
+				if len(runes) > increment {
+					var gram2 string
+					for i := 0; i < len(runes)-increment+1; i++ {
+						gram2 = string(runes[i : i+increment])
+						if v, ok := Trie.Freq[gram2]; ok && v > 0.0 {
+							result <- gram2
+						}
 					}
 				}
 			}
+			result <- word
 		}
-		result = append(result, word)
-	}
+		close(result)
+	}()
 	return result
 }
