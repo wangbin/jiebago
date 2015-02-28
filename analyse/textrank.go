@@ -7,9 +7,7 @@ import (
 	"sort"
 )
 
-const (
-	DampingFactor = 0.85
-)
+const dampingFactor = 0.85
 
 var (
 	defaultAllowPOS = []string{"ns", "n", "vn", "v"}
@@ -95,7 +93,7 @@ func (u *undirectWeightedGraph) rank() TfIdfs {
 			for _, e := range inedges {
 				s += e.weight / outSum[e.end] * ws[e.end]
 			}
-			ws[n] = (1 - DampingFactor) + DampingFactor*s
+			ws[n] = (1 - dampingFactor) + dampingFactor*s
 		}
 	}
 	minRank := math.MaxFloat64
@@ -158,6 +156,9 @@ func TextRank(sentence string, topK int) TfIdfs {
 	return TextRankWithPOS(sentence, topK, defaultAllowPOS)
 }
 
+// Set the dictionary, could be absolute path of dictionary file, or dictionary
+// name in current directory. This function must be called before cut any
+// sentence.
 func SetDictionary(dictFileName string) error {
 	return posseg.SetDictionary(dictFileName)
 }

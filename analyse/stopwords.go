@@ -42,6 +42,8 @@ func init() {
 	}
 }
 
+// Set the stop words file path, could be absolute path of stop words file, or
+// file name in current directory.
 func SetStopWords(stopWordsFileName string) error {
 	stopWordsFilePath, err := jiebago.DictPath(stopWordsFileName)
 	if err != nil {

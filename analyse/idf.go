@@ -6,26 +6,26 @@ import (
 )
 
 var (
-	idfLoader *IDFLoader
+	loader *idfLoader
 )
 
 func init() {
-	idfLoader = NewIDFLoader()
+	loader = newIDFLoader()
 }
 
-type IDFLoader struct {
+type idfLoader struct {
 	Path   string
 	Freq   map[string]float64
 	Median float64
 }
 
-func NewIDFLoader() *IDFLoader {
-	loader := new(IDFLoader)
+func newIDFLoader() *idfLoader {
+	loader := new(idfLoader)
 	loader.Freq = make(map[string]float64)
 	return loader
 }
 
-func (loader *IDFLoader) newPath(idfFilePath string) error {
+func (loader *idfLoader) newPath(idfFilePath string) error {
 	if loader.Path == idfFilePath {
 		return nil
 	}
@@ -46,10 +46,12 @@ func (loader *IDFLoader) newPath(idfFilePath string) error {
 	return nil
 }
 
+// Set the IDF file path, could be absolute path of IDF file, or IDF file
+// name in current directory.
 func SetIdf(idfFileName string) error {
 	idfFilePath, err := jiebago.DictPath(idfFileName)
 	if err != nil {
 		return err
 	}
-	return idfLoader.newPath(idfFilePath)
+	return loader.newPath(idfFilePath)
 }

@@ -5,7 +5,7 @@ import (
 	"sort"
 )
 
-const MinFloat = -3.14e100
+const minFloat = -3.14e100
 
 var (
 	prevStatus = make(map[byte][]byte)
@@ -57,7 +57,7 @@ func viterbi(obs []rune, states []byte) (float64, []byte) {
 		if val, ok := probEmit[y][obs[0]]; ok {
 			V[0][y] = val + probStart[y]
 		} else {
-			V[0][y] = MinFloat + probStart[y]
+			V[0][y] = minFloat + probStart[y]
 		}
 		path[y] = []byte{y}
 	}
@@ -71,14 +71,14 @@ func viterbi(obs []rune, states []byte) (float64, []byte) {
 			if val, ok := probEmit[y][obs[t]]; ok {
 				em_p = val
 			} else {
-				em_p = MinFloat
+				em_p = minFloat
 			}
 			for _, y0 := range prevStatus[y] {
 				var transP float64
 				if tp, ok := probTrans[y0][y]; ok {
 					transP = tp
 				} else {
-					transP = MinFloat
+					transP = minFloat
 				}
 				prob0 := V[t-1][y0] + transP + em_p
 				ps0 = append(ps0, &probState{prob: prob0, state: y0})
