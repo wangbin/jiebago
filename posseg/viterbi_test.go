@@ -5,27 +5,27 @@ import (
 )
 
 var (
-	route1 = []StateTag{
-		StateTag{'B', "nr"},
-		StateTag{'M', "nr"},
-		StateTag{'E', "nr"},
-		StateTag{'S', "v"},
-		StateTag{'B', "v"},
-		StateTag{'E', "v"},
-		StateTag{'B', "n"},
-		StateTag{'M', "n"},
-		StateTag{'E', "n"},
-		StateTag{'S', "d"},
-		StateTag{'S', "v"},
-		StateTag{'S', "n"},
-		StateTag{'B', "v"},
-		StateTag{'E', "v"},
-		StateTag{'B', "nr"},
-		StateTag{'M', "nr"},
-		StateTag{'M', "nr"},
-		StateTag{'M', "nr"},
-		StateTag{'E', "nr"},
-		StateTag{'S', "zg"}}
+	route1 = []stateTag{
+		stateTag{'B', "nr"},
+		stateTag{'M', "nr"},
+		stateTag{'E', "nr"},
+		stateTag{'S', "v"},
+		stateTag{'B', "v"},
+		stateTag{'E', "v"},
+		stateTag{'B', "n"},
+		stateTag{'M', "n"},
+		stateTag{'E', "n"},
+		stateTag{'S', "d"},
+		stateTag{'S', "v"},
+		stateTag{'S', "n"},
+		stateTag{'B', "v"},
+		stateTag{'E', "v"},
+		stateTag{'B', "nr"},
+		stateTag{'M', "nr"},
+		stateTag{'M', "nr"},
+		stateTag{'M', "nr"},
+		stateTag{'E', "nr"},
+		stateTag{'S', "zg"}}
 )
 
 func TestViterbi(t *testing.T) {

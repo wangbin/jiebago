@@ -12,10 +12,10 @@ func (m RuneFloatMap) Get(key rune) float64 {
 	}
 }
 
-var ProbEmit = make(map[StateTag]RuneFloatMap)
+var ProbEmit = make(map[stateTag]RuneFloatMap)
 
 func init() {
-	ProbEmit[StateTag{'B', "a"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "a"}] = RuneFloatMap{
 		'\u4e00': -3.618715666782108,
 		'\u4e07': -10.500566885381515,
 		'\u4e0a': -8.541143017159477,
@@ -1321,7 +1321,7 @@ func init() {
 		'\u9f77': -9.673888312197047,
 		'\u9f8c': -9.673888312197047,
 		'\u9f90': -6.407810885844551}
-	ProbEmit[StateTag{'B', "ad"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "ad"}] = RuneFloatMap{
 		'\u4e0d': -9.025464126169886,
 		'\u4e13': -6.9549912544728105,
 		'\u4e25': -3.3030468393683283,
@@ -1487,8 +1487,8 @@ func init() {
 		'\u9ed8': -10.9713742752252,
 		'\u9f4a': -8.891932733545364,
 		'\u9f50': -8.891932733545364}
-	ProbEmit[StateTag{'B', "ag"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "an"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "ag"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "an"}] = RuneFloatMap{
 		'\u4e25': -4.513735246352475,
 		'\u4f24': -8.39185670010494,
 		'\u4f4e': -6.158264478597846,
@@ -1585,7 +1585,7 @@ func init() {
 		'\u9ad8': -9.49046898877305,
 		'\u9ebb': -3.605754811611948,
 		'\u9eef': -10.183616169332995}
-	ProbEmit[StateTag{'B', "b"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "b"}] = RuneFloatMap{
 		'\u4e00': -3.9341511703482,
 		'\u4e01': -12.362075894006255,
 		'\u4e03': -7.919424637515938,
@@ -2460,8 +2460,8 @@ func init() {
 		'\u9f50': -9.226581678077105,
 		'\u9f8d': -8.896339991206528,
 		'\u9f99': -8.896339991206528}
-	ProbEmit[StateTag{'B', "bg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "c"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "bg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "c"}] = RuneFloatMap{
 		'\u4e00': -4.7554160789480315,
 		'\u4e0d': -2.568139872259119,
 		'\u4e0e': -4.758360721829588,
@@ -2570,7 +2570,7 @@ func init() {
 		'\u9664': -5.8502132492689505,
 		'\u96d6': -3.1689991397303,
 		'\u975e': -7.876605569858971}
-	ProbEmit[StateTag{'B', "d"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "d"}] = RuneFloatMap{
 		'\u4e00': -2.701213386578478,
 		'\u4e07': -7.7108886240081835,
 		'\u4e0b': -12.999155654702719,
@@ -3183,9 +3183,9 @@ func init() {
 		'\u9f0e': -10.434206297241182,
 		'\u9f4a': -8.298675288910303,
 		'\u9f50': -8.298675288910303}
-	ProbEmit[StateTag{'B', "df"}] = RuneFloatMap{'\u4e0d': 0.0}
-	ProbEmit[StateTag{'B', "dg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "e"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "df"}] = RuneFloatMap{'\u4e0d': 0.0}
+	ProbEmit[stateTag{'B', "dg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "e"}] = RuneFloatMap{
 		'\u545c': -2.5576660040704287,
 		'\u54c7': -6.52795791762255,
 		'\u54c8': -4.13006264482418,
@@ -3198,8 +3198,8 @@ func init() {
 		'\u5929': -2.5206247323900794,
 		'\u597d': -2.864396271492904,
 		'\u5c1a': -4.918520005188451}
-	ProbEmit[StateTag{'B', "en"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "f"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "en"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "f"}] = RuneFloatMap{
 		'\u4e00': -5.967972486230796,
 		'\u4e0a': -3.5480073521453943,
 		'\u4e0b': -4.272267313667743,
@@ -3300,9 +3300,9 @@ func init() {
 		'\u9802': -5.692922160684915,
 		'\u982d': -7.851700444601272,
 		'\u9876': -5.692922160684915}
-	ProbEmit[StateTag{'B', "g"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "h"}] = RuneFloatMap{'\u8d85': 0.0}
-	ProbEmit[StateTag{'B', "i"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "g"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "h"}] = RuneFloatMap{'\u8d85': 0.0}
+	ProbEmit[stateTag{'B', "i"}] = RuneFloatMap{
 		'\u4e00': -3.042203110465306,
 		'\u4e01': -10.08768928513572,
 		'\u4e03': -6.1048972088193665,
@@ -5660,8 +5660,8 @@ func init() {
 		'\u9f8d': -7.294481275693204,
 		'\u9f90': -7.630953512314416,
 		'\u9f99': -7.294481275693204}
-	ProbEmit[StateTag{'B', "in"}] = RuneFloatMap{'\u5fc3': 0.0}
-	ProbEmit[StateTag{'B', "j"}] = RuneFloatMap{'\u4e00': -3.5119498764938633,
+	ProbEmit[stateTag{'B', "in"}] = RuneFloatMap{'\u5fc3': 0.0}
+	ProbEmit[stateTag{'B', "j"}] = RuneFloatMap{'\u4e00': -3.5119498764938633,
 		'\u4e03': -8.78261571171139,
 		'\u4e07': -9.475762892271336,
 		'\u4e09': -4.265780091791198,
@@ -6414,12 +6414,12 @@ func init() {
 		'\u9ee8': -6.422619711504005,
 		'\u9f8d': -10.08189869584165,
 		'\u9f99': -10.08189869584165}
-	ProbEmit[StateTag{'B', "jn"}] = RuneFloatMap{'\u4e1c': -0.40546510810816444,
+	ProbEmit[stateTag{'B', "jn"}] = RuneFloatMap{'\u4e1c': -0.40546510810816444,
 		'\u4ea7': -1.0986122886681098,
 		'\u6771': -0.40546510810816444,
 		'\u7522': -1.0986122886681098}
-	ProbEmit[StateTag{'B', "k"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "l"}] = RuneFloatMap{'\u4e00': -3.6640721106634464,
+	ProbEmit[stateTag{'B', "k"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "l"}] = RuneFloatMap{'\u4e00': -3.6640721106634464,
 		'\u4e03': -7.826279580155966,
 		'\u4e07': -6.614143465190869,
 		'\u4e09': -5.736644270286588,
@@ -8293,8 +8293,8 @@ func init() {
 		'\u9f99': -10.550859083209387,
 		'\u9f9c': -10.550859083209387,
 		'\u9f9f': -10.550859083209387}
-	ProbEmit[StateTag{'B', "ln"}] = RuneFloatMap{'\u4eba': 0.0}
-	ProbEmit[StateTag{'B', "m"}] = RuneFloatMap{'\u4e00': -0.9206937226302377,
+	ProbEmit[stateTag{'B', "ln"}] = RuneFloatMap{'\u4eba': 0.0}
+	ProbEmit[stateTag{'B', "m"}] = RuneFloatMap{'\u4e00': -0.9206937226302377,
 		'\u4e01': -9.81652617429654,
 		'\u4e03': -5.137962557092596,
 		'\u4e07': -3.159577210948165,
@@ -8459,8 +8459,8 @@ func init() {
 		'\u99ac': -10.676727439519652,
 		'\u9a6c': -10.676727439519652,
 		'\u9ede': -10.548894068009767}
-	ProbEmit[StateTag{'B', "mg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "mq"}] = RuneFloatMap{'\u4e00': -2.4038309603949264,
+	ProbEmit[stateTag{'B', "mg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "mq"}] = RuneFloatMap{'\u4e00': -2.4038309603949264,
 		'\u4e07': -5.822885959457088,
 		'\u4e09': -1.0971737844641665,
 		'\u4e0a': -7.9297264753250385,
@@ -8495,7 +8495,7 @@ func init() {
 		'\u9678': -7.9297264753250385,
 		'\u96d9': -9.433803872101313,
 		'\u96f6': -5.306669487056221}
-	ProbEmit[StateTag{'B', "n"}] = RuneFloatMap{'\u4e00': -5.996794192798978,
+	ProbEmit[stateTag{'B', "n"}] = RuneFloatMap{'\u4e00': -5.996794192798978,
 		'\u4e01': -9.800299616016531,
 		'\u4e03': -9.86121978977837,
 		'\u4e07': -7.977123950555097,
@@ -13759,8 +13759,8 @@ func init() {
 		'\u9f99': -7.437618479204475,
 		'\u9f9c': -10.29471221014119,
 		'\u9f9f': -10.29471221014119}
-	ProbEmit[StateTag{'B', "ng"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "nr"}] = RuneFloatMap{'\u4e00': -8.442022770880829,
+	ProbEmit[stateTag{'B', "ng"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "nr"}] = RuneFloatMap{'\u4e00': -8.442022770880829,
 		'\u4e01': -5.291497968953797,
 		'\u4e03': -10.851217598933133,
 		'\u4e07': -6.409301907021771,
@@ -14929,7 +14929,7 @@ func init() {
 		'\u9f94': -6.902380620382271,
 		'\u9f99': -6.233007799437239,
 		'\u9f9a': -6.902380620382271}
-	ProbEmit[StateTag{'B', "nrfg"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "nrfg"}] = RuneFloatMap{
 		'\u4e01': -7.515889085215125,
 		'\u4e07': -7.739032636529336,
 		'\u4e1c': -6.82274190465518,
@@ -15286,7 +15286,7 @@ func init() {
 		'\u9f94': -9.818474178209172,
 		'\u9f99': -5.906451172781026,
 		'\u9f9a': -9.818474178209172}
-	ProbEmit[StateTag{'B', "nrt"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "nrt"}] = RuneFloatMap{
 		'\u4e00': -7.167050736911834,
 		'\u4e01': -10.56824811857399,
 		'\u4e07': -7.07174055710751,
@@ -16338,7 +16338,7 @@ func init() {
 		'\u9f99': -6.76158562880367,
 		'\u9f9c': -10.162783010465825,
 		'\u9f9f': -10.162783010465825}
-	ProbEmit[StateTag{'B', "ns"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "ns"}] = RuneFloatMap{
 		'\u4e00': -7.815407507492756,
 		'\u4e01': -10.144309908804175,
 		'\u4e03': -7.645609936883838,
@@ -18327,7 +18327,7 @@ func init() {
 		'\u9f9a': -13.54550729046633,
 		'\u9f9c': -8.028054394001622,
 		'\u9f9f': -8.028054394001622}
-	ProbEmit[StateTag{'B', "nt"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "nt"}] = RuneFloatMap{
 		'\u4e00': -7.268324712873958,
 		'\u4e03': -8.0040315078527,
 		'\u4e07': -8.50046839416659,
@@ -18924,7 +18924,7 @@ func init() {
 		'\u9f50': -10.446378543221904,
 		'\u9f8d': -8.0040315078527,
 		'\u9f99': -8.0040315078527}
-	ProbEmit[StateTag{'B', "nz"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "nz"}] = RuneFloatMap{
 		'\u4e00': -7.0353152797963245,
 		'\u4e01': -9.972207053327383,
 		'\u4e03': -6.538219848842236,
@@ -20914,7 +20914,7 @@ func init() {
 		'\u9f99': -6.1435656568382875,
 		'\u9f9c': -7.698609497206589,
 		'\u9f9f': -7.698609497206589}
-	ProbEmit[StateTag{'B', "o"}] = RuneFloatMap{
+	ProbEmit[stateTag{'B', "o"}] = RuneFloatMap{
 		'\u4e01': -4.404653324846681,
 		'\u4e52': -5.634601615575877,
 		'\u5237': -6.633130445687004,
@@ -20991,7 +20991,7 @@ func init() {
 		'\u98bc': -5.534518157018894,
 		'\u98d5': -5.534518157018894,
 		'\u9aa8': -8.579040594742317}
-	ProbEmit[StateTag{'B', "p"}] = RuneFloatMap{'\u4e3a': -2.3157898579945755,
+	ProbEmit[stateTag{'B', "p"}] = RuneFloatMap{'\u4e3a': -2.3157898579945755,
 		'\u4e58': -7.006072297349502,
 		'\u4ee5': -7.258663049990012,
 		'\u4f9d': -5.41465289041808,
@@ -21042,7 +21042,7 @@ func init() {
 		'\u9760': -5.987998871165405,
 		'\u9806': -5.091252735364219,
 		'\u987a': -5.091252735364219}
-	ProbEmit[StateTag{'B', "q"}] = RuneFloatMap{'\u4e00': -8.549051705129457,
+	ProbEmit[stateTag{'B', "q"}] = RuneFloatMap{'\u4e00': -8.549051705129457,
 		'\u4e07': -6.688299364414451,
 		'\u4e0b': -7.661748510128555,
 		'\u4e1b': -7.78691165308256,
@@ -21177,9 +21177,9 @@ func init() {
 		'\u99ac': -4.714218338392441,
 		'\u9a6c': -4.714218338392441,
 		'\u9ede': -7.403919400826455}
-	ProbEmit[StateTag{'B', "qe"}] = RuneFloatMap{'\u5146': 0.0}
-	ProbEmit[StateTag{'B', "qg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "r"}] = RuneFloatMap{'\u4e00': -4.459387940605907,
+	ProbEmit[stateTag{'B', "qe"}] = RuneFloatMap{'\u5146': 0.0}
+	ProbEmit[stateTag{'B', "qg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "r"}] = RuneFloatMap{'\u4e00': -4.459387940605907,
 		'\u4e09': -7.746504623310215,
 		'\u4e24': -6.371400233483868,
 		'\u4e2a': -9.023292771392573,
@@ -21258,10 +21258,10 @@ func init() {
 		'\u90a3': -2.5798044165702327,
 		'\u9119': -9.634761920938251,
 		'\u9918': -9.423452827271044}
-	ProbEmit[StateTag{'B', "rg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "rr"}] = RuneFloatMap{'\u5176': -0.11261887810814913, '\u60a8': -2.239526957026909}
-	ProbEmit[StateTag{'B', "rz"}] = RuneFloatMap{'\u8fd9': 0.0, '\u9019': 0.0}
-	ProbEmit[StateTag{'B', "s"}] = RuneFloatMap{'\u4e00': -3.0793927602254434,
+	ProbEmit[stateTag{'B', "rg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "rr"}] = RuneFloatMap{'\u5176': -0.11261887810814913, '\u60a8': -2.239526957026909}
+	ProbEmit[stateTag{'B', "rz"}] = RuneFloatMap{'\u8fd9': 0.0, '\u9019': 0.0}
+	ProbEmit[stateTag{'B', "s"}] = RuneFloatMap{'\u4e00': -3.0793927602254434,
 		'\u4e09': -9.590394871701438,
 		'\u4e0a': -6.1069593918023095,
 		'\u4e0d': -6.649722375330474,
@@ -21519,7 +21519,7 @@ func init() {
 		'\u9ad8': -5.9622516527753335,
 		'\u9ee8': -6.321369263147765,
 		'\u9f3b': -8.971355663295213}
-	ProbEmit[StateTag{'B', "t"}] = RuneFloatMap{'\u4e00': -4.570096731317768,
+	ProbEmit[stateTag{'B', "t"}] = RuneFloatMap{'\u4e00': -4.570096731317768,
 		'\u4e01': -11.568149648280684,
 		'\u4e03': -6.38076384243993,
 		'\u4e07': -6.550869811465761,
@@ -21936,8 +21936,8 @@ func init() {
 		'\u9f4b': -9.863401556042259,
 		'\u9f8d': -12.26129682884063,
 		'\u9f99': -12.26129682884063}
-	ProbEmit[StateTag{'B', "tg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "u"}] = RuneFloatMap{'\u4e00': -1.1805831449121478,
+	ProbEmit[stateTag{'B', "tg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "u"}] = RuneFloatMap{'\u4e00': -1.1805831449121478,
 		'\u4e0e': -4.979080600230819,
 		'\u4e3a': -3.7616343036603515,
 		'\u4e91': -10.7379823741081,
@@ -21961,13 +21961,13 @@ func init() {
 		'\u8d77': -8.098925044492841,
 		'\u958b': -10.7379823741081,
 		'\u96f2': -10.7379823741081}
-	ProbEmit[StateTag{'B', "ud"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "ug"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "uj"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "ul"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "uv"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "uz"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "v"}] = RuneFloatMap{'\u4e00': -7.876404026214085,
+	ProbEmit[stateTag{'B', "ud"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "ug"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "uj"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "ul"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "uv"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "uz"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "v"}] = RuneFloatMap{'\u4e00': -7.876404026214085,
 		'\u4e01': -13.592883331664693,
 		'\u4e07': -13.438732651837435,
 		'\u4e08': -10.96580219309615,
@@ -25330,7 +25330,7 @@ func init() {
 		'\u9f50': -9.006216617241162,
 		'\u9f9c': -11.492822502782122,
 		'\u9f9f': -11.492822502782122}
-	ProbEmit[StateTag{'B', "vd"}] = RuneFloatMap{'\u4e25': -8.60666819784384,
+	ProbEmit[stateTag{'B', "vd"}] = RuneFloatMap{'\u4e25': -8.60666819784384,
 		'\u5012': -7.913521017283895,
 		'\u5077': -7.220373836723949,
 		'\u5192': -6.409443620507621,
@@ -25348,9 +25348,9 @@ func init() {
 		'\u9006': -3.6721942647131485,
 		'\u9589': -4.917788743729904,
 		'\u95ed': -4.917788743729904}
-	ProbEmit[StateTag{'B', "vg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "vi"}] = RuneFloatMap{'\u7b49': 0.0}
-	ProbEmit[StateTag{'B', "vn"}] = RuneFloatMap{'\u4e00': -6.982762362552521,
+	ProbEmit[stateTag{'B', "vg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "vi"}] = RuneFloatMap{'\u7b49': 0.0}
+	ProbEmit[stateTag{'B', "vn"}] = RuneFloatMap{'\u4e00': -6.982762362552521,
 		'\u4e09': -10.734877406023612,
 		'\u4e0a': -7.895149380946202,
 		'\u4e0b': -8.32693179737174,
@@ -26909,11 +26909,11 @@ func init() {
 		'\u9ede': -12.238954802799887,
 		'\u9ef4': -12.526636875251667,
 		'\u9f13': -11.428024586583557}
-	ProbEmit[StateTag{'B', "vq"}] = RuneFloatMap{'\u51fa': -1.2227306813964929,
+	ProbEmit[stateTag{'B', "vq"}] = RuneFloatMap{'\u51fa': -1.2227306813964929,
 		'\u53bb': -0.34874232921302734}
-	ProbEmit[StateTag{'B', "w"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "x"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "y"}] = RuneFloatMap{'\u4e5f': -1.010128393085956,
+	ProbEmit[stateTag{'B', "w"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "x"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "y"}] = RuneFloatMap{'\u4e5f': -1.010128393085956,
 		'\u4f86': -4.261911335950585,
 		'\u4fbf': -4.685725582726946,
 		'\u54ce': -5.378872763286892,
@@ -26923,8 +26923,8 @@ func init() {
 		'\u7f77': -1.3446321251344966,
 		'\u800c': -1.0846153684657418,
 		'\u8457': -4.685725582726946}
-	ProbEmit[StateTag{'B', "yg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'B', "z"}] = RuneFloatMap{'\u4e0a': -7.0976926889407626,
+	ProbEmit[stateTag{'B', "yg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'B', "z"}] = RuneFloatMap{'\u4e0a': -7.0976926889407626,
 		'\u4e0d': -4.488582435693456,
 		'\u4e1d': -7.748280255081912,
 		'\u4e24': -6.404545508380817,
@@ -27627,8 +27627,8 @@ func init() {
 		'\u9f13': -6.848796641524138,
 		'\u9f4a': -6.595600745143527,
 		'\u9f50': -6.595600745143527}
-	ProbEmit[StateTag{'B', "zg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "a"}] = RuneFloatMap{'\u4e00': -6.528479639210718,
+	ProbEmit[stateTag{'B', "zg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "a"}] = RuneFloatMap{'\u4e00': -6.528479639210718,
 		'\u4e0b': -6.776596111456308,
 		'\u4e11': -13.545089323104937,
 		'\u4e25': -6.50806170841866,
@@ -28978,7 +28978,7 @@ func init() {
 		'\u9f50': -6.988310966946894,
 		'\u9f6a': -9.673888312197047,
 		'\u9f8a': -9.673888312197047}
-	ProbEmit[StateTag{'E', "ad"}] = RuneFloatMap{'\u4e45': -9.266626182986775,
+	ProbEmit[stateTag{'E', "ad"}] = RuneFloatMap{'\u4e45': -9.266626182986775,
 		'\u4e71': -9.87276198655709,
 		'\u4e82': -9.87276198655709,
 		'\u4fbf': -4.707976012633576,
@@ -29133,8 +29133,8 @@ func init() {
 		'\u97e7': -11.664521455785145,
 		'\u9a5f': -7.570176893563044,
 		'\u9aa4': -7.570176893563044}
-	ProbEmit[StateTag{'E', "ag"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "an"}] = RuneFloatMap{'\u4e11': -10.183616169332995,
+	ProbEmit[stateTag{'E', "ag"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "an"}] = RuneFloatMap{'\u4e11': -10.183616169332995,
 		'\u4e4f': -6.964740344464794,
 		'\u4e71': -10.183616169332995,
 		'\u4e82': -10.183616169332995,
@@ -29242,7 +29242,7 @@ func init() {
 		'\u9817': -6.546030009606609,
 		'\u9887': -6.546030009606609,
 		'\u99a8': -9.49046898877305}
-	ProbEmit[StateTag{'E', "b"}] = RuneFloatMap{'\u4e00': -3.70790724756294,
+	ProbEmit[stateTag{'E', "b"}] = RuneFloatMap{'\u4e00': -3.70790724756294,
 		'\u4e0a': -7.818781111736251,
 		'\u4e0b': -5.6005031252021995,
 		'\u4e13': -9.143200069138054,
@@ -29956,8 +29956,8 @@ func init() {
 		'\u9f61': -7.2440820815895,
 		'\u9f7f': -8.865568332539775,
 		'\u9f84': -7.2440820815895}
-	ProbEmit[StateTag{'E', "bg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "c"}] = RuneFloatMap{'\u4e0d': -8.25251187572559,
+	ProbEmit[stateTag{'E', "bg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "c"}] = RuneFloatMap{'\u4e0d': -8.25251187572559,
 		'\u4e14': -2.946361192202036,
 		'\u4e3a': -2.779303402552143,
 		'\u4e48': -6.621939651217517,
@@ -30043,7 +30043,7 @@ func init() {
 		'\u975e': -6.131471941970971,
 		'\u9762': -4.256718987231986,
 		'\u9ebc': -6.621939651217517}
-	ProbEmit[StateTag{'E', "d"}] = RuneFloatMap{'\u4e00': -6.984218751409594,
+	ProbEmit[stateTag{'E', "d"}] = RuneFloatMap{'\u4e00': -6.984218751409594,
 		'\u4e01': -9.322854982795642,
 		'\u4e09': -7.5040387121800745,
 		'\u4e0a': -4.636396516593545,
@@ -30613,9 +30613,9 @@ func init() {
 		'\u9f50': -6.5337888379333435,
 		'\u9f52': -11.74639268620735,
 		'\u9f7f': -11.74639268620735}
-	ProbEmit[StateTag{'E', "df"}] = RuneFloatMap{'\u8981': 0.0}
-	ProbEmit[StateTag{'E', "dg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "e"}] = RuneFloatMap{'\u4f19': -2.864396271492904,
+	ProbEmit[stateTag{'E', "df"}] = RuneFloatMap{'\u8981': 0.0}
+	ProbEmit[stateTag{'E', "dg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "e"}] = RuneFloatMap{'\u4f19': -2.864396271492904,
 		'\u5440': -0.65302718677052,
 		'\u547c': -2.5576660040704287,
 		'\u54c8': -2.5026062268874014,
@@ -30626,8 +30626,8 @@ func init() {
 		'\u5925': -2.864396271492904,
 		'\u98e8': -4.918520005188451,
 		'\u9957': -4.918520005188451}
-	ProbEmit[StateTag{'E', "en"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "f"}] = RuneFloatMap{'\u4e0a': -2.8053792589892286,
+	ProbEmit[stateTag{'E', "en"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "f"}] = RuneFloatMap{'\u4e0a': -2.8053792589892286,
 		'\u4e0b': -3.072885379281532,
 		'\u4e1c': -5.841087960827876,
 		'\u4e2d': -3.866631629866201,
@@ -30702,9 +30702,9 @@ func init() {
 		'\u982d': -4.7656747241725546,
 		'\u9996': -7.706766419878938,
 		'\u9e93': -6.105296677094015}
-	ProbEmit[StateTag{'E', "g"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "h"}] = RuneFloatMap{'\u4f4e': 0.0}
-	ProbEmit[StateTag{'E', "i"}] = RuneFloatMap{'\u4e00': -6.816853721336808,
+	ProbEmit[stateTag{'E', "g"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "h"}] = RuneFloatMap{'\u4f4e': 0.0}
+	ProbEmit[stateTag{'E', "i"}] = RuneFloatMap{'\u4e00': -6.816853721336808,
 		'\u4e01': -8.621352216342293,
 		'\u4e07': -6.3781905438190485,
 		'\u4e08': -7.368589247846925,
@@ -33188,8 +33188,8 @@ func init() {
 		'\u9f8a': -10.493154393243884,
 		'\u9f8d': -7.836397486529225,
 		'\u9f99': -7.836397486529225}
-	ProbEmit[StateTag{'E', "in"}] = RuneFloatMap{'\u60a3': 0.0}
-	ProbEmit[StateTag{'E', "j"}] = RuneFloatMap{'\u4e00': -7.298947186566323,
+	ProbEmit[stateTag{'E', "in"}] = RuneFloatMap{'\u60a3': 0.0}
+	ProbEmit[stateTag{'E', "j"}] = RuneFloatMap{'\u4e00': -7.298947186566323,
 		'\u4e09': -8.615561627048224,
 		'\u4e0d': -8.829135727346284,
 		'\u4e11': -11.873658165069706,
@@ -34019,10 +34019,10 @@ func init() {
 		'\u9ee8': -7.66896554567874,
 		'\u9f8d': -8.98328640717354,
 		'\u9f99': -8.98328640717354}
-	ProbEmit[StateTag{'E', "jn"}] = RuneFloatMap{'\u897f': -0.40546510810816444,
+	ProbEmit[stateTag{'E', "jn"}] = RuneFloatMap{'\u897f': -0.40546510810816444,
 		'\u91cf': -1.0986122886681098}
-	ProbEmit[StateTag{'E', "k"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "l"}] = RuneFloatMap{'\u4e00': -5.8618074132405935,
+	ProbEmit[stateTag{'E', "k"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "l"}] = RuneFloatMap{'\u4e00': -5.8618074132405935,
 		'\u4e01': -10.550859083209387,
 		'\u4e07': -10.550859083209387,
 		'\u4e08': -11.244006263769332,
@@ -35980,8 +35980,8 @@ func init() {
 		'\u9f7f': -8.353634505873169,
 		'\u9f8d': -10.327715531895178,
 		'\u9f99': -10.327715531895178}
-	ProbEmit[StateTag{'E', "ln"}] = RuneFloatMap{'\u6743': 0.0, '\u6b0a': 0.0}
-	ProbEmit[StateTag{'E', "m"}] = RuneFloatMap{'\u4e00': -4.481580208618347,
+	ProbEmit[stateTag{'E', "ln"}] = RuneFloatMap{'\u6743': 0.0, '\u6b0a': 0.0}
+	ProbEmit[stateTag{'E', "m"}] = RuneFloatMap{'\u4e00': -4.481580208618347,
 		'\u4e03': -6.8353220013054585,
 		'\u4e07': -4.753687743434612,
 		'\u4e08': -6.916584965384224,
@@ -36410,8 +36410,8 @@ func init() {
 		'\u9ede': -4.291686355968758,
 		'\u9f4a': -13.767769892877967,
 		'\u9f50': -13.767769892877967}
-	ProbEmit[StateTag{'E', "mg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "mq"}] = RuneFloatMap{'\u4e00': -4.6932290491070185,
+	ProbEmit[stateTag{'E', "mg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "mq"}] = RuneFloatMap{'\u4e00': -4.6932290491070185,
 		'\u4e09': -9.028338763993148,
 		'\u4e0b': -9.028338763993148,
 		'\u4e1d': -6.516033140017034,
@@ -36495,7 +36495,7 @@ func init() {
 		'\u9678': -9.433803872101313,
 		'\u9762': -3.194503161088749,
 		'\u9ede': -3.653060356308983}
-	ProbEmit[StateTag{'E', "n"}] = RuneFloatMap{'\u4e00': -8.846426172993333,
+	ProbEmit[stateTag{'E', "n"}] = RuneFloatMap{'\u4e00': -8.846426172993333,
 		'\u4e01': -9.076882371153829,
 		'\u4e03': -12.446474413400653,
 		'\u4e08': -10.302494350583245,
@@ -40844,8 +40844,8 @@ func init() {
 		'\u9f9b': -11.465645160388927,
 		'\u9f9c': -10.220050681372172,
 		'\u9f9f': -10.220050681372172}
-	ProbEmit[StateTag{'E', "ng"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "nr"}] = RuneFloatMap{'\u4e00': -7.403216151073176,
+	ProbEmit[stateTag{'E', "ng"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "nr"}] = RuneFloatMap{'\u4e00': -7.403216151073176,
 		'\u4e01': -6.731164680000826,
 		'\u4e03': -8.482142764670254,
 		'\u4e07': -7.7716038413984405,
@@ -45816,7 +45816,7 @@ func init() {
 		'\u9f9a': -12.930659140612969,
 		'\u9f9c': -9.691980688448588,
 		'\u9f9f': -9.691980688448588}
-	ProbEmit[StateTag{'E', "nrfg"}] = RuneFloatMap{'\u4e00': -5.0822757298146755,
+	ProbEmit[stateTag{'E', "nrfg"}] = RuneFloatMap{'\u4e00': -5.0822757298146755,
 		'\u4e01': -9.818474178209172,
 		'\u4e09': -5.584367673611912,
 		'\u4e15': -9.818474178209172,
@@ -46506,7 +46506,7 @@ func init() {
 		'\u9f84': -9.125326997649227,
 		'\u9f8d': -5.94727316730128,
 		'\u9f99': -5.94727316730128}
-	ProbEmit[StateTag{'E', "nrt"}] = RuneFloatMap{'\u4e00': -6.570047416904791,
+	ProbEmit[stateTag{'E', "nrt"}] = RuneFloatMap{'\u4e00': -6.570047416904791,
 		'\u4e01': -5.704567237434397,
 		'\u4e07': -5.88611689144977,
 		'\u4e08': -9.1819537574541,
@@ -47437,7 +47437,7 @@ func init() {
 		'\u9f50': -7.236043608398786,
 		'\u9f8d': -6.312635408755766,
 		'\u9f99': -6.312635408755766}
-	ProbEmit[StateTag{'E', "ns"}] = RuneFloatMap{'\u4e01': -11.060600640678329,
+	ProbEmit[stateTag{'E', "ns"}] = RuneFloatMap{'\u4e01': -11.060600640678329,
 		'\u4e03': -8.298483218305844,
 		'\u4e07': -12.44689500179822,
 		'\u4e0a': -7.0903087271262075,
@@ -48689,7 +48689,7 @@ func init() {
 		'\u9f50': -7.659403259016174,
 		'\u9f8d': -6.570093363010378,
 		'\u9f99': -6.570093363010378}
-	ProbEmit[StateTag{'E', "nt"}] = RuneFloatMap{'\u4e0b': -11.13952572378185,
+	ProbEmit[stateTag{'E', "nt"}] = RuneFloatMap{'\u4e0b': -11.13952572378185,
 		'\u4e13': -10.446378543221904,
 		'\u4e1a': -5.876835534876963,
 		'\u4e1c': -7.061988279876129,
@@ -48946,7 +48946,7 @@ func init() {
 		'\u9a6c': -8.94230114644563,
 		'\u9ad4': -6.142313450017734,
 		'\u9ee8': -3.452445567998714}
-	ProbEmit[StateTag{'E', "nz"}] = RuneFloatMap{'\u4e00': -9.520221929584325,
+	ProbEmit[stateTag{'E', "nz"}] = RuneFloatMap{'\u4e00': -9.520221929584325,
 		'\u4e01': -6.7533312284591815,
 		'\u4e03': -10.12635773315464,
 		'\u4e09': -7.511397955118443,
@@ -50679,7 +50679,7 @@ func init() {
 		'\u9f99': -5.084008463568857,
 		'\u9f9c': -10.819504913714585,
 		'\u9f9f': -10.819504913714585}
-	ProbEmit[StateTag{'E', "o"}] = RuneFloatMap{'\u4e53': -5.634601615575877,
+	ProbEmit[stateTag{'E', "o"}] = RuneFloatMap{'\u4e53': -5.634601615575877,
 		'\u513f': -8.579040594742317,
 		'\u5152': -8.579040594742317,
 		'\u51ac': -6.633130445687004,
@@ -50752,7 +50752,7 @@ func init() {
 		'\u96f6': -5.145053390257171,
 		'\u98bc': -5.534518157018894,
 		'\u98d5': -5.534518157018894}
-	ProbEmit[StateTag{'E', "p"}] = RuneFloatMap{'\u4e4b': -6.565515869430067,
+	ProbEmit[stateTag{'E', "p"}] = RuneFloatMap{'\u4e4b': -6.565515869430067,
 		'\u4e86': -2.026203081578427,
 		'\u4e8e': -1.457100442455245,
 		'\u4ece': -4.194627798043008,
@@ -50778,7 +50778,7 @@ func init() {
 		'\u8457': -2.0012874169314214,
 		'\u8fc7': -1.3690212226235217,
 		'\u904e': -1.3690212226235217}
-	ProbEmit[StateTag{'E', "q"}] = RuneFloatMap{'\u4e1b': -7.78691165308256,
+	ProbEmit[stateTag{'E', "q"}] = RuneFloatMap{'\u4e1b': -7.78691165308256,
 		'\u4e2a': -4.33164705015013,
 		'\u4ea9': -4.804602399860711,
 		'\u4ed1': -6.305307112158346,
@@ -50886,9 +50886,9 @@ func init() {
 		'\u9877': -4.742389215359138,
 		'\u987f': -5.2746060291064465,
 		'\u9ede': -10.494961854184771}
-	ProbEmit[StateTag{'E', "qe"}] = RuneFloatMap{'\u4f4d': 0.0}
-	ProbEmit[StateTag{'E', "qg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "r"}] = RuneFloatMap{'\u4e00': -4.085380702163175,
+	ProbEmit[stateTag{'E', "qe"}] = RuneFloatMap{'\u4f4d': 0.0}
+	ProbEmit[stateTag{'E', "qg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "r"}] = RuneFloatMap{'\u4e00': -4.085380702163175,
 		'\u4e09': -7.47981282675027,
 		'\u4e0b': -7.318544679154148,
 		'\u4e1a': -10.011239492173162,
@@ -51152,12 +51152,12 @@ func init() {
 		'\u9e23': -11.774828084434521,
 		'\u9ebc': -2.1902610386063723,
 		'\u9ee8': -8.137241924708135}
-	ProbEmit[StateTag{'E', "rg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "rr"}] = RuneFloatMap{'\u4eba': -0.11261887810814913,
+	ProbEmit[stateTag{'E', "rg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "rr"}] = RuneFloatMap{'\u4eba': -0.11261887810814913,
 		'\u4eec': -2.239526957026909,
 		'\u5011': -2.239526957026909}
-	ProbEmit[StateTag{'E', "rz"}] = RuneFloatMap{'\u4f4d': 0.0}
-	ProbEmit[StateTag{'E', "s"}] = RuneFloatMap{'\u4e0a': -1.6376290252178447,
+	ProbEmit[stateTag{'E', "rz"}] = RuneFloatMap{'\u4f4d': 0.0}
+	ProbEmit[stateTag{'E', "s"}] = RuneFloatMap{'\u4e0a': -1.6376290252178447,
 		'\u4e0b': -3.322246006351216,
 		'\u4e1c': -7.46727826651894,
 		'\u4e2d': -2.226526636574511,
@@ -51245,7 +51245,7 @@ func init() {
 		'\u9876': -10.032227623980477,
 		'\u98a0': -11.130839912648586,
 		'\u9e93': -9.521402000214486}
-	ProbEmit[StateTag{'E', "t"}] = RuneFloatMap{'\u4e00': -5.27380658183964,
+	ProbEmit[stateTag{'E', "t"}] = RuneFloatMap{'\u4e00': -5.27380658183964,
 		'\u4e03': -8.9654599628363,
 		'\u4e09': -6.028848812290107,
 		'\u4e0a': -4.426904525930194,
@@ -51449,8 +51449,8 @@ func init() {
 		'\u9f50': -6.8953208138187785,
 		'\u9f8d': -11.855831720732466,
 		'\u9f99': -11.855831720732466}
-	ProbEmit[StateTag{'E', "tg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "u"}] = RuneFloatMap{'\u4e86': -4.655763463731654,
+	ProbEmit[stateTag{'E', "tg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "u"}] = RuneFloatMap{'\u4e86': -4.655763463731654,
 		'\u4e91': -10.7379823741081,
 		'\u5167': -3.085911627991618,
 		'\u5185': -3.085911627991618,
@@ -51481,13 +51481,13 @@ func init() {
 		'\u8bdd': -2.679022356338683,
 		'\u8bf4': -1.8114648642579778,
 		'\u96f2': -10.7379823741081}
-	ProbEmit[StateTag{'E', "ud"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "ug"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "uj"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "ul"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "uv"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "uz"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "v"}] = RuneFloatMap{'\u4e00': -8.417675662278764,
+	ProbEmit[stateTag{'E', "ud"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "ug"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "uj"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "ul"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "uv"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "uz"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "v"}] = RuneFloatMap{'\u4e00': -8.417675662278764,
 		'\u4e01': -12.126546262871265,
 		'\u4e0a': -5.69193800997261,
 		'\u4e0b': -5.5578203332921055,
@@ -54967,7 +54967,7 @@ func init() {
 		'\u9f8b': -14.286030512224638,
 		'\u9f8d': -12.340120363169325,
 		'\u9f99': -12.340120363169325}
-	ProbEmit[StateTag{'E', "vd"}] = RuneFloatMap{'\u4e3b': -8.60666819784384,
+	ProbEmit[stateTag{'E', "vd"}] = RuneFloatMap{'\u4e3b': -8.60666819784384,
 		'\u52a0': -8.60666819784384,
 		'\u52bf': -3.6721942647131485,
 		'\u52e2': -3.6721942647131485,
@@ -54988,9 +54988,9 @@ func init() {
 		'\u95f2': -7.220373836723949,
 		'\u984d': -6.8149087286157854,
 		'\u989d': -6.8149087286157854}
-	ProbEmit[StateTag{'E', "vg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "vi"}] = RuneFloatMap{'\u4e8e': 0.0, '\u65bc': 0.0}
-	ProbEmit[StateTag{'E', "vn"}] = RuneFloatMap{'\u4e00': -4.912489188959563,
+	ProbEmit[stateTag{'E', "vg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "vi"}] = RuneFloatMap{'\u4e8e': 0.0, '\u65bc': 0.0}
+	ProbEmit[stateTag{'E', "vn"}] = RuneFloatMap{'\u4e00': -4.912489188959563,
 		'\u4e0b': -7.549903132831092,
 		'\u4e16': -12.015811251485676,
 		'\u4e1a': -5.580943756929138,
@@ -56548,10 +56548,10 @@ func init() {
 		'\u9ed8': -11.428024586583557,
 		'\u9ede': -6.980158194414132,
 		'\u9ee8': -11.140342514131776}
-	ProbEmit[StateTag{'E', "vq"}] = RuneFloatMap{'\u8fc7': 0.0, '\u904e': 0.0}
-	ProbEmit[StateTag{'E', "w"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "x"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "y"}] = RuneFloatMap{'\u4e86': -1.309846009049081,
+	ProbEmit[stateTag{'E', "vq"}] = RuneFloatMap{'\u8fc7': 0.0, '\u904e': 0.0}
+	ProbEmit[stateTag{'E', "w"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "x"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "y"}] = RuneFloatMap{'\u4e86': -1.309846009049081,
 		'\u5440': -5.378872763286892,
 		'\u5462': -4.685725582726946,
 		'\u597d': -1.395046025729762,
@@ -56560,8 +56560,8 @@ func init() {
 		'\u7f62': -2.1511473231417084,
 		'\u7f77': -2.1511473231417084,
 		'\u8457': -4.261911335950585}
-	ProbEmit[StateTag{'E', "yg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'E', "z"}] = RuneFloatMap{'\u4e0a': -7.21276201872555,
+	ProbEmit[stateTag{'E', "yg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'E', "z"}] = RuneFloatMap{'\u4e0a': -7.21276201872555,
 		'\u4e1b': -10.233186904869912,
 		'\u4e1d': -7.748280255081912,
 		'\u4e3d': -5.826467657605659,
@@ -57248,8 +57248,8 @@ func init() {
 		'\u9f13': -7.668237547408375,
 		'\u9f4a': -6.281943186288485,
 		'\u9f50': -6.281943186288485}
-	ProbEmit[StateTag{'E', "zg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "a"}] = RuneFloatMap{'\u4e0a': -6.617625769553877,
+	ProbEmit[stateTag{'E', "zg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "a"}] = RuneFloatMap{'\u4e0a': -6.617625769553877,
 		'\u4e0d': -2.21702274930706,
 		'\u4e3a': -4.6481851230883695,
 		'\u4eba': -4.559237637071874,
@@ -57339,7 +57339,7 @@ func init() {
 		'\u95f7': -5.844435881320395,
 		'\u9762': -5.7703279091666735,
 		'\u982d': -7.716238058221987}
-	ProbEmit[StateTag{'M', "ad"}] = RuneFloatMap{'\u5b9e': -0.7492366472109889,
+	ProbEmit[stateTag{'M', "ad"}] = RuneFloatMap{'\u5b9e': -0.7492366472109889,
 		'\u5be6': -0.7492366472109889,
 		'\u786e': -0.7492366472109889,
 		'\u78ba': -0.7492366472109889,
@@ -57347,9 +57347,9 @@ func init() {
 		'\u7ecf': -3.4965075614664802,
 		'\u898f': -3.71965111278069,
 		'\u89c4': -3.71965111278069}
-	ProbEmit[StateTag{'M', "ag"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "an"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "b"}] = RuneFloatMap{'\u4e00': -3.2635399339549105,
+	ProbEmit[stateTag{'M', "ag"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "an"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "b"}] = RuneFloatMap{'\u4e00': -3.2635399339549105,
 		'\u4e09': -9.670419920024225,
 		'\u4e0a': -5.2883932853503435,
 		'\u4e0b': -6.412323382002743,
@@ -57826,8 +57826,8 @@ func init() {
 		'\u9ee8': -8.284125558904334,
 		'\u9f61': -6.579377466665909,
 		'\u9f84': -6.579377466665909}
-	ProbEmit[StateTag{'M', "bg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "c"}] = RuneFloatMap{'\u4e00': -2.103404611823065,
+	ProbEmit[stateTag{'M', "bg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "c"}] = RuneFloatMap{'\u4e00': -2.103404611823065,
 		'\u4e0a': -5.044195767345755,
 		'\u4e0b': -3.711182772838801,
 		'\u4e0d': -3.7466295218345484,
@@ -57874,7 +57874,7 @@ func init() {
 		'\u8fc7': -6.070048701731436,
 		'\u904e': -6.070048701731436,
 		'\u9ad4': -4.59163905170374}
-	ProbEmit[StateTag{'M', "d"}] = RuneFloatMap{'\u4e00': -1.3801674272923878,
+	ProbEmit[stateTag{'M', "d"}] = RuneFloatMap{'\u4e00': -1.3801674272923878,
 		'\u4e09': -9.522812613235182,
 		'\u4e0b': -5.610789607807036,
 		'\u4e0d': -2.6794180934134353,
@@ -58010,11 +58010,11 @@ func init() {
 		'\u9aa8': -7.010506989259068,
 		'\u9ad4': -5.2008899026310065,
 		'\u9ede': -4.665587532438462}
-	ProbEmit[StateTag{'M', "df"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "dg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "e"}] = RuneFloatMap{'\u5bb6': 0.0}
-	ProbEmit[StateTag{'M', "en"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "f"}] = RuneFloatMap{'\u4e0a': -3.6502817352651946,
+	ProbEmit[stateTag{'M', "df"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "dg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "e"}] = RuneFloatMap{'\u5bb6': 0.0}
+	ProbEmit[stateTag{'M', "en"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "f"}] = RuneFloatMap{'\u4e0a': -3.6502817352651946,
 		'\u4e0b': -3.815361485624643,
 		'\u4e1c': -4.146718621579086,
 		'\u4e2d': -4.372842801031433,
@@ -58039,9 +58039,9 @@ func init() {
 		'\u908a': -7.884388239862454,
 		'\u9593': -6.968097507988299,
 		'\u95f4': -6.968097507988299}
-	ProbEmit[StateTag{'M', "g"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "h"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "i"}] = RuneFloatMap{'\u4e00': -4.043195538238757,
+	ProbEmit[stateTag{'M', "g"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "h"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "i"}] = RuneFloatMap{'\u4e00': -4.043195538238757,
 		'\u4e01': -9.748349620830185,
 		'\u4e03': -6.998066656104703,
 		'\u4e07': -5.570348977536034,
@@ -61217,8 +61217,8 @@ func init() {
 		'\u9f99': -6.819511582106225,
 		'\u9f9c': -12.581562964886402,
 		'\u9f9f': -12.581562964886402}
-	ProbEmit[StateTag{'M', "in"}] = RuneFloatMap{'\u5927': -0.6931471805599453, '\u8179': -0.6931471805599453}
-	ProbEmit[StateTag{'M', "j"}] = RuneFloatMap{'\u4e00': -4.81651102518315,
+	ProbEmit[stateTag{'M', "in"}] = RuneFloatMap{'\u5927': -0.6931471805599453, '\u8179': -0.6931471805599453}
+	ProbEmit[stateTag{'M', "j"}] = RuneFloatMap{'\u4e00': -4.81651102518315,
 		'\u4e03': -9.827146319279406,
 		'\u4e09': -4.780500587660117,
 		'\u4e0a': -7.575854520672911,
@@ -61724,11 +61724,11 @@ func init() {
 		'\u9c9c': -8.12239822704098,
 		'\u9ec3': -9.827146319279406,
 		'\u9ec4': -9.827146319279406}
-	ProbEmit[StateTag{'M', "jn"}] = RuneFloatMap{'\u4e2d': -0.40546510810816444,
+	ProbEmit[stateTag{'M', "jn"}] = RuneFloatMap{'\u4e2d': -0.40546510810816444,
 		'\u92b7': -1.0986122886681098,
 		'\u9500': -1.0986122886681098}
-	ProbEmit[StateTag{'M', "k"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "l"}] = RuneFloatMap{'\u4e00': -4.352067738253056,
+	ProbEmit[stateTag{'M', "k"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "l"}] = RuneFloatMap{'\u4e00': -4.352067738253056,
 		'\u4e01': -10.219385292618155,
 		'\u4e03': -10.442528843932365,
 		'\u4e07': -6.930983405101344,
@@ -64349,8 +64349,8 @@ func init() {
 		'\u9f7f': -10.037063735824201,
 		'\u9f8d': -8.609947380184055,
 		'\u9f99': -8.609947380184055}
-	ProbEmit[StateTag{'M', "ln"}] = RuneFloatMap{'\u653f': -0.6931471805599453, '\u6c11': -0.6931471805599453}
-	ProbEmit[StateTag{'M', "m"}] = RuneFloatMap{'\u4e00': -2.33220168367214,
+	ProbEmit[stateTag{'M', "ln"}] = RuneFloatMap{'\u653f': -0.6931471805599453, '\u6c11': -0.6931471805599453}
+	ProbEmit[stateTag{'M', "m"}] = RuneFloatMap{'\u4e00': -2.33220168367214,
 		'\u4e01': -9.108163189928295,
 		'\u4e03': -4.042271450618837,
 		'\u4e07': -3.503000714316078,
@@ -64588,8 +64588,8 @@ func init() {
 		'\u99ac': -8.41501600936835,
 		'\u9a6c': -8.41501600936835,
 		'\u9ede': -4.909328055556909}
-	ProbEmit[StateTag{'M', "mg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "mq"}] = RuneFloatMap{'\u4e00': -8.26010498404909,
+	ProbEmit[stateTag{'M', "mg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "mq"}] = RuneFloatMap{'\u4e00': -8.26010498404909,
 		'\u4e03': -7.854639875940926,
 		'\u4e07': -5.932827278464673,
 		'\u4e09': -7.16149269538098,
@@ -64628,7 +64628,7 @@ func init() {
 		'\u90e8': -3.106813389551311,
 		'\u9762': -7.449174767832761,
 		'\u9ede': -6.245201963506825}
-	ProbEmit[StateTag{'M', "n"}] = RuneFloatMap{'\u4e00': -6.605311943440279,
+	ProbEmit[stateTag{'M', "n"}] = RuneFloatMap{'\u4e00': -6.605311943440279,
 		'\u4e01': -7.740867747300073,
 		'\u4e03': -9.65698423287661,
 		'\u4e07': -8.94349736807954,
@@ -68225,8 +68225,8 @@ func init() {
 		'\u9f99': -7.714995657474478,
 		'\u9f9c': -10.392095612535588,
 		'\u9f9f': -10.392095612535588}
-	ProbEmit[StateTag{'M', "ng"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "nr"}] = RuneFloatMap{'\u4e00': -5.2644021775301955,
+	ProbEmit[stateTag{'M', "ng"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "nr"}] = RuneFloatMap{'\u4e00': -5.2644021775301955,
 		'\u4e01': -7.30216333614851,
 		'\u4e03': -7.672138559274724,
 		'\u4e07': -7.200567122025588,
@@ -72388,7 +72388,7 @@ func init() {
 		'\u9f9a': -11.20269196215092,
 		'\u9f9c': -9.123250420471086,
 		'\u9f9f': -9.123250420471086}
-	ProbEmit[StateTag{'M', "nrfg"}] = RuneFloatMap{'\u4e00': -5.745670567358454,
+	ProbEmit[stateTag{'M', "nrfg"}] = RuneFloatMap{'\u4e00': -5.745670567358454,
 		'\u4e07': -8.453720768460665,
 		'\u4e09': -7.537430036586509,
 		'\u4e16': -5.509281789294223,
@@ -72759,7 +72759,7 @@ func init() {
 		'\u9f0e': -7.3551084797925546,
 		'\u9f4a': -4.419480130308268,
 		'\u9f50': -4.419480130308268}
-	ProbEmit[StateTag{'M', "nrt"}] = RuneFloatMap{'\u4e00': -6.93416534737564,
+	ProbEmit[stateTag{'M', "nrt"}] = RuneFloatMap{'\u4e00': -6.93416534737564,
 		'\u4e01': -7.676102692105018,
 		'\u4e07': -7.899246243419228,
 		'\u4e0a': -8.186928315871008,
@@ -73210,7 +73210,7 @@ func init() {
 		'\u9f4a': -8.592393423979173,
 		'\u9f50': -8.592393423979173,
 		'\u9f90': -9.978687785099064}
-	ProbEmit[StateTag{'M', "ns"}] = RuneFloatMap{'\u4e00': -8.516274736979174,
+	ProbEmit[stateTag{'M', "ns"}] = RuneFloatMap{'\u4e00': -8.516274736979174,
 		'\u4e01': -6.189396951416084,
 		'\u4e03': -7.982757702011113,
 		'\u4e07': -8.777000999442427,
@@ -74958,7 +74958,7 @@ func init() {
 		'\u9f99': -5.079119631217472,
 		'\u9f9c': -11.528536312484375,
 		'\u9f9f': -11.528536312484375}
-	ProbEmit[StateTag{'M', "nt"}] = RuneFloatMap{'\u4e00': -7.168161871798686,
+	ProbEmit[stateTag{'M', "nt"}] = RuneFloatMap{'\u4e00': -7.168161871798686,
 		'\u4e01': -8.587681880546898,
 		'\u4e03': -8.414410159272862,
 		'\u4e09': -7.55420889404975,
@@ -76238,7 +76238,7 @@ func init() {
 		'\u9f8d': -8.702092231724642,
 		'\u9f90': -11.505452612631176,
 		'\u9f99': -8.702092231724642}
-	ProbEmit[StateTag{'M', "nz"}] = RuneFloatMap{'\u4e00': -4.513478964251662,
+	ProbEmit[stateTag{'M', "nz"}] = RuneFloatMap{'\u4e00': -4.513478964251662,
 		'\u4e01': -5.988357206335674,
 		'\u4e03': -6.748443869570728,
 		'\u4e07': -7.411285700635345,
@@ -78080,7 +78080,7 @@ func init() {
 		'\u9f7f': -9.824218850798255,
 		'\u9f8d': -6.497984507609555,
 		'\u9f99': -6.497984507609555}
-	ProbEmit[StateTag{'M', "o"}] = RuneFloatMap{'\u4e01': -4.887001844761697,
+	ProbEmit[stateTag{'M', "o"}] = RuneFloatMap{'\u4e01': -4.887001844761697,
 		'\u4e52': -4.139787442931476,
 		'\u4e53': -4.139787442931476,
 		'\u513f': -7.084226422097916,
@@ -78133,8 +78133,8 @@ func init() {
 		'\u9535': -5.474788509663815,
 		'\u9686': -2.6183183034433326,
 		'\u96f6': -5.697932060978025}
-	ProbEmit[StateTag{'M', "p"}] = RuneFloatMap{'\u4e4b': -2.5494451709255714, '\u501f': -0.0813456394539524}
-	ProbEmit[StateTag{'M', "q"}] = RuneFloatMap{'\u4e00': -7.722087110546794,
+	ProbEmit[stateTag{'M', "p"}] = RuneFloatMap{'\u4e4b': -2.5494451709255714, '\u501f': -0.0813456394539524}
+	ProbEmit[stateTag{'M', "q"}] = RuneFloatMap{'\u4e00': -7.722087110546794,
 		'\u4e5d': -7.722087110546794,
 		'\u516b': -7.722087110546794,
 		'\u516c': -1.5246251709595726,
@@ -78163,9 +78163,9 @@ func init() {
 		'\u88e1': -8.415234291106739,
 		'\u8def': -5.506513394542378,
 		'\u91cc': -8.415234291106739}
-	ProbEmit[StateTag{'M', "qe"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "qg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "r"}] = RuneFloatMap{'\u4e00': -4.184234260762071,
+	ProbEmit[stateTag{'M', "qe"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "qg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "r"}] = RuneFloatMap{'\u4e00': -4.184234260762071,
 		'\u4e2a': -4.179221718938527,
 		'\u4e48': -1.4708382400461961,
 		'\u4ec0': -0.7870650819285203,
@@ -78190,10 +78190,10 @@ func init() {
 		'\u9663': -8.784391904926618,
 		'\u9ebc': -1.4708382400461961,
 		'\u9ede': -6.992632435698563}
-	ProbEmit[StateTag{'M', "rg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "rr"}] = RuneFloatMap{'\u4ed6': 0.0}
-	ProbEmit[StateTag{'M', "rz"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "s"}] = RuneFloatMap{'\u4e2d': -2.3292698907502336,
+	ProbEmit[stateTag{'M', "rg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "rr"}] = RuneFloatMap{'\u4ed6': 0.0}
+	ProbEmit[stateTag{'M', "rz"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "s"}] = RuneFloatMap{'\u4e2d': -2.3292698907502336,
 		'\u4e4b': -4.353651655247042,
 		'\u4f4e': -4.04827000569586,
 		'\u5167': -0.7433774503817233,
@@ -78241,7 +78241,7 @@ func init() {
 		'\u9675': -8.09132127353041,
 		'\u98a8': -6.48188336109631,
 		'\u98ce': -6.48188336109631}
-	ProbEmit[StateTag{'M', "t"}] = RuneFloatMap{'\u4e00': -3.3412921979577455,
+	ProbEmit[stateTag{'M', "t"}] = RuneFloatMap{'\u4e00': -3.3412921979577455,
 		'\u4e09': -4.044111673160198,
 		'\u4e0a': -6.444169108963064,
 		'\u4e0b': -5.547109739016797,
@@ -78459,15 +78459,15 @@ func init() {
 		'\u982d': -9.083226438578322,
 		'\u987f': -9.488691546686487,
 		'\u9f4b': -7.348625383190217}
-	ProbEmit[StateTag{'M', "tg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "u"}] = RuneFloatMap{'\u4e2a': 0.0, '\u500b': 0.0}
-	ProbEmit[StateTag{'M', "ud"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "ug"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "uj"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "ul"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "uv"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "uz"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "v"}] = RuneFloatMap{'\u4e00': -6.3070148043234,
+	ProbEmit[stateTag{'M', "tg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "u"}] = RuneFloatMap{'\u4e2a': 0.0, '\u500b': 0.0}
+	ProbEmit[stateTag{'M', "ud"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "ug"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "uj"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "ul"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "uv"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "uz"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "v"}] = RuneFloatMap{'\u4e00': -6.3070148043234,
 		'\u4e09': -11.016545005635734,
 		'\u4e0a': -4.042066094610688,
 		'\u4e0b': -4.726829434726737,
@@ -79320,10 +79320,10 @@ func init() {
 		'\u9f50': -10.323397825075789,
 		'\u9f61': -6.3818160174060985,
 		'\u9f84': -6.3818160174060985}
-	ProbEmit[StateTag{'M', "vd"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "vg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "vi"}] = RuneFloatMap{'\u540c': 0.0}
-	ProbEmit[StateTag{'M', "vn"}] = RuneFloatMap{'\u4e0b': -7.731711399653496,
+	ProbEmit[stateTag{'M', "vd"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "vg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "vi"}] = RuneFloatMap{'\u540c': 0.0}
+	ProbEmit[stateTag{'M', "vn"}] = RuneFloatMap{'\u4e0b': -7.731711399653496,
 		'\u4e1a': -2.1614603176218177,
 		'\u4e2d': -5.899129935905186,
 		'\u4e3b': -6.122273487219395,
@@ -79477,12 +79477,12 @@ func init() {
 		'\u9e7c': -6.2847924167171705,
 		'\u9f61': -6.478948431158128,
 		'\u9f84': -6.478948431158128}
-	ProbEmit[StateTag{'M', "vq"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "w"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "x"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "y"}] = RuneFloatMap{'\u5440': 0.0}
-	ProbEmit[StateTag{'M', "yg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'M', "z"}] = RuneFloatMap{'\u4e0d': -7.397013139568439,
+	ProbEmit[stateTag{'M', "vq"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "w"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "x"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "y"}] = RuneFloatMap{'\u5440': 0.0}
+	ProbEmit[stateTag{'M', "yg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'M', "z"}] = RuneFloatMap{'\u4e0d': -7.397013139568439,
 		'\u4e1b': -9.648304938174933,
 		'\u4e1d': -6.470251107826988,
 		'\u4e25': -5.8528157490027395,
@@ -80158,8 +80158,8 @@ func init() {
 		'\u9f13': -5.910635319891566,
 		'\u9f4a': -5.697061219593507,
 		'\u9f50': -5.697061219593507}
-	ProbEmit[StateTag{'M', "zg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "a"}] = RuneFloatMap{'\u4e11': -7.093552581086063,
+	ProbEmit[stateTag{'M', "zg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "a"}] = RuneFloatMap{'\u4e11': -7.093552581086063,
 		'\u4e25': -6.074189664072094,
 		'\u4e45': -5.0139009774371734,
 		'\u4e4f': -13.482113986631692,
@@ -80467,7 +80467,7 @@ func init() {
 		'\u9ed1': -4.6012503767643365,
 		'\u9f4a': -6.149090972245212,
 		'\u9f50': -6.149090972245212}
-	ProbEmit[StateTag{'S', "ad"}] = RuneFloatMap{'\u50f5': -5.47058858748849,
+	ProbEmit[stateTag{'S', "ad"}] = RuneFloatMap{'\u50f5': -5.47058858748849,
 		'\u575a': -6.386879319362645,
 		'\u5805': -6.386879319362645,
 		'\u5947': -5.981414211254481,
@@ -80487,7 +80487,7 @@ func init() {
 		'\u7d20': -7.080026499922591,
 		'\u7f55': -0.9575336904082042,
 		'\u8fe5': -2.6611858921259923}
-	ProbEmit[StateTag{'S', "ag"}] = RuneFloatMap{'\u4e30': -3.769518800739177,
+	ProbEmit[stateTag{'S', "ag"}] = RuneFloatMap{'\u4e30': -3.769518800739177,
 		'\u4e3d': -6.9826639508983925,
 		'\u4ec1': -10.314868461073596,
 		'\u4f18': -3.2778408463873205,
@@ -80715,11 +80715,11 @@ func init() {
 		'\u9e3f': -6.508205971303277,
 		'\u9e97': -6.9826639508983925,
 		'\u9ee2': -8.705430548639496}
-	ProbEmit[StateTag{'S', "an"}] = RuneFloatMap{'\u60b2': -0.985877219309031,
+	ProbEmit[stateTag{'S', "an"}] = RuneFloatMap{'\u60b2': -0.985877219309031,
 		'\u6d4a': -0.8082901995971884,
 		'\u6fc1': -0.8082901995971884,
 		'\u7aed': -1.7077738131549622}
-	ProbEmit[StateTag{'S', "b"}] = RuneFloatMap{'\u4ed4': -6.106353056339978,
+	ProbEmit[stateTag{'S', "b"}] = RuneFloatMap{'\u4ed4': -6.106353056339978,
 		'\u516c': -4.848932417570629,
 		'\u526f': -1.6750695130307816,
 		'\u539f': -1.9287532548189064,
@@ -80741,10 +80741,10 @@ func init() {
 		'\u967d': -4.463493009964759,
 		'\u96c4': -4.5800126215743715,
 		'\u96cc': -4.335507943260794}
-	ProbEmit[StateTag{'S', "bg"}] = RuneFloatMap{'\u6a59': -1.9459101490553135,
+	ProbEmit[stateTag{'S', "bg"}] = RuneFloatMap{'\u6a59': -1.9459101490553135,
 		'\u8d17': -0.15415067982725836,
 		'\u8d5d': -0.15415067982725836}
-	ProbEmit[StateTag{'S', "c"}] = RuneFloatMap{'\u4e14': -4.292719201125689,
+	ProbEmit[stateTag{'S', "c"}] = RuneFloatMap{'\u4e14': -4.292719201125689,
 		'\u4e26': -2.465949293792156,
 		'\u4f46': -2.2507841969427096,
 		'\u5018': -6.960112984328604,
@@ -80767,7 +80767,7 @@ func init() {
 		'\u82e5': -4.2325816476545715,
 		'\u867d': -4.6115092884745135,
 		'\u96d6': -4.6115092884745135}
-	ProbEmit[StateTag{'S', "d"}] = RuneFloatMap{'\u4e0d': -2.170740468993419,
+	ProbEmit[stateTag{'S', "d"}] = RuneFloatMap{'\u4e0d': -2.170740468993419,
 		'\u4e13': -6.666512749926482,
 		'\u4e1a': -13.69825400868961,
 		'\u4e4d': -8.940362735683854,
@@ -80928,8 +80928,8 @@ func init() {
 		'\u9aa4': -8.886069653317191,
 		'\u9f4a': -7.363199757191551,
 		'\u9f50': -7.363199757191551}
-	ProbEmit[StateTag{'S', "df"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "dg"}] = RuneFloatMap{'\u4ff1': -1.6787148344839615,
+	ProbEmit[stateTag{'S', "df"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "dg"}] = RuneFloatMap{'\u4ff1': -1.6787148344839615,
 		'\u500f': -4.921307185969479,
 		'\u52a1': -6.363691013740413,
 		'\u52c9': -8.235493190642003,
@@ -80952,7 +80952,7 @@ func init() {
 		'\u7d20': -5.561344541215475,
 		'\u8f12': -4.85110292729623,
 		'\u8f84': -4.85110292729623}
-	ProbEmit[StateTag{'S', "e"}] = RuneFloatMap{'\u5401': -5.840786995648489,
+	ProbEmit[stateTag{'S', "e"}] = RuneFloatMap{'\u5401': -5.840786995648489,
 		'\u5454': -5.840786995648489,
 		'\u5466': -4.126989067890146,
 		'\u5478': -3.475227103493055,
@@ -80984,8 +80984,8 @@ func init() {
 		'\u7c72': -5.840786995648489,
 		'\u8a92': -5.172957623072834,
 		'\u8bf6': -5.172957623072834}
-	ProbEmit[StateTag{'S', "en"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "f"}] = RuneFloatMap{'\u4e0a': -1.4794537437663022,
+	ProbEmit[stateTag{'S', "en"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "f"}] = RuneFloatMap{'\u4e0a': -1.4794537437663022,
 		'\u4e0b': -2.345368590975673,
 		'\u4e1c': -4.253392217271065,
 		'\u4e2d': -1.5420447059823048,
@@ -81009,7 +81009,7 @@ func init() {
 		'\u91cc': -2.6773919759324896,
 		'\u9593': -3.971153065228915,
 		'\u95f4': -3.971153065228915}
-	ProbEmit[StateTag{'S', "g"}] = RuneFloatMap{'\u4e10': -7.827075898864886,
+	ProbEmit[stateTag{'S', "g"}] = RuneFloatMap{'\u4e10': -7.827075898864886,
 		'\u4e15': -6.22455842927536,
 		'\u4ed1': -7.302551430740734,
 		'\u4f57': -7.262546096127035,
@@ -82623,10 +82623,10 @@ func init() {
 		'\u9f86': -6.694562058521095,
 		'\u9f88': -6.87688361531505,
 		'\u9fa0': -9.80807736773147}
-	ProbEmit[StateTag{'S', "h"}] = RuneFloatMap{'\u975e': 0.0}
-	ProbEmit[StateTag{'S', "i"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "in"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "j"}] = RuneFloatMap{'\u4e11': -12.118552048000678,
+	ProbEmit[stateTag{'S', "h"}] = RuneFloatMap{'\u975e': 0.0}
+	ProbEmit[stateTag{'S', "i"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "in"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "j"}] = RuneFloatMap{'\u4e11': -12.118552048000678,
 		'\u4e39': -6.2549208724025815,
 		'\u4e4c': -5.091237533960902,
 		'\u4e52': -7.774746626146994,
@@ -82900,8 +82900,8 @@ func init() {
 		'\u9c81': -8.684564843515533,
 		'\u9ece': -6.561723986301141,
 		'\u9ed4': -5.7941930856193675}
-	ProbEmit[StateTag{'S', "jn"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "k"}] = RuneFloatMap{'\u4eea': -6.296955839770945,
+	ProbEmit[stateTag{'S', "jn"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "k"}] = RuneFloatMap{'\u4eea': -6.296955839770945,
 		'\u4eec': -0.9569279846415382,
 		'\u5011': -0.9569279846415382,
 		'\u5100': -6.296955839770945,
@@ -82911,9 +82911,9 @@ func init() {
 		'\u708e': -7.15044567040607,
 		'\u754c': -5.49429013340451,
 		'\u8005': -1.434348035244678}
-	ProbEmit[StateTag{'S', "l"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "ln"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "m"}] = RuneFloatMap{'\u4e00': -2.0191796275570364,
+	ProbEmit[stateTag{'S', "l"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "ln"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "m"}] = RuneFloatMap{'\u4e00': -2.0191796275570364,
 		'\u4e03': -5.606298452156635,
 		'\u4e07': -3.9000010749667853,
 		'\u4e08': -10.736197167079707,
@@ -83268,7 +83268,7 @@ func init() {
 		'\u9a7e': -12.183116150016033,
 		'\u9b25': -12.183116150016033,
 		'\u9ede': -4.044697451454915}
-	ProbEmit[StateTag{'S', "mg"}] = RuneFloatMap{'\u4e19': -1.5265646919147433,
+	ProbEmit[stateTag{'S', "mg"}] = RuneFloatMap{'\u4e19': -1.5265646919147433,
 		'\u4e59': -3.723789269250963,
 		'\u5bc5': -2.2862016137435215,
 		'\u5df3': -0.9812528920775834,
@@ -83276,8 +83276,8 @@ func init() {
 		'\u7532': -3.4901744180694574,
 		'\u7678': -2.3244228265637195,
 		'\u8fb0': -4.588786706737567}
-	ProbEmit[StateTag{'S', "mq"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "n"}] = RuneFloatMap{'\u4e1a': -8.942718638892643,
+	ProbEmit[stateTag{'S', "mq"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "n"}] = RuneFloatMap{'\u4e1a': -8.942718638892643,
 		'\u4e1d': -7.0661473222341495,
 		'\u4e2b': -9.266838107546855,
 		'\u4e3b': -5.021136943872944,
@@ -84094,7 +84094,7 @@ func init() {
 		'\u9f99': -5.624739119648787,
 		'\u9f9c': -7.703771412294877,
 		'\u9f9f': -7.703771412294877}
-	ProbEmit[StateTag{'S', "ng"}] = RuneFloatMap{'\u4e01': -10.402323587575292,
+	ProbEmit[stateTag{'S', "ng"}] = RuneFloatMap{'\u4e01': -10.402323587575292,
 		'\u4e16': -4.703441991518803,
 		'\u4e18': -10.06585135095408,
 		'\u4e1a': -5.126592719700052,
@@ -85194,7 +85194,7 @@ func init() {
 		'\u9f9b': -7.802106091276299,
 		'\u9f9c': -13.110373788677503,
 		'\u9f9f': -13.110373788677503}
-	ProbEmit[StateTag{'S', "nr"}] = RuneFloatMap{'\u4e01': -4.7693609975351565,
+	ProbEmit[stateTag{'S', "nr"}] = RuneFloatMap{'\u4e01': -4.7693609975351565,
 		'\u4e18': -6.069526204925109,
 		'\u4e1b': -6.094097465655613,
 		'\u4e30': -6.943055077461182,
@@ -85831,18 +85831,18 @@ func init() {
 		'\u9f90': -7.303057811492589,
 		'\u9f94': -7.475429037433376,
 		'\u9f9a': -7.475429037433376}
-	ProbEmit[StateTag{'S', "nrfg"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "nrt"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "ns"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "nt"}] = RuneFloatMap{'\u4e49': -0.420280193893305,
+	ProbEmit[stateTag{'S', "nrfg"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "nrt"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "ns"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "nt"}] = RuneFloatMap{'\u4e49': -0.420280193893305,
 		'\u5510': -1.791759469228055,
 		'\u7fa9': -0.420280193893305,
 		'\u9004': -2.322387720290225,
 		'\u90b9': -2.833213344056216,
 		'\u9112': -2.833213344056216,
 		'\u9676': -3.9318256327243257}
-	ProbEmit[StateTag{'S', "nz"}] = RuneFloatMap{'\u5b8f': 0.0}
-	ProbEmit[StateTag{'S', "o"}] = RuneFloatMap{'\u4e53': -4.01044055546524,
+	ProbEmit[stateTag{'S', "nz"}] = RuneFloatMap{'\u5b8f': 0.0}
+	ProbEmit[stateTag{'S', "o"}] = RuneFloatMap{'\u4e53': -4.01044055546524,
 		'\u53ed': -3.2477000831061,
 		'\u53fd': -4.209111250260724,
 		'\u5401': -8.719970756777574,
@@ -85908,7 +85908,7 @@ func init() {
 		'\u9557': -5.136451818321464,
 		'\u98bc': -5.10905284413335,
 		'\u98d5': -5.10905284413335}
-	ProbEmit[StateTag{'S', "p"}] = RuneFloatMap{'\u4e0e': -2.767843593587735,
+	ProbEmit[stateTag{'S', "p"}] = RuneFloatMap{'\u4e0e': -2.767843593587735,
 		'\u4e3a': -2.1052155071489698,
 		'\u4e4e': -9.066726510166252,
 		'\u4e8e': -3.1004079644963065,
@@ -85954,7 +85954,7 @@ func init() {
 		'\u8ddf': -4.94442587067756,
 		'\u9664': -5.037424605300836,
 		'\u9776': -8.678592858409726}
-	ProbEmit[StateTag{'S', "q"}] = RuneFloatMap{'\u4e08': -7.0352192549196175,
+	ProbEmit[stateTag{'S', "q"}] = RuneFloatMap{'\u4e08': -7.0352192549196175,
 		'\u4e18': -7.507917093249045,
 		'\u4e1b': -8.592243424669677,
 		'\u4e1d': -6.515465000409326,
@@ -86274,9 +86274,9 @@ func init() {
 		'\u9f61': -8.092113090020435,
 		'\u9f84': -8.092113090020435}
 
-	ProbEmit[StateTag{'S', "qe"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "qg"}] = RuneFloatMap{'\u79e9': 0.0}
-	ProbEmit[StateTag{'S', "r"}] = RuneFloatMap{'\u4ed6': -1.515102649570492,
+	ProbEmit[stateTag{'S', "qe"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "qg"}] = RuneFloatMap{'\u79e9': 0.0}
+	ProbEmit[stateTag{'S', "r"}] = RuneFloatMap{'\u4ed6': -1.515102649570492,
 		'\u4f55': -5.81379140828521,
 		'\u4f60': -2.1948005709283698,
 		'\u4ffa': -6.170775901831739,
@@ -86317,15 +86317,15 @@ func init() {
 		'\u8fd9': -2.0022643982378314,
 		'\u9019': -2.0022643982378314,
 		'\u90a3': -2.927416761255084}
-	ProbEmit[StateTag{'S', "rg"}] = RuneFloatMap{'\u5179': -0.8499398698500423,
+	ProbEmit[stateTag{'S', "rg"}] = RuneFloatMap{'\u5179': -0.8499398698500423,
 		'\u65af': -0.5599456576398818,
 		'\u6c5d': -6.630683385642372,
 		'\u8332': -0.8499398698500423}
-	ProbEmit[StateTag{'S', "rr"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "rz"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "s"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "t"}] = RuneFloatMap{'\u865e': -0.37729423114146804, '\u8700': -1.157452788691043}
-	ProbEmit[StateTag{'S', "tg"}] = RuneFloatMap{'\u4eca': -0.8203637123257934,
+	ProbEmit[stateTag{'S', "rr"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "rz"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "s"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "t"}] = RuneFloatMap{'\u865e': -0.37729423114146804, '\u8700': -1.157452788691043}
+	ProbEmit[stateTag{'S', "tg"}] = RuneFloatMap{'\u4eca': -0.8203637123257934,
 		'\u51ac': -3.502794249670678,
 		'\u5348': -4.037186148382152,
 		'\u5510': -4.745837515478063,
@@ -86350,7 +86350,7 @@ func init() {
 		'\u79cb': -3.4753749698832936,
 		'\u968b': -8.904720598837734,
 		'\u9b4f': -9.3101857069459}
-	ProbEmit[StateTag{'S', "u"}] = RuneFloatMap{'\u4e4b': -1.3025902625825694,
+	ProbEmit[stateTag{'S', "u"}] = RuneFloatMap{'\u4e4b': -1.3025902625825694,
 		'\u55bd': -8.53397466837824,
 		'\u560d': -8.53397466837824,
 		'\u60df': -12.485218386959668,
@@ -86361,13 +86361,13 @@ func init() {
 		'\u822c': -5.340811206638529,
 		'\u8fde': -3.0482206443694793,
 		'\u9023': -3.0482206443694793}
-	ProbEmit[StateTag{'S', "ud"}] = RuneFloatMap{'\u5f97': 0.0}
-	ProbEmit[StateTag{'S', "ug"}] = RuneFloatMap{'\u8fc7': 0.0, '\u904e': 0.0}
-	ProbEmit[StateTag{'S', "uj"}] = RuneFloatMap{'\u7684': 0.0}
-	ProbEmit[StateTag{'S', "ul"}] = RuneFloatMap{'\u4e86': 0.0}
-	ProbEmit[StateTag{'S', "uv"}] = RuneFloatMap{'\u5730': 0.0}
-	ProbEmit[StateTag{'S', "uz"}] = RuneFloatMap{'\u7740': 0.0, '\u8457': 0.0}
-	ProbEmit[StateTag{'S', "v"}] = RuneFloatMap{'\u4e1f': -7.820453114944452,
+	ProbEmit[stateTag{'S', "ud"}] = RuneFloatMap{'\u5f97': 0.0}
+	ProbEmit[stateTag{'S', "ug"}] = RuneFloatMap{'\u8fc7': 0.0, '\u904e': 0.0}
+	ProbEmit[stateTag{'S', "uj"}] = RuneFloatMap{'\u7684': 0.0}
+	ProbEmit[stateTag{'S', "ul"}] = RuneFloatMap{'\u4e86': 0.0}
+	ProbEmit[stateTag{'S', "uv"}] = RuneFloatMap{'\u5730': 0.0}
+	ProbEmit[stateTag{'S', "uz"}] = RuneFloatMap{'\u7740': 0.0, '\u8457': 0.0}
+	ProbEmit[stateTag{'S', "v"}] = RuneFloatMap{'\u4e1f': -7.820453114944452,
 		'\u4e22': -7.820453114944452,
 		'\u4e32': -8.703731439792104,
 		'\u4e34': -7.619383274787051,
@@ -88074,8 +88074,8 @@ func init() {
 		'\u9f50': -13.402695505066557,
 		'\u9f5c': -10.304105846072858,
 		'\u9f87': -10.304105846072858}
-	ProbEmit[StateTag{'S', "vd"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "vg"}] = RuneFloatMap{'\u4e01': -8.28972153736344,
+	ProbEmit[stateTag{'S', "vd"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "vg"}] = RuneFloatMap{'\u4e01': -8.28972153736344,
 		'\u4e27': -5.677815196814132,
 		'\u4e3d': -9.89915944979754,
 		'\u4e4f': -11.978600991477375,
@@ -88744,8 +88744,8 @@ func init() {
 		'\u9cf4': -7.324640641319853,
 		'\u9e23': -7.324640641319853,
 		'\u9e97': -9.89915944979754}
-	ProbEmit[StateTag{'S', "vi"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "vn"}] = RuneFloatMap{'\u4f0f': -6.984253249954862,
+	ProbEmit[stateTag{'S', "vi"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "vn"}] = RuneFloatMap{'\u4f0f': -6.984253249954862,
 		'\u4f10': -6.984253249954862,
 		'\u508d': -6.067962518080707,
 		'\u6028': -4.499346600166862,
@@ -88772,9 +88772,9 @@ func init() {
 		'\u8c2d': -2.680188156750692,
 		'\u8cfd': -2.8175880261531354,
 		'\u8d5b': -2.8175880261531354}
-	ProbEmit[StateTag{'S', "vq"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "w"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "x"}] = RuneFloatMap{'\u4e69': -5.194105616094084,
+	ProbEmit[stateTag{'S', "vq"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "w"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "x"}] = RuneFloatMap{'\u4e69': -5.194105616094084,
 		'\u4e8d': -4.738209654359028,
 		'\u4eb3': -5.5909869805108565,
 		'\u4ec3': -6.364176868744338,
@@ -89359,7 +89359,7 @@ func init() {
 		'\u9f6c': -5.362728328529877,
 		'\u9f89': -5.362728328529877,
 		'\u9f8a': -5.713589302603189}
-	ProbEmit[StateTag{'S', "y"}] = RuneFloatMap{'\u4e48': -3.609460990446313,
+	ProbEmit[stateTag{'S', "y"}] = RuneFloatMap{'\u4e48': -3.609460990446313,
 		'\u4e4e': -4.922692282853993,
 		'\u516e': -5.608711849489706,
 		'\u5417': -1.9736707918183423,
@@ -89398,7 +89398,7 @@ func init() {
 		'\u77e3': -3.989661196933152,
 		'\u8036': -7.168277931883633,
 		'\u9ebc': -3.609460990446313}
-	ProbEmit[StateTag{'S', "yg"}] = RuneFloatMap{'\u5c14': 0.0, '\u723e': 0.0}
-	ProbEmit[StateTag{'S', "z"}] = RuneFloatMap{}
-	ProbEmit[StateTag{'S', "zg"}] = RuneFloatMap{'\u5189': 0.0}
+	ProbEmit[stateTag{'S', "yg"}] = RuneFloatMap{'\u5c14': 0.0, '\u723e': 0.0}
+	ProbEmit[stateTag{'S', "z"}] = RuneFloatMap{}
+	ProbEmit[stateTag{'S', "zg"}] = RuneFloatMap{'\u5189': 0.0}
 }

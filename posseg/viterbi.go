@@ -5,22 +5,22 @@ import (
 	"sort"
 )
 
-type StateTag struct {
+type stateTag struct {
 	State byte
 	Tag   string
 }
 
-func (st StateTag) String() string {
+func (st stateTag) String() string {
 	return fmt.Sprintf("(%q, %s)", st.State, st.Tag)
 }
 
-func emptyStateTag() StateTag {
-	return StateTag{' ', ""}
+func emptyStateTag() stateTag {
+	return stateTag{' ', ""}
 }
 
 type ProbState struct {
 	Prob float64
-	ST   StateTag
+	ST   stateTag
 }
 
 func (ps ProbState) String() string {
@@ -47,35 +47,35 @@ func (pss ProbStates) Swap(i, j int) {
 	pss[i], pss[j] = pss[j], pss[i]
 }
 
-func viterbi(obs []rune) (float64, []StateTag) {
+func viterbi(obs []rune) (float64, []stateTag) {
 	obsLength := len(obs)
-	V := make([]map[StateTag]float64, obsLength)
-	V[0] = make(map[StateTag]float64)
-	mem_path := make([]map[StateTag]StateTag, obsLength)
-	mem_path[0] = make(map[StateTag]StateTag)
+	V := make([]map[stateTag]float64, obsLength)
+	V[0] = make(map[stateTag]float64)
+	mem_path := make([]map[stateTag]stateTag, obsLength)
+	mem_path[0] = make(map[stateTag]stateTag)
 	// all_states := ProbTransKeys
-	ys := CharStateTab.Get(obs[0]) // default is all_states
+	ys := charStateTab.get(obs[0]) // default is all_states
 	for _, y := range ys {
 		V[0][y] = ProbEmit[y].Get(obs[0]) + ProbStart[y]
 		mem_path[0][y] = emptyStateTag()
 	}
 	for t := 1; t < obsLength; t++ {
-		prev_states := make([]StateTag, 0)
+		prev_states := make([]stateTag, 0)
 		for x, _ := range mem_path[t-1] {
 			if len(ProbTrans[x]) > 0 {
 				prev_states = append(prev_states, x)
 			}
 		}
 		//use Go's map to implement Python's Set()
-		prev_states_expect_next := make(map[StateTag]StateTag)
+		prev_states_expect_next := make(map[stateTag]stateTag)
 		for _, x := range prev_states {
 			for y, _ := range ProbTrans[x] {
 				prev_states_expect_next[y] = y
 			}
 		}
-		tmp_obs_states := CharStateTab.Get(obs[t])
+		tmp_obs_states := charStateTab.get(obs[t])
 
-		obs_states := make([]StateTag, 0)
+		obs_states := make([]stateTag, 0)
 		for index, _ := range tmp_obs_states {
 			if _, ok := prev_states_expect_next[tmp_obs_states[index]]; ok {
 				obs_states = append(obs_states, tmp_obs_states[index])
@@ -89,8 +89,8 @@ func viterbi(obs []rune) (float64, []StateTag) {
 		if len(obs_states) == 0 {
 			obs_states = ProbTransKeys
 		}
-		mem_path[t] = make(map[StateTag]StateTag)
-		V[t] = make(map[StateTag]float64)
+		mem_path[t] = make(map[stateTag]stateTag) // TODO: value needed or not?
+		V[t] = make(map[stateTag]float64)
 		for _, y := range obs_states {
 			pss := make(ProbStates, 0)
 			for _, y0 := range prev_states {
@@ -114,7 +114,7 @@ func viterbi(obs []rune) (float64, []StateTag) {
 	sort.Sort(sort.Reverse(last))
 	prob := last[0].Prob
 	state := last[0].ST
-	route := make([]StateTag, len(obs))
+	route := make([]stateTag, len(obs))
 	i := obsLength - 1
 	for {
 		if i < 0 {
