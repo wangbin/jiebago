@@ -1,39 +1,45 @@
 package analyse
 
 import (
+	"fmt"
 	"github.com/wangbin/jiebago"
 	"sort"
 	"strings"
 	"unicode/utf8"
 )
 
-type TfIdf struct {
-	word string
-	freq float64
+type wordWeight struct {
+	Word   string
+	Weight float64
 }
 
-type TfIdfs []TfIdf
-
-func (tis TfIdfs) Len() int {
-	return len(tis)
+func (w wordWeight) String() string {
+	return fmt.Sprintf("{%s: %f}", w.Word, w.Weight)
 }
 
-func (tis TfIdfs) Less(i, j int) bool {
-	if tis[i].freq == tis[j].freq {
-		return tis[i].word < tis[j].word
+type wordWeights []wordWeight
+
+func (ws wordWeights) Len() int {
+	return len(ws)
+}
+
+func (ws wordWeights) Less(i, j int) bool {
+	if ws[i].Weight == ws[j].Weight {
+		return ws[i].Word < ws[j].Word
 	}
-	return tis[i].freq < tis[j].freq
+
+	return ws[i].Weight < ws[j].Weight
 }
 
-func (tis TfIdfs) Swap(i, j int) {
-	tis[i], tis[j] = tis[j], tis[i]
+func (ws wordWeights) Swap(i, j int) {
+	ws[i], ws[j] = ws[j], ws[i]
 }
 
-func ExtractTags(sentence string, topK int) []string {
-	words := jiebago.Cut(sentence, false, true)
+// Keyword extraction.
+func ExtractTags(sentence string, topK int) (tags wordWeights) {
 	freq := make(map[string]float64)
 
-	for _, w := range words {
+	for w := range jiebago.Cut(sentence, false, true) {
 		w = strings.TrimSpace(w)
 		if utf8.RuneCountInString(w) < 2 {
 			continue
@@ -54,26 +60,21 @@ func ExtractTags(sentence string, topK int) []string {
 	for k, v := range freq {
 		freq[k] = v / total
 	}
-	tis := make(TfIdfs, 0)
+	ws := make(wordWeights, 0)
 	for k, v := range freq {
-		var ti TfIdf
-		if freq_, ok := idfFreq[k]; ok {
-			ti = TfIdf{word: k, freq: freq_ * v}
+		var ti wordWeight
+		if freq_, ok := loader.Freq[k]; ok {
+			ti = wordWeight{Word: k, Weight: freq_ * v}
 		} else {
-			ti = TfIdf{word: k, freq: medianIdf * v}
+			ti = wordWeight{Word: k, Weight: loader.Median * v}
 		}
-		tis = append(tis, ti)
+		ws = append(ws, ti)
 	}
-	sort.Sort(sort.Reverse(tis))
-	var topTfIdfs TfIdfs
-	if len(tis) > topK {
-		topTfIdfs = tis[:topK]
+	sort.Sort(sort.Reverse(ws))
+	if len(ws) > topK {
+		tags = ws[:topK]
 	} else {
-		topTfIdfs = tis
-	}
-	tags := make([]string, len(topTfIdfs))
-	for index, ti := range topTfIdfs {
-		tags[index] = ti.word
+		tags = ws
 	}
 	return tags
 }

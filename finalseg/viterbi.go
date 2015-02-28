@@ -5,41 +5,48 @@ import (
 	"sort"
 )
 
-const MIN_FLOAT = -3.14e100
+const minFloat = -3.14e100
 
-var PrevStatus = make(map[byte][]byte)
+var (
+	prevStatus = make(map[byte][]byte)
+	probStart  = make(map[byte]float64)
+)
 
 func init() {
-	PrevStatus['B'] = []byte{'E', 'S'}
-	PrevStatus['M'] = []byte{'M', 'B'}
-	PrevStatus['S'] = []byte{'S', 'E'}
-	PrevStatus['E'] = []byte{'B', 'M'}
+	prevStatus['B'] = []byte{'E', 'S'}
+	prevStatus['M'] = []byte{'M', 'B'}
+	prevStatus['S'] = []byte{'S', 'E'}
+	prevStatus['E'] = []byte{'B', 'M'}
+	probStart['B'] = -0.26268660809250016
+	probStart['E'] = -3.14e+100
+	probStart['M'] = -3.14e+100
+	probStart['S'] = -1.4652633398537678
 }
 
-type Viterbi struct {
+type probState struct {
 	prob  float64
 	state byte
 }
 
-func (v Viterbi) String() string {
-	return fmt.Sprintf("(%f, %s)", v.prob, v.state)
+func (p probState) String() string {
+	return fmt.Sprintf("(%f, %x)", p.prob, p.state)
 }
 
-type Viterbis []*Viterbi
+type probStates []*probState
 
-func (vs Viterbis) Len() int {
-	return len(vs)
+func (ps probStates) Len() int {
+	return len(ps)
 }
 
-func (vs Viterbis) Less(i, j int) bool {
-	if vs[i].prob == vs[j].prob {
-		return vs[i].state < vs[j].state
+func (ps probStates) Less(i, j int) bool {
+	if ps[i].prob == ps[j].prob {
+		return ps[i].state < ps[j].state
 	}
-	return vs[i].prob < vs[j].prob
+	return ps[i].prob < ps[j].prob
 }
 
-func (vs Viterbis) Swap(i, j int) {
-	vs[i], vs[j] = vs[j], vs[i]
+func (ps probStates) Swap(i, j int) {
+	ps[i], ps[j] = ps[j], ps[i]
 }
 
 func viterbi(obs []rune, states []byte) (float64, []byte) {
@@ -47,10 +54,10 @@ func viterbi(obs []rune, states []byte) (float64, []byte) {
 	V := make([]map[byte]float64, len(obs))
 	V[0] = make(map[byte]float64)
 	for _, y := range states {
-		if val, ok := ProbEmit[y][obs[0]]; ok {
-			V[0][y] = val + ProbStart[y]
+		if val, ok := probEmit[y][obs[0]]; ok {
+			V[0][y] = val + probStart[y]
 		} else {
-			V[0][y] = MIN_FLOAT + ProbStart[y]
+			V[0][y] = minFloat + probStart[y]
 		}
 		path[y] = []byte{y}
 	}
@@ -59,36 +66,36 @@ func viterbi(obs []rune, states []byte) (float64, []byte) {
 		newPath := make(map[byte][]byte)
 		V[t] = make(map[byte]float64)
 		for _, y := range states {
-			vs0 := make(Viterbis, 0)
+			ps0 := make(probStates, 0)
 			var em_p float64
-			if val, ok := ProbEmit[y][obs[t]]; ok {
+			if val, ok := probEmit[y][obs[t]]; ok {
 				em_p = val
 			} else {
-				em_p = MIN_FLOAT
+				em_p = minFloat
 			}
-			for _, y0 := range PrevStatus[y] {
+			for _, y0 := range prevStatus[y] {
 				var transP float64
-				if tp, ok := ProbTrans[y0][y]; ok {
+				if tp, ok := probTrans[y0][y]; ok {
 					transP = tp
 				} else {
-					transP = MIN_FLOAT
+					transP = minFloat
 				}
 				prob0 := V[t-1][y0] + transP + em_p
-				vs0 = append(vs0, &Viterbi{prob: prob0, state: y0})
+				ps0 = append(ps0, &probState{prob: prob0, state: y0})
 			}
-			sort.Sort(sort.Reverse(vs0))
-			V[t][y] = vs0[0].prob
-			pp := make([]byte, len(path[vs0[0].state]))
-			copy(pp, path[vs0[0].state])
+			sort.Sort(sort.Reverse(ps0))
+			V[t][y] = ps0[0].prob
+			pp := make([]byte, len(path[ps0[0].state]))
+			copy(pp, path[ps0[0].state])
 			newPath[y] = append(pp, y)
 		}
 		path = newPath
 	}
-	vs := make(Viterbis, 0)
+	ps := make(probStates, 0)
 	for _, y := range []byte{'E', 'S'} {
-		vs = append(vs, &Viterbi{V[len(obs)-1][y], y})
+		ps = append(ps, &probState{V[len(obs)-1][y], y})
 	}
-	sort.Sort(sort.Reverse(vs))
-	v := vs[0]
+	sort.Sort(sort.Reverse(ps))
+	v := ps[0]
 	return v.prob, path[v.state]
 }

@@ -1,80 +1,57 @@
 package analyse
 
 import (
-	"bufio"
-	"os"
-	"path/filepath"
+	"github.com/wangbin/jiebago"
 	"sort"
-	"strconv"
-	"strings"
 )
 
 var (
-	stopWords map[string]string
-	idfFreq   map[string]float64
-	medianIdf float64
+	loader *idfLoader
 )
 
 func init() {
-	idfFreq = make(map[string]float64)
-	stopWords = map[string]string{
-		"the": "the", "of": "of", "is": "is", "and": "and", "to": "to", "in": "in", "that": "that", "we": "we", "for": "for", "an": "an", "are": "are", "by": "bye", "be": "be", "as": "as", "on": "on", "with": "with", "can": "can", "if": "of", "from": "from", "which": "which", "you": "you", "it": "it", "this": "this", "then": "then", "at": "at", "have": "have", "all": "all", "not": "not", "one": "one", "has": "has", "or": "or",
-	}
+	loader = newIDFLoader()
 }
 
-func SetIdf(idfFilePath string) error {
-	if !filepath.IsAbs(idfFilePath) {
-		pwd, err := os.Getwd()
-		if err != nil {
-			return err
-		}
-		idfFilePath = filepath.Clean(filepath.Join(pwd, idfFilePath))
+type idfLoader struct {
+	Path   string
+	Freq   map[string]float64
+	Median float64
+}
+
+func newIDFLoader() *idfLoader {
+	loader := new(idfLoader)
+	loader.Freq = make(map[string]float64)
+	return loader
+}
+
+func (loader *idfLoader) newPath(idfFilePath string) error {
+	if loader.Path == idfFilePath {
+		return nil
 	}
-	idfFile, err := os.Open(idfFilePath)
+	wtfs, err := jiebago.ParseDictFile(idfFilePath)
 	if err != nil {
 		return err
 	}
-	scanner := bufio.NewScanner(idfFile)
+
 	freqs := make([]float64, 0)
-	for scanner.Scan() {
-		line := scanner.Text()
-		words := strings.Split(line, " ")
-		word, freqStr := words[0], words[1]
-		freq, err := strconv.ParseFloat(freqStr, 64)
-		if err != nil {
-			continue
-		}
-		idfFreq[word] = freq
-		freqs = append(freqs, freq)
+
+	for _, wtf := range wtfs {
+		loader.Freq[wtf.Word] = wtf.Freq
+		freqs = append(freqs, wtf.Freq)
 	}
-	if err := scanner.Err(); err != nil {
-		return err
-	}
+
 	sort.Float64s(freqs)
-	medianIdf = freqs[len(freqs)/2]
+	loader.Median = freqs[len(freqs)/2]
 	return nil
 }
 
-func SetStopWords(stopWordsFilePath string) error {
-	if !filepath.IsAbs(stopWordsFilePath) {
-		pwd, err := os.Getwd()
-		if err != nil {
-			return err
-		}
-		stopWordsFilePath = filepath.Clean(filepath.Join(pwd, stopWordsFilePath))
-	}
-	stopWordsFile, err := os.Open(stopWordsFilePath)
+// Set the IDF file path, could be absolute path of IDF file, or IDF file
+// name in current directory.
+func SetIdf(idfFileName string) error {
+	idfFilePath, err := jiebago.DictPath(idfFileName)
 	if err != nil {
 		return err
 	}
-	scanner := bufio.NewScanner(stopWordsFile)
-	for scanner.Scan() {
-		stopWord := scanner.Text()
-		stopWord = strings.TrimSpace(stopWord)
-		stopWords[stopWord] = stopWord
-	}
-	if err := scanner.Err(); err != nil {
-		return err
-	}
-	return nil
+	return loader.newPath(idfFilePath)
 }

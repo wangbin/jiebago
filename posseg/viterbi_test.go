@@ -5,33 +5,33 @@ import (
 )
 
 var (
-	route1 = []StateTag{
-		StateTag{'B', "nr"},
-		StateTag{'M', "nr"},
-		StateTag{'E', "nr"},
-		StateTag{'S', "v"},
-		StateTag{'B', "v"},
-		StateTag{'E', "v"},
-		StateTag{'B', "n"},
-		StateTag{'M', "n"},
-		StateTag{'E', "n"},
-		StateTag{'S', "d"},
-		StateTag{'S', "v"},
-		StateTag{'S', "n"},
-		StateTag{'B', "v"},
-		StateTag{'E', "v"},
-		StateTag{'B', "nr"},
-		StateTag{'M', "nr"},
-		StateTag{'M', "nr"},
-		StateTag{'M', "nr"},
-		StateTag{'E', "nr"},
-		StateTag{'S', "zg"}}
+	route1 = []stateTag{
+		stateTag{'B', "nr"},
+		stateTag{'M', "nr"},
+		stateTag{'E', "nr"},
+		stateTag{'S', "v"},
+		stateTag{'B', "v"},
+		stateTag{'E', "v"},
+		stateTag{'B', "n"},
+		stateTag{'M', "n"},
+		stateTag{'E', "n"},
+		stateTag{'S', "d"},
+		stateTag{'S', "v"},
+		stateTag{'S', "n"},
+		stateTag{'B', "v"},
+		stateTag{'E', "v"},
+		stateTag{'B', "nr"},
+		stateTag{'M', "nr"},
+		stateTag{'M', "nr"},
+		stateTag{'M', "nr"},
+		stateTag{'E', "nr"},
+		stateTag{'S', "zg"}}
 )
 
 func TestViterbi(t *testing.T) {
 	ss := "李小福是创新办主任也是云计算方面的专家;"
-	prob, route := Viterbi([]rune(ss))
-	if prob != MIN_FLOAT {
+	prob, route := viterbi([]rune(ss))
+	if prob != MinFloat {
 		t.Error(prob)
 	}
 	if len(route) != len(route1) {
@@ -42,5 +42,4 @@ func TestViterbi(t *testing.T) {
 			t.Error(route[index])
 		}
 	}
-
 }
