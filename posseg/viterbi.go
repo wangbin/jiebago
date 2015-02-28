@@ -5,8 +5,6 @@ import (
 	"sort"
 )
 
-const MIN_FLOAT = -3.14e100
-
 type StateTag struct {
 	State byte
 	Tag   string
@@ -49,7 +47,7 @@ func (pss ProbStates) Swap(i, j int) {
 	pss[i], pss[j] = pss[j], pss[i]
 }
 
-func Viterbi(obs []rune) (float64, []StateTag) {
+func viterbi(obs []rune) (float64, []StateTag) {
 	obsLength := len(obs)
 	V := make([]map[StateTag]float64, obsLength)
 	V[0] = make(map[StateTag]float64)

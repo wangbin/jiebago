@@ -20,6 +20,8 @@ type WordTag struct {
 	Word, Tag string
 }
 
+// Set dictionary, it could be absolute path of dictionary file, or dictionary
+// name in current diectory.
 func SetDictionary(dictFileName string) error {
 	err := jiebago.SetDictionary(dictFileName)
 	if err != nil {
@@ -42,7 +44,7 @@ func cutDetailInternal(sentence string) chan WordTag {
 
 	go func() {
 		runes := []rune(sentence)
-		_, posList := Viterbi(runes)
+		_, posList := viterbi(runes)
 		begin := 0
 		next := 0
 		for i, char := range runes {
@@ -232,6 +234,8 @@ func cutDAGNoHMM(sentence string) chan WordTag {
 	return result
 }
 
+// Tags the POS of each word after segmentation, using labels compatible with
+// ictclas.
 func Cut(sentence string, HMM bool) chan WordTag {
 	for key := range jiebago.UserWordTagTab {
 		wordTagMap[key] = jiebago.UserWordTagTab[key]

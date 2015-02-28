@@ -1,19 +1,20 @@
 package jiebago
 
-type Token struct {
+type token struct {
 	Word  string
 	Start int
 	End   int
 }
 
-func Tokenize(sentence string, mode string, HMM bool) []Token {
-	tokens := make([]Token, 0)
+// Return words with position.
+func Tokenize(sentence string, mode string, HMM bool) []token {
+	tokens := make([]token, 0)
 	start := 0
 	var width int
 	for word := range Cut(sentence, false, HMM) {
 		if mode == "default" {
 			width = len([]rune(word))
-			tokens = append(tokens, Token{word, start, start + width})
+			tokens = append(tokens, token{word, start, start + width})
 			start += width
 
 		} else {
@@ -24,12 +25,12 @@ func Tokenize(sentence string, mode string, HMM bool) []Token {
 					for i := 0; i < width-step+1; i++ {
 						gram := string(runes[i : i+step])
 						if _, ok := Trie.Freq[gram]; ok {
-							tokens = append(tokens, Token{gram, start + i, start + i + step})
+							tokens = append(tokens, token{gram, start + i, start + i + step})
 						}
 					}
 				}
 			}
-			tokens = append(tokens, Token{word, start, start + width})
+			tokens = append(tokens, token{word, start, start + width})
 		}
 	}
 	return tokens

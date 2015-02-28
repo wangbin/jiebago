@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// Trie store the total frequency and map of all words and their frequenciesb
 var Trie *trie
 
 type trie struct {
@@ -130,6 +131,7 @@ func (t *trie) addWord(wtf *WordTagFreq) {
 	}
 }
 
+// Load user specified dictionary file.
 func LoadUserDict(dictFilePath string) error {
 	wtfs, err := ParseDictFile(dictFilePath)
 	if err != nil {
@@ -144,6 +146,9 @@ func LoadUserDict(dictFilePath string) error {
 	return nil
 }
 
+// Set the dictionary, could be absolute path of dictionary file, or dictionary
+// name in current directory. This function must be called before cut any
+// sentence.
 func SetDictionary(dictFileName string) error {
 	Trie = &trie{Total: 0.0, Freq: make(map[string]float64)}
 	return Trie.load(dictFileName)

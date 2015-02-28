@@ -30,8 +30,8 @@ var (
 
 func TestViterbi(t *testing.T) {
 	ss := "李小福是创新办主任也是云计算方面的专家;"
-	prob, route := Viterbi([]rune(ss))
-	if prob != MIN_FLOAT {
+	prob, route := viterbi([]rune(ss))
+	if prob != MinFloat {
 		t.Error(prob)
 	}
 	if len(route) != len(route1) {

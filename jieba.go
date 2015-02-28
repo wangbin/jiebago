@@ -1,3 +1,4 @@
+// Golang implemention of jieba (Python Chinese word segmentation module).
 package jiebago
 
 import (
@@ -9,6 +10,7 @@ import (
 )
 
 var (
+	// Word/Tag Map load from user dictionary
 	UserWordTagTab = make(map[string]string)
 	reEng          = regexp.MustCompile(`[[:alnum:]]`)
 	reHanCutAll    = regexp.MustCompile(`\p{Han}+`)
@@ -17,37 +19,36 @@ var (
 	reSkipDefault  = regexp.MustCompile(`(\r\n|\s)`)
 )
 
-type Route struct {
+type route struct {
 	Freq  float64
 	Index int
 }
 
-func (route Route) String() string {
-	return fmt.Sprintf("(%f, %d)", route.Freq, route.Index)
+func (r route) String() string {
+	return fmt.Sprintf("(%f, %d)", r.Freq, r.Index)
 }
 
-type Routes []*Route
+type routes []*route
 
-func (routes Routes) Len() int {
-	return len(routes)
+func (rs routes) Len() int {
+	return len(rs)
 }
 
-func (routes Routes) Less(i, j int) bool {
-	routei := routes[i]
-	routej := routes[j]
-	if routei.Freq < routej.Freq {
+func (rs routes) Less(i, j int) bool {
+	if rs[i].Freq < rs[j].Freq {
 		return true
 	}
-	if routei.Freq == routej.Freq {
-		return routei.Index < routej.Index
+	if rs[i].Freq == rs[j].Freq {
+		return rs[i].Index < rs[j].Index
 	}
 	return false
 }
 
-func (routes Routes) Swap(i, j int) {
-	routes[i], routes[j] = routes[j], routes[i]
+func (rs routes) Swap(i, j int) {
+	rs[i], rs[j] = rs[j], rs[i]
 }
 
+// Split sentence using regular expression.
 func RegexpSplit(r *regexp.Regexp, sentence string) []string {
 	result := make([]string, 0)
 	locs := r.FindAllStringIndex(sentence, -1)
@@ -71,6 +72,7 @@ func RegexpSplit(r *regexp.Regexp, sentence string) []string {
 	return result
 }
 
+// Build a directed acyclic graph (DAG) for sentence.
 func DAG(sentence string) map[int][]int {
 	dag := make(map[int][]int)
 	runes := []rune(sentence)
@@ -103,28 +105,28 @@ func DAG(sentence string) map[int][]int {
 	return dag
 }
 
-func Calc(sentence string, dag map[int][]int) map[int]*Route {
+func Calc(sentence string, dag map[int][]int) map[int]*route {
 	runes := []rune(sentence)
 	number := len(runes)
-	routes := make(map[int]*Route)
-	routes[number] = &Route{Freq: 0.0, Index: 0}
+	rs := make(map[int]*route)
+	rs[number] = &route{Freq: 0.0, Index: 0}
 	logTotal := math.Log(Trie.Total)
 	for idx := number - 1; idx >= 0; idx-- {
-		candidates := make(Routes, 0)
+		candidates := make(routes, 0)
 		for _, i := range dag[idx] {
 			word := string(runes[idx : i+1])
-			var route *Route
+			var r *route
 			if _, ok := Trie.Freq[word]; ok {
-				route = &Route{Freq: math.Log(Trie.Freq[word]) - logTotal + routes[i+1].Freq, Index: i}
+				r = &route{Freq: math.Log(Trie.Freq[word]) - logTotal + rs[i+1].Freq, Index: i}
 			} else {
-				route = &Route{Freq: math.Log(1.0) - logTotal + routes[i+1].Freq, Index: i}
+				r = &route{Freq: math.Log(1.0) - logTotal + rs[i+1].Freq, Index: i}
 			}
-			candidates = append(candidates, route)
+			candidates = append(candidates, r)
 		}
 		sort.Sort(sort.Reverse(candidates))
-		routes[idx] = candidates[0]
+		rs[idx] = candidates[0]
 	}
-	return routes
+	return rs
 }
 
 type cutFunc func(sentence string) chan string
@@ -261,6 +263,18 @@ func cutAll(sentence string) chan string {
 	return result
 }
 
+/*
+Cut sentence.
+
+isCutAll controls use full cut mode or accurate mode.
+
+Full Mode gets all the possible words from the sentence. Fast but not accurate.
+
+Accurate Mode attempts to cut the sentence into the most accurate segmentations,
+which is suitable for text analysis.
+
+HMM contols whether to use the Hidden Markov Mode.
+*/
 func Cut(sentence string, isCutAll bool, HMM bool) chan string {
 	result := make(chan string)
 	go func() {
@@ -321,6 +335,9 @@ func Cut(sentence string, isCutAll bool, HMM bool) chan string {
 	return result
 }
 
+// Cut sentence using Search Engine Mode, based on the Accurate Mode, attempts
+// to cut long words into several short words, which can raise the recall rate.
+// Suitable for search engines.
 func CutForSearch(sentence string, hmm bool) chan string {
 	result := make(chan string)
 	go func() {

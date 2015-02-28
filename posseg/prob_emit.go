@@ -1,12 +1,14 @@
 package posseg
 
+const MinFloat = -3.14e100
+
 type RuneFloatMap map[rune]float64
 
 func (m RuneFloatMap) Get(key rune) float64 {
 	if _, ok := m[key]; ok {
 		return m[key]
 	} else {
-		return MIN_FLOAT
+		return MinFloat
 	}
 }
 
