@@ -19,44 +19,56 @@
     import (
         "fmt"
         "github.com/wangbin/jiebago"
-        "strings"
     )
 
     var sentence = "我来到北京清华大学"
 
+    func print(ch chan string) {
+        for word := range ch {
+            fmt.Printf("%s / ", word)
+        }
+        fmt.Println()
+        fmt.Println()
+    }
+
     func main() {
-        jiebago.SetDictionary("/Path/to/default/dictionary/file") // 设定字典
-        fmt.Printf("【全模式】: %s\n\n", strings.Join(jiebago.Cut(sentence, true, true), "/ "))
-        fmt.Printf("【精确模式】: %s\n\n", strings.Join(jiebago.Cut(sentence, false, true), "/ "))
-        fmt.Printf("【新词识别】：%s\n\n", strings.Join(jiebago.Cut("他来到了网易杭研大厦", false, true), ", "))
-        fmt.Printf("【搜索引擎模式】：%s\n\n", strings.Join(jiebago.CutForSearch("小明硕士毕业于中国科学院计算所，后在日本京都大学深造", true), ", "))
+        jiebago.SetDictionary("/Path/to/dictionary/file") // 设定字典
+        fmt.Print("【全模式】： ")
+        print(jiebago.Cut(sentence, true, true))
+        fmt.Print("【精确模式】： ")
+        print(jiebago.Cut(sentence, false, true))
+        fmt.Print("【新词识别】：")
+        print(jiebago.Cut("他来到了网易杭研大厦", false, true))
+        fmt.Print("【搜索引擎模式】：")
+        print(jiebago.CutForSearch("小明硕士毕业于中国科学院计算所，后在日本京都大学深造", true))
     }
     
 使用结巴分词自带的[词典文件](https://github.com/fxsjy/jieba/blob/master/jieba/dict.txt)，输出结果如下：
 
-    【全模式】: 我/ 来到/ 北京/ 清华/ 清华大学/ 华大/ 大学
+    【全模式】： 我 / 来到 / 北京 / 清华 / 清华大学 / 华大 / 大学 /
 
-    【精确模式】: 我/ 来到/ 北京/ 清华大学
+    【精确模式】： 我 / 来到 / 北京 / 清华大学 /
 
-    【新词识别】：他, 来到, 了, 网易, 杭研, 大厦
+    【新词识别】：他 / 来到 / 了 / 网易 / 杭研 / 大厦 /
 
-    【搜索引擎模式】：小明, 硕士, 毕业, 于, 中国, 科学, 学院, 科学院, 中国科学院, 计算, 计算所, ，, 后, 在, 日本, 京都, 大学, 日本京都大学, 深造
-    
+    【搜索引擎模式】：小明 / 硕士 / 毕业 / 于 / 中国 / 科学 / 学院 / 科学院 / 中国科学院 / 计算 / 计算所 / ， / 后 / 在 / 日本 / 京都 / 大学 / 日本京都大学 / 深造 /
+
 添加自定义词典
 =============
 
     var sentence = "李小福是创新办主任也是云计算方面的专家"
-    jiebago.SetDictionary("/Path/to/default/dictionary/file")
-    fmt.Printf("Before: %s\n\n", strings.Join(jiebago.Cut(sentence, false, true), "/ "))
+	fmt.Print("Before: ")
+	print(jiebago.Cut(sentence, false, true))
     jiebago.LoadUserDict("/Path/to/user/dictionary/file")
-    fmt.Printf("After: %s\n\n", strings.Join(jiebago.Cut(sentence, false, true), "/ "))
+	fmt.Print("After: ")
+	print(jiebago.Cut(sentence, false, true))
 
 使用结巴分词自带的[词典文件](https://github.com/fxsjy/jieba/blob/master/jieba/dict.txt)和[用户自定义词典文件](https://github.com/fxsjy/jieba/blob/master/test/userdict.txt)，结果输出如下：
 
-    Before: 李小福/ 是/ 创新/ 办/ 主任/ 也/ 是/ 云/ 计算/ 方面/ 的/ 专家
+    Before: 李小福 / 是 / 创新 / 办 / 主任 / 也 / 是 / 云 / 计算 / 方面 / 的 / 专家 /
 
-    After: 李小福/ 是/ 创新办/ 主任/ 也/ 是/ 云计算/ 方面/ 的/ 专家
-    
+    After: 李小福 / 是 / 创新办 / 主任 / 也 / 是 / 云计算 / 方面 / 的 / 专家 /
+
 关键词提取
 ========
 
@@ -70,23 +82,57 @@
 
     import (
         "fmt"
-        "github.com/wangbin/jiebago"
         "github.com/wangbin/jiebago/analyse"
-        "strings"
     )
 
     var sentence = "这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。"
 
     func main() {
-        jiebago.SetDictionary("/Path/to/default/dictionary/file")
+        analyse.SetDictionary("/Path/to/dictionary/file")
         analyse.SetIdf("/Path/to/idf/file")
-        fmt.Println(strings.Join(analyse.ExtractTags(sentence, 20), "/ "))
+        for _, ww := range analyse.ExtractTags(sentence, 20) {
+           fmt.Printf("%s / ", ww.Word)
+        }
     }
     
 输出：
 
-    Python/ C++/ 伸手不见五指/ 孙悟空/ 黑夜/ 北京/ 这是/ 一个
-    
+    Python / C++ / 伸手不见五指 / 孙悟空 / 黑夜 / 北京 / 这是 / 一个 /
+
+## 基于TextRank算法的关键词抽取实现
+
+示例代码：
+
+    package main
+
+    import (
+        "fmt"
+        "github.com/wangbin/jiebago/analyse"
+    )
+
+    func main() {
+        sentence := "此外，公司拟对全资子公司吉林欧亚置业有限公司增资4.3亿元，增资后，吉林欧亚     置业注册资本由7000万元增加到5亿元。吉林欧亚置业主要经营范围为房地产开发及百货零售等业务。目前在建吉林欧亚城市商业综合体项目。2013年，实现营业收入0万元，实现净利润-139.13万元。"
+
+        analyse.SetDictionary("/Path/to/dictionary/file")
+        result := analyse.TextRank(sentence, 10)
+        for _, wt := range result {
+            fmt.Printf("%s %f\n", wt.Word, wt.Freq)
+        }
+    }
+
+输出：
+
+    吉林 1.000000
+    欧亚 0.878078
+    置业 0.562048
+    实现 0.520906
+    收入 0.384284
+    增资 0.360591
+    子公司 0.353132
+    城市 0.307509
+    全资 0.306324
+    商业 0.306138    
+
 词性标注
 =======
 
@@ -107,8 +153,8 @@
     var sentence = "我爱北京天安门"
 
     func main() {
-        posseg.SetDictionary("/Path/to/default/dictionary/file")
-        for _, wt := range posseg.Cut(sentence, true) {
+        posseg.SetDictionary("/Path/to/dictionary/file")
+        for wt := range posseg.Cut(sentence, true) {
             fmt.Printf("%s %s\n", wt.Word, wt.Tag)
         }
     }
@@ -135,7 +181,9 @@
         fileLength += len([]rune(line))
         lineCount += 1
         go func() {
-            ch <- jiebago.Cut(line, false, true)
+           for word := range jiebago.Cut(line, false, true) {
+              ch <- word
+           }
         }()
     }
     if err := scanner.Err(); err != nil {

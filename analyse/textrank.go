@@ -157,3 +157,7 @@ func TextRankWithPOS(sentence string, topK int, allowPOS []string) TfIdfs {
 func TextRank(sentence string, topK int) TfIdfs {
 	return TextRankWithPOS(sentence, topK, defaultAllowPOS)
 }
+
+func SetDictionary(dictFileName string) error {
+	return posseg.SetDictionary(dictFileName)
+}

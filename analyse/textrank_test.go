@@ -1,7 +1,6 @@
 package analyse
 
 import (
-	"github.com/wangbin/jiebago"
 	"math"
 	"testing"
 )
@@ -24,9 +23,7 @@ var (
 )
 
 func TestTextRank(t *testing.T) {
-	jiebago.SetDictionary("../dict.txt")
-	SetIdf("idf.txt")
-
+	SetDictionary("../dict.txt")
 	results := TextRank(sentence, 10)
 	for index, tw := range results {
 		if tw.Word != tagRanks[index].Word || math.Abs(tw.Freq-tagRanks[index].Freq) > 1e-6 {
