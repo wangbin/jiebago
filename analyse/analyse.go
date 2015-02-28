@@ -35,6 +35,7 @@ func (ws wordWeights) Swap(i, j int) {
 	ws[i], ws[j] = ws[j], ws[i]
 }
 
+// Keyword extraction.
 func ExtractTags(sentence string, topK int) (tags wordWeights) {
 	freq := make(map[string]float64)
 

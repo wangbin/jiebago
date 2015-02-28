@@ -113,6 +113,8 @@ func (u *undirectWeightedGraph) rank() wordWeights {
 	return result
 }
 
+// Extract keywords from sentence using TextRank algorithm. the allowed POS list
+// could be manually speificed.
 func TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
 	posFilt := make(map[string]int)
 	for _, pos := range allowPOS {
@@ -152,6 +154,8 @@ func TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
 	return tags
 }
 
+// Extract keywords from sentence using TextRank algorithm.
+// topK specify how many top keywords to be returned at most.
 func TextRank(sentence string, topK int) wordWeights {
 	return TextRankWithPOS(sentence, topK, defaultAllowPOS)
 }
