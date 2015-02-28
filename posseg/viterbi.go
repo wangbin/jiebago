@@ -18,22 +18,22 @@ func emptyStateTag() stateTag {
 	return stateTag{' ', ""}
 }
 
-type ProbState struct {
+type probState struct {
 	Prob float64
 	ST   stateTag
 }
 
-func (ps ProbState) String() string {
+func (ps probState) String() string {
 	return fmt.Sprintf("(%v: %f)", ps.ST, ps.Prob)
 }
 
-type ProbStates []ProbState
+type probStates []probState
 
-func (pss ProbStates) Len() int {
+func (pss probStates) Len() int {
 	return len(pss)
 }
 
-func (pss ProbStates) Less(i, j int) bool {
+func (pss probStates) Less(i, j int) bool {
 	if pss[i].Prob == pss[j].Prob {
 		if pss[i].ST.State == pss[j].ST.State {
 			return pss[i].ST.Tag < pss[j].ST.Tag
@@ -43,7 +43,7 @@ func (pss ProbStates) Less(i, j int) bool {
 	return pss[i].Prob < pss[j].Prob
 }
 
-func (pss ProbStates) Swap(i, j int) {
+func (pss probStates) Swap(i, j int) {
 	pss[i], pss[j] = pss[j], pss[i]
 }
 
@@ -91,9 +91,9 @@ func viterbi(obs []rune) (float64, []stateTag) {
 		mem_path[t] = make(map[stateTag]stateTag) // TODO: value needed or not?
 		V[t] = make(map[stateTag]float64)
 		for _, y := range obs_states {
-			pss := make(ProbStates, 0)
+			pss := make(probStates, 0)
 			for _, y0 := range prev_states {
-				ps := ProbState{
+				ps := probState{
 					Prob: V[t-1][y0] + probTrans[y0].Get(y) + ProbEmit[y].Get(obs[t]),
 					ST:   y0}
 				pss = append(pss, ps)
@@ -103,11 +103,11 @@ func viterbi(obs []rune) (float64, []stateTag) {
 			mem_path[t][y] = pss[0].ST
 		}
 	}
-	last := make(ProbStates, 0)
+	last := make(probStates, 0)
 	length := len(mem_path)
 	vlength := len(V)
 	for y, _ := range mem_path[length-1] {
-		ps := ProbState{Prob: V[vlength-1][y], ST: y}
+		ps := probState{Prob: V[vlength-1][y], ST: y}
 		last = append(last, ps)
 	}
 	sort.Sort(sort.Reverse(last))
