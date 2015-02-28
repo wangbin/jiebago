@@ -65,7 +65,7 @@ func (u *undirectWeightedGraph) addEdge(start, end string, weight float64) {
 	}
 }
 
-func (u *undirectWeightedGraph) rank() TfIdfs {
+func (u *undirectWeightedGraph) rank() wordWeights {
 	if !sort.IsSorted(u.keys) {
 		sort.Sort(u.keys)
 	}
@@ -105,15 +105,15 @@ func (u *undirectWeightedGraph) rank() TfIdfs {
 			maxRank = w
 		}
 	}
-	result := make(TfIdfs, 0)
+	result := make(wordWeights, 0)
 	for n, w := range ws {
-		result = append(result, TfIdf{Word: n, Freq: (w - minRank/10.0) / (maxRank - minRank/10.0)})
+		result = append(result, wordWeight{Word: n, Weight: (w - minRank/10.0) / (maxRank - minRank/10.0)})
 	}
 	sort.Sort(sort.Reverse(result))
 	return result
 }
 
-func TextRankWithPOS(sentence string, topK int, allowPOS []string) TfIdfs {
+func TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
 	posFilt := make(map[string]int)
 	for _, pos := range allowPOS {
 		posFilt[pos] = 1
@@ -152,7 +152,7 @@ func TextRankWithPOS(sentence string, topK int, allowPOS []string) TfIdfs {
 	return tags
 }
 
-func TextRank(sentence string, topK int) TfIdfs {
+func TextRank(sentence string, topK int) wordWeights {
 	return TextRankWithPOS(sentence, topK, defaultAllowPOS)
 }
 

@@ -8,34 +8,34 @@ import (
 	"unicode/utf8"
 )
 
-type TfIdf struct {
-	Word string
-	Freq float64
+type wordWeight struct {
+	Word   string
+	Weight float64
 }
 
-func (t TfIdf) String() string {
-	return fmt.Sprintf("{%s: %f}", t.Word, t.Freq)
+func (w wordWeight) String() string {
+	return fmt.Sprintf("{%s: %f}", w.Word, w.Weight)
 }
 
-type TfIdfs []TfIdf
+type wordWeights []wordWeight
 
-func (tis TfIdfs) Len() int {
-	return len(tis)
+func (ws wordWeights) Len() int {
+	return len(ws)
 }
 
-func (tis TfIdfs) Less(i, j int) bool {
-	if tis[i].Freq == tis[j].Freq {
-		return tis[i].Word < tis[j].Word
+func (ws wordWeights) Less(i, j int) bool {
+	if ws[i].Weight == ws[j].Weight {
+		return ws[i].Word < ws[j].Word
 	}
 
-	return tis[i].Freq < tis[j].Freq
+	return ws[i].Weight < ws[j].Weight
 }
 
-func (tis TfIdfs) Swap(i, j int) {
-	tis[i], tis[j] = tis[j], tis[i]
+func (ws wordWeights) Swap(i, j int) {
+	ws[i], ws[j] = ws[j], ws[i]
 }
 
-func ExtractTags(sentence string, topK int) (tags TfIdfs) {
+func ExtractTags(sentence string, topK int) (tags wordWeights) {
 	freq := make(map[string]float64)
 
 	for w := range jiebago.Cut(sentence, false, true) {
@@ -59,21 +59,21 @@ func ExtractTags(sentence string, topK int) (tags TfIdfs) {
 	for k, v := range freq {
 		freq[k] = v / total
 	}
-	tis := make(TfIdfs, 0)
+	ws := make(wordWeights, 0)
 	for k, v := range freq {
-		var ti TfIdf
+		var ti wordWeight
 		if freq_, ok := loader.Freq[k]; ok {
-			ti = TfIdf{Word: k, Freq: freq_ * v}
+			ti = wordWeight{Word: k, Weight: freq_ * v}
 		} else {
-			ti = TfIdf{Word: k, Freq: loader.Median * v}
+			ti = wordWeight{Word: k, Weight: loader.Median * v}
 		}
-		tis = append(tis, ti)
+		ws = append(ws, ti)
 	}
-	sort.Sort(sort.Reverse(tis))
-	if len(tis) > topK {
-		tags = tis[:topK]
+	sort.Sort(sort.Reverse(ws))
+	if len(ws) > topK {
+		tags = ws[:topK]
 	} else {
-		tags = tis
+		tags = ws
 	}
 	return tags
 }

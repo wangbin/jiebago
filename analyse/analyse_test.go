@@ -228,30 +228,30 @@ var (
 只是逼不得已
 雖然沒有藉口
 `
-	LyciWeight = []TfIdf{
-		TfIdf{Word: "所謂", Freq: 1.010262},
-		TfIdf{Word: "是否", Freq: 0.738650},
-		TfIdf{Word: "一般", Freq: 0.607600},
-		TfIdf{Word: "雖然", Freq: 0.336754},
-		TfIdf{Word: "退縮", Freq: 0.336754},
-		TfIdf{Word: "肌迫", Freq: 0.336754},
-		TfIdf{Word: "矯作", Freq: 0.336754},
-		TfIdf{Word: "沒有", Freq: 0.336754},
-		TfIdf{Word: "怯懦", Freq: 0.271099},
-		TfIdf{Word: "隨便", Freq: 0.168377},
+	LyciWeight = []wordWeight{
+		wordWeight{Word: "所謂", Weight: 1.010262},
+		wordWeight{Word: "是否", Weight: 0.738650},
+		wordWeight{Word: "一般", Weight: 0.607600},
+		wordWeight{Word: "雖然", Weight: 0.336754},
+		wordWeight{Word: "退縮", Weight: 0.336754},
+		wordWeight{Word: "肌迫", Weight: 0.336754},
+		wordWeight{Word: "矯作", Weight: 0.336754},
+		wordWeight{Word: "沒有", Weight: 0.336754},
+		wordWeight{Word: "怯懦", Weight: 0.271099},
+		wordWeight{Word: "隨便", Weight: 0.168377},
 	}
 
-	LyciWeight2 = []TfIdf{
-		TfIdf{Word: "所謂", Freq: 1.215739},
-		TfIdf{Word: "一般", Freq: 0.731179},
-		TfIdf{Word: "雖然", Freq: 0.405246},
-		TfIdf{Word: "退縮", Freq: 0.405246},
-		TfIdf{Word: "肌迫", Freq: 0.405246},
-		TfIdf{Word: "矯作", Freq: 0.405246},
-		TfIdf{Word: "怯懦", Freq: 0.326238},
-		TfIdf{Word: "逼不得已", Freq: 0.202623},
-		TfIdf{Word: "右銘", Freq: 0.202623},
-		TfIdf{Word: "寬闊", Freq: 0.202623},
+	LyciWeight2 = []wordWeight{
+		wordWeight{Word: "所謂", Weight: 1.215739},
+		wordWeight{Word: "一般", Weight: 0.731179},
+		wordWeight{Word: "雖然", Weight: 0.405246},
+		wordWeight{Word: "退縮", Weight: 0.405246},
+		wordWeight{Word: "肌迫", Weight: 0.405246},
+		wordWeight{Word: "矯作", Weight: 0.405246},
+		wordWeight{Word: "怯懦", Weight: 0.326238},
+		wordWeight{Word: "逼不得已", Weight: 0.202623},
+		wordWeight{Word: "右銘", Weight: 0.202623},
+		wordWeight{Word: "寬闊", Weight: 0.202623},
 	}
 )
 
@@ -278,7 +278,7 @@ func TestExtratTagsWithWeight(t *testing.T) {
 	result := ExtractTags(Lyric, 10)
 	for index, tag := range result {
 		if LyciWeight[index].Word != tag.Word ||
-			math.Abs(LyciWeight[index].Freq-tag.Freq) > 1e-6 {
+			math.Abs(LyciWeight[index].Weight-tag.Weight) > 1e-6 {
 			t.Errorf("%v != %v", tag, LyciWeight[index])
 		}
 	}
@@ -291,7 +291,7 @@ func TestExtractTagsWithStopWordsFile(t *testing.T) {
 	result := ExtractTags(Lyric, 7)
 	for index, tag := range result {
 		if LyciWeight2[index].Word != tag.Word ||
-			math.Abs(LyciWeight2[index].Freq-tag.Freq) > 1e-6 {
+			math.Abs(LyciWeight2[index].Weight-tag.Weight) > 1e-6 {
 			t.Errorf("%v != %v", tag, LyciWeight2[index])
 		}
 	}
