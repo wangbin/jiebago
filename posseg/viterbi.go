@@ -53,7 +53,6 @@ func viterbi(obs []rune) (float64, []stateTag) {
 	V[0] = make(map[stateTag]float64)
 	mem_path := make([]map[stateTag]stateTag, obsLength)
 	mem_path[0] = make(map[stateTag]stateTag)
-	// all_states := ProbTransKeys
 	ys := charStateTab.get(obs[0]) // default is all_states
 	for _, y := range ys {
 		V[0][y] = ProbEmit[y].Get(obs[0]) + ProbStart[y]
@@ -62,14 +61,14 @@ func viterbi(obs []rune) (float64, []stateTag) {
 	for t := 1; t < obsLength; t++ {
 		prev_states := make([]stateTag, 0)
 		for x, _ := range mem_path[t-1] {
-			if len(ProbTrans[x]) > 0 {
+			if len(probTrans[x]) > 0 {
 				prev_states = append(prev_states, x)
 			}
 		}
 		//use Go's map to implement Python's Set()
 		prev_states_expect_next := make(map[stateTag]stateTag)
 		for _, x := range prev_states {
-			for y, _ := range ProbTrans[x] {
+			for y, _ := range probTrans[x] {
 				prev_states_expect_next[y] = y
 			}
 		}
@@ -87,7 +86,7 @@ func viterbi(obs []rune) (float64, []stateTag) {
 			}
 		}
 		if len(obs_states) == 0 {
-			obs_states = ProbTransKeys
+			obs_states = probTransKeys
 		}
 		mem_path[t] = make(map[stateTag]stateTag) // TODO: value needed or not?
 		V[t] = make(map[stateTag]float64)
@@ -95,7 +94,7 @@ func viterbi(obs []rune) (float64, []stateTag) {
 			pss := make(ProbStates, 0)
 			for _, y0 := range prev_states {
 				ps := ProbState{
-					Prob: V[t-1][y0] + ProbTrans[y0].Get(y) + ProbEmit[y].Get(obs[t]),
+					Prob: V[t-1][y0] + probTrans[y0].Get(y) + ProbEmit[y].Get(obs[t]),
 					ST:   y0}
 				pss = append(pss, ps)
 			}

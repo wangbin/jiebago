@@ -6,7 +6,7 @@ func (m charStateTabMap) get(key rune) []stateTag {
 	if _, ok := m[key]; ok {
 		return m[key]
 	} else {
-		return ProbTransKeys
+		return probTransKeys
 	}
 }
 

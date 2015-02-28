@@ -15,149 +15,149 @@ func (m stateTagFloatMap) Get(key stateTag) float64 {
 }
 
 var (
-	ProbTrans     = make(map[stateTag]stateTagFloatMap)
-	ProbTransKeys = make([]stateTag, 0)
+	probTrans     = make(map[stateTag]stateTagFloatMap)
+	probTransKeys = make([]stateTag, 0)
 )
 
 func init() {
-	ProbTrans[stateTag{'B', "a"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "a"}] = stateTagFloatMap{
 		stateTag{'E', "a"}: -0.0050648453069648755,
 		stateTag{'M', "a"}: -5.287963037107507}
-	ProbTrans[stateTag{'B', "ad"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "ad"}] = stateTagFloatMap{
 		stateTag{'E', "ad"}: -0.0007479013978476627,
 		stateTag{'M', "ad"}: -7.198613337130562}
-	ProbTrans[stateTag{'B', "ag"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "an"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "ag"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "an"}] = stateTagFloatMap{
 		stateTag{'E', "an"}: 0.0}
-	ProbTrans[stateTag{'B', "b"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "b"}] = stateTagFloatMap{
 		stateTag{'E', "b"}: -0.06753917715798491,
 		stateTag{'M', "b"}: -2.7286269787493125}
-	ProbTrans[stateTag{'B', "bg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "c"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "bg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "c"}] = stateTagFloatMap{
 		stateTag{'E', "c"}: -0.04442738163948101,
 		stateTag{'M', "c"}: -3.1360307468646766}
-	ProbTrans[stateTag{'B', "d"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "d"}] = stateTagFloatMap{
 		stateTag{'E', "d"}: -0.04677309521554972,
 		stateTag{'M', "d"}: -3.0857425240950174}
-	ProbTrans[stateTag{'B', "df"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "df"}] = stateTagFloatMap{
 		stateTag{'E', "df"}: 0.0}
-	ProbTrans[stateTag{'B', "dg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "e"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "dg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "e"}] = stateTagFloatMap{
 		stateTag{'E', "e"}: -0.05870760082677792,
 		stateTag{'M', "e"}: -2.864396271492904}
-	ProbTrans[stateTag{'B', "en"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "f"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "en"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "f"}] = stateTagFloatMap{
 		stateTag{'E', "f"}: -0.01914032315305203,
 		stateTag{'M', "f"}: -3.965512906408017}
-	ProbTrans[stateTag{'B', "g"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "h"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "g"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "h"}] = stateTagFloatMap{
 		stateTag{'E', "h"}: 0.0}
-	ProbTrans[stateTag{'B', "i"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "i"}] = stateTagFloatMap{
 		stateTag{'E', "i"}: -7.5100009018967535,
 		stateTag{'M', "i"}: -0.0005477305718588087}
-	ProbTrans[stateTag{'B', "in"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "in"}] = stateTagFloatMap{
 		stateTag{'M', "in"}: 0.0}
-	ProbTrans[stateTag{'B', "j"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "j"}] = stateTagFloatMap{
 		stateTag{'E', "j"}: -0.2543207374058728,
 		stateTag{'M', "j"}: -1.4936259227444613}
-	ProbTrans[stateTag{'B', "jn"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "jn"}] = stateTagFloatMap{
 		stateTag{'M', "jn"}: 0.0}
-	ProbTrans[stateTag{'B', "k"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "l"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "k"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "l"}] = stateTagFloatMap{
 		stateTag{'E', "l"}: -3.68054609970312,
 		stateTag{'M', "l"}: -0.02553239955770466}
-	ProbTrans[stateTag{'B', "ln"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "ln"}] = stateTagFloatMap{
 		stateTag{'M', "ln"}: 0.0}
-	ProbTrans[stateTag{'B', "m"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "m"}] = stateTagFloatMap{
 		stateTag{'E', "m"}: -0.1861592793620009,
 		stateTag{'M', "m"}: -1.7727887176378618}
-	ProbTrans[stateTag{'B', "mg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "mq"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "mg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "mq"}] = stateTagFloatMap{
 		stateTag{'E', "mq"}: -0.9316228008055788,
 		stateTag{'M', "mq"}: -0.5007333022296009}
-	ProbTrans[stateTag{'B', "n"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "n"}] = stateTagFloatMap{
 		stateTag{'E', "n"}: -0.1386970766026951,
 		stateTag{'M', "n"}: -2.04401015913586}
-	ProbTrans[stateTag{'B', "ng"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "nr"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "ng"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "nr"}] = stateTagFloatMap{
 		stateTag{'E', "nr"}: -0.9187994754319938,
 		stateTag{'M', "nr"}: -0.5091566178045187}
-	ProbTrans[stateTag{'B', "nrfg"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "nrfg"}] = stateTagFloatMap{
 		stateTag{'E', "nrfg"}: -0.6898863081052478,
 		stateTag{'M', "nrfg"}: -0.6964187211005602}
-	ProbTrans[stateTag{'B', "nrt"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "nrt"}] = stateTagFloatMap{
 		stateTag{'E', "nrt"}: -0.19889046807373303,
 		stateTag{'M', "nrt"}: -1.7127985687430378}
-	ProbTrans[stateTag{'B', "ns"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "ns"}] = stateTagFloatMap{
 		stateTag{'E', "ns"}: -0.30583032091031265,
 		stateTag{'M', "ns"}: -1.333745856818688}
-	ProbTrans[stateTag{'B', "nt"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "nt"}] = stateTagFloatMap{
 		stateTag{'E', "nt"}: -5.85632199504386,
 		stateTag{'M', "nt"}: -0.0028658525153568088}
-	ProbTrans[stateTag{'B', "nz"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "nz"}] = stateTagFloatMap{
 		stateTag{'E', "nz"}: -0.5116528585143264,
 		stateTag{'M', "nz"}: -0.9150511614331327}
-	ProbTrans[stateTag{'B', "o"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "o"}] = stateTagFloatMap{
 		stateTag{'E', "o"}: -0.15615808279732152,
 		stateTag{'M', "o"}: -1.9339496252366735}
-	ProbTrans[stateTag{'B', "p"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "p"}] = stateTagFloatMap{
 		stateTag{'E', "p"}: -0.0005180550387437946,
 		stateTag{'M', "p"}: -7.565688085284925}
-	ProbTrans[stateTag{'B', "q"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "q"}] = stateTagFloatMap{
 		stateTag{'E', "q"}: -0.23327551934156823,
 		stateTag{'M', "q"}: -1.5699064300606476}
-	ProbTrans[stateTag{'B', "qe"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "qe"}] = stateTagFloatMap{
 		stateTag{'E', "qe"}: 0.0}
-	ProbTrans[stateTag{'B', "qg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "r"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "qg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "r"}] = stateTagFloatMap{
 		stateTag{'E', "r"}: -0.01687625300447763,
 		stateTag{'M', "r"}: -4.090274052396829}
-	ProbTrans[stateTag{'B', "rg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "rr"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "rg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "rr"}] = stateTagFloatMap{
 		stateTag{'E', "rr"}: -2.239526957026909,
 		stateTag{'M', "rr"}: -0.11261887810814913}
-	ProbTrans[stateTag{'B', "rz"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "rz"}] = stateTagFloatMap{
 		stateTag{'E', "rz"}: 0.0}
-	ProbTrans[stateTag{'B', "s"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "s"}] = stateTagFloatMap{
 		stateTag{'E', "s"}: -0.015465951118050396,
 		stateTag{'M', "s"}: -4.176837382501129}
-	ProbTrans[stateTag{'B', "t"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "t"}] = stateTagFloatMap{
 		stateTag{'E', "t"}: -0.06198448272867337,
 		stateTag{'M', "t"}: -2.8117033638171693}
-	ProbTrans[stateTag{'B', "tg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "u"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "tg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "u"}] = stateTagFloatMap{
 		stateTag{'E', "u"}: -2.170492159178564e-05,
 		stateTag{'M', "u"}: -10.7379823741081}
-	ProbTrans[stateTag{'B', "ud"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "ug"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "uj"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "ul"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "uv"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "uz"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "v"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "ud"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "ug"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "uj"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "ul"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "uv"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "uz"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "v"}] = stateTagFloatMap{
 		stateTag{'E', "v"}: -0.012409266514635869,
 		stateTag{'M', "v"}: -4.395510002912934}
-	ProbTrans[stateTag{'B', "vd"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "vd"}] = stateTagFloatMap{
 		stateTag{'E', "vd"}: 0.0}
-	ProbTrans[stateTag{'B', "vg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "vi"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "vg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "vi"}] = stateTagFloatMap{
 		stateTag{'M', "vi"}: 0.0}
-	ProbTrans[stateTag{'B', "vn"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "vn"}] = stateTagFloatMap{
 		stateTag{'E', "vn"}: -0.01102649184048478,
 		stateTag{'M', "vn"}: -4.512962732418981}
-	ProbTrans[stateTag{'B', "vq"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "vq"}] = stateTagFloatMap{
 		stateTag{'E', "vq"}: 0.0}
-	ProbTrans[stateTag{'B', "w"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "x"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "y"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "w"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "x"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "y"}] = stateTagFloatMap{
 		stateTag{'E', "y"}: -0.0046236917718409775,
 		stateTag{'M', "y"}: -5.378872763286892}
-	ProbTrans[stateTag{'B', "yg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'B', "z"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "yg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'B', "z"}] = stateTagFloatMap{
 		stateTag{'E', "z"}: -0.5543440297742611,
 		stateTag{'M', "z"}: -0.854370382921828}
-	ProbTrans[stateTag{'B', "zg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "a"}] = stateTagFloatMap{
+	probTrans[stateTag{'B', "zg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "a"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.4301509494938407,
 		stateTag{'B', "ad"}:   -6.530359369866237,
 		stateTag{'B', "an"}:   -6.905890270156357,
@@ -232,7 +232,7 @@ func init() {
 		stateTag{'S', "vn"}:   -9.994255345743957,
 		stateTag{'S', "x"}:    -9.230156429211727,
 		stateTag{'S', "y"}:    -5.506941727527432}
-	ProbTrans[stateTag{'E', "ad"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "ad"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.669490663077246,
 		stateTag{'B', "ad"}:   -5.577421564067343,
 		stateTag{'B', "an"}:   -7.408859517113575,
@@ -299,8 +299,8 @@ func init() {
 		stateTag{'S', "vg"}:   -6.300768484490921,
 		stateTag{'S', "x"}:    -9.71144461010762,
 		stateTag{'S', "y"}:    -7.3006459324733415}
-	ProbTrans[stateTag{'E', "ag"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "an"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "ag"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "an"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.6052367516663226,
 		stateTag{'B', "ad"}:   -5.932878424497706,
 		stateTag{'B', "an"}:   -5.820082930352362,
@@ -366,7 +366,7 @@ func init() {
 		stateTag{'S', "vg"}:   -6.026697179715361,
 		stateTag{'S', "x"}:    -9.444423863328726,
 		stateTag{'S', "y"}:    -5.22491615815262}
-	ProbTrans[stateTag{'E', "b"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "b"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.707673302574278,
 		stateTag{'B', "ad"}:   -7.800150133419737,
 		stateTag{'B', "an"}:   -6.283289297017788,
@@ -436,8 +436,8 @@ func init() {
 		stateTag{'S', "x"}:    -8.857519463553798,
 		stateTag{'S', "y"}:    -8.422201392295952,
 		stateTag{'S', "yg"}:   -12.354027025020278}
-	ProbTrans[stateTag{'E', "bg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "c"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "bg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "c"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.316505787725195,
 		stateTag{'B', "ad"}:   -5.657713206360876,
 		stateTag{'B', "an"}:   -7.810927842700653,
@@ -514,7 +514,7 @@ func init() {
 		stateTag{'S', "vn"}:   -10.247044328319221,
 		stateTag{'S', "x"}:    -9.222540011804833,
 		stateTag{'S', "y"}:    -8.241710758793108}
-	ProbTrans[stateTag{'E', "d"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "d"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -2.8017387321396003,
 		stateTag{'B', "ad"}:   -4.976725806196074,
 		stateTag{'B', "an"}:   -6.517554503391935,
@@ -587,7 +587,7 @@ func init() {
 		stateTag{'S', "vn"}:   -11.49275450318056,
 		stateTag{'S', "x"}:    -10.052392920790394,
 		stateTag{'S', "y"}:    -7.483403153791852}
-	ProbTrans[stateTag{'E', "df"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "df"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.6866377692261105,
 		stateTag{'B', "ad"}:   -5.142113297908936,
 		stateTag{'B', "an"}:   -7.3015975472623085,
@@ -637,8 +637,8 @@ func init() {
 		stateTag{'S', "v"}:    -1.1229621092989344,
 		stateTag{'S', "vg"}:   -5.627621113690637,
 		stateTag{'S', "y"}:    -5.455770856763977}
-	ProbTrans[stateTag{'E', "dg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "e"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "dg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "e"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:  -6.498282149476434,
 		stateTag{'B', "c"}:  -5.111987788356543,
 		stateTag{'B', "d"}:  -3.665068805420218,
@@ -680,8 +680,8 @@ func init() {
 		stateTag{'S', "v"}:  -2.4378391389300145,
 		stateTag{'S', "vg"}: -4.552372000421121,
 		stateTag{'S', "y"}:  -3.5538431703099933}
-	ProbTrans[stateTag{'E', "en"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "f"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "en"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "f"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.337384778823908,
 		stateTag{'B', "ad"}:   -5.930084750763245,
 		stateTag{'B', "an"}:   -6.992620982957545,
@@ -755,8 +755,8 @@ func init() {
 		stateTag{'S', "vn"}:   -11.836808069416136,
 		stateTag{'S', "x"}:    -9.585516270809642,
 		stateTag{'S', "y"}:    -7.140883520159581}
-	ProbTrans[stateTag{'E', "g"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "h"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "g"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "h"}] = stateTagFloatMap{
 		stateTag{'B', "d"}:  -4.442651256490317,
 		stateTag{'B', "n"}:  -0.2995165300987837,
 		stateTag{'B', "nz"}: -3.7495040759303713,
@@ -764,7 +764,7 @@ func init() {
 		stateTag{'S', "b"}:  -4.442651256490317,
 		stateTag{'S', "n"}:  -2.833213344056216,
 		stateTag{'S', "uj"}: -2.245426679154097}
-	ProbTrans[stateTag{'E', "i"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "i"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.71147680000632,
 		stateTag{'B', "ad"}:   -5.813383984571282,
 		stateTag{'B', "an"}:   -8.349062959732706,
@@ -835,7 +835,7 @@ func init() {
 		stateTag{'S', "vn"}:   -10.716186573864322,
 		stateTag{'S', "x"}:    -9.416903589734062,
 		stateTag{'S', "y"}:    -4.795502208817387}
-	ProbTrans[stateTag{'E', "in"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "in"}] = stateTagFloatMap{
 		stateTag{'B', "d"}:   -2.03688192726104,
 		stateTag{'B', "m"}:   -3.1354942159291497,
 		stateTag{'B', "n"}:   -3.1354942159291497,
@@ -848,7 +848,7 @@ func init() {
 		stateTag{'S', "tg"}:  -3.1354942159291497,
 		stateTag{'S', "v"}:   -2.4423470353692043,
 		stateTag{'S', "y"}:   -3.1354942159291497}
-	ProbTrans[stateTag{'E', "j"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "j"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.817381150280411,
 		stateTag{'B', "ad"}:   -5.71856911396881,
 		stateTag{'B', "an"}:   -7.6453906664616005,
@@ -918,13 +918,13 @@ func init() {
 		stateTag{'S', "x"}:    -10.073138902409653,
 		stateTag{'S', "y"}:    -8.058235881867388,
 		stateTag{'S', "yg"}:   -11.864898371637707}
-	ProbTrans[stateTag{'E', "jn"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "jn"}] = stateTagFloatMap{
 		stateTag{'B', "n"}:  -0.916290731874155,
 		stateTag{'B', "vn"}: -1.6094379124341003,
 		stateTag{'S', "m"}:  -1.6094379124341003,
 		stateTag{'S', "uj"}: -1.6094379124341003}
-	ProbTrans[stateTag{'E', "k"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "l"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "k"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "l"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.281994308212445,
 		stateTag{'B', "ad"}:   -5.631355414286653,
 		stateTag{'B', "an"}:   -7.781973234434385,
@@ -996,7 +996,7 @@ func init() {
 		stateTag{'S', "vn"}:   -10.506552737487805,
 		stateTag{'S', "x"}:    -10.101087629379641,
 		stateTag{'S', "y"}:    -5.233553178924058}
-	ProbTrans[stateTag{'E', "ln"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "ln"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:  -3.6635616461296463,
 		stateTag{'B', "d"}:  -2.9704144655697013,
 		stateTag{'B', "n"}:  -1.466337068793427,
@@ -1011,7 +1011,7 @@ func init() {
 		stateTag{'S', "p"}:  -2.9704144655697013,
 		stateTag{'S', "uj"}: -2.277267285009756,
 		stateTag{'S', "v"}:  -3.6635616461296463}
-	ProbTrans[stateTag{'E', "m"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "m"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.4312981852350974,
 		stateTag{'B', "ad"}:   -6.006821180675518,
 		stateTag{'B', "an"}:   -7.110240120503148,
@@ -1088,8 +1088,8 @@ func init() {
 		stateTag{'S', "vn"}:   -10.107287318638448,
 		stateTag{'S', "x"}:    -8.824892552536708,
 		stateTag{'S', "y"}:    -6.280936873895908}
-	ProbTrans[stateTag{'E', "mg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "mq"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "mg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "mq"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.102081544724253,
 		stateTag{'B', "ad"}:   -6.251903883165888,
 		stateTag{'B', "an"}:   -7.4150546929715695,
@@ -1152,7 +1152,7 @@ func init() {
 		stateTag{'S', "vg"}:   -6.409532827369472,
 		stateTag{'S', "x"}:    -10.12310489407378,
 		stateTag{'S', "y"}:    -8.177194745018467}
-	ProbTrans[stateTag{'E', "n"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "n"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.978080739676936,
 		stateTag{'B', "ad"}:   -5.66511002885322,
 		stateTag{'B', "an"}:   -7.226405423299325,
@@ -1232,8 +1232,8 @@ func init() {
 		stateTag{'S', "vn"}:   -10.333352412489203,
 		stateTag{'S', "x"}:    -9.153740325629451,
 		stateTag{'S', "y"}:    -6.125876773892667}
-	ProbTrans[stateTag{'E', "ng"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "nr"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "ng"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "nr"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.8510677626421845,
 		stateTag{'B', "ad"}:   -5.7730519464060785,
 		stateTag{'B', "an"}:   -8.937924040051959,
@@ -1312,7 +1312,7 @@ func init() {
 		stateTag{'S', "y"}:    -6.3869918800048096,
 		stateTag{'S', "yg"}:   -12.898737209649537,
 		stateTag{'S', "zg"}:   -12.205590029089592}
-	ProbTrans[stateTag{'E', "nrfg"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "nrfg"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.722301912631971,
 		stateTag{'B', "ad"}:   -5.214199526512442,
 		stateTag{'B', "an"}:   -7.986788248752224,
@@ -1379,7 +1379,7 @@ func init() {
 		stateTag{'S', "vn"}:   -9.085400537420334,
 		stateTag{'S', "x"}:    -9.085400537420334,
 		stateTag{'S', "y"}:    -6.48271085197595}
-	ProbTrans[stateTag{'E', "nrt"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "nrt"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.103149768384549,
 		stateTag{'B', "ad"}:   -6.169770621635323,
 		stateTag{'B', "an"}:   -7.824819045321476,
@@ -1452,7 +1452,7 @@ func init() {
 		stateTag{'S', "x"}:    -7.69965590236747,
 		stateTag{'S', "y"}:    -6.84398979230975,
 		stateTag{'S', "yg"}:   -11.226016426983632}
-	ProbTrans[stateTag{'E', "ns"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "ns"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.533345781203185,
 		stateTag{'B', "ad"}:   -6.417350824011239,
 		stateTag{'B', "an"}:   -8.632653132767416,
@@ -1527,7 +1527,7 @@ func init() {
 		stateTag{'S', "vn"}:   -10.586053953551886,
 		stateTag{'S', "x"}:    -8.560679633142326,
 		stateTag{'S', "y"}:    -7.777920293892693}
-	ProbTrans[stateTag{'E', "nt"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "nt"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.972479528443855,
 		stateTag{'B', "ad"}:   -5.2608818025832305,
 		stateTag{'B', "an"}:   -7.974712366600939,
@@ -1593,7 +1593,7 @@ func init() {
 		stateTag{'S', "vg"}:   -7.81436971652576,
 		stateTag{'S', "x"}:    -10.417059401970144,
 		stateTag{'S', "y"}:    -8.807621489536043}
-	ProbTrans[stateTag{'E', "nz"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "nz"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.9490278735999,
 		stateTag{'B', "ad"}:   -6.253492216472158,
 		stateTag{'B', "an"}:   -8.843759381917984,
@@ -1665,7 +1665,7 @@ func init() {
 		stateTag{'S', "vn"}:   -9.180231618539198,
 		stateTag{'S', "x"}:    -8.15061220135804,
 		stateTag{'S', "y"}:    -7.044094733182816}
-	ProbTrans[stateTag{'E', "o"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "o"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:   -5.7903423608503095,
 		stateTag{'B', "ad"}:  -8.562931083090092,
 		stateTag{'B', "an"}:  -8.562931083090092,
@@ -1721,7 +1721,7 @@ func init() {
 		stateTag{'S', "vg"}:  -5.0365705584739295,
 		stateTag{'S', "x"}:   -4.358238463699125,
 		stateTag{'S', "y"}:   -5.007583021600677}
-	ProbTrans[stateTag{'E', "p"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "p"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.707686938726001,
 		stateTag{'B', "ad"}:   -5.171603498030898,
 		stateTag{'B', "an"}:   -7.4460177140582475,
@@ -1788,7 +1788,7 @@ func init() {
 		stateTag{'S', "vn"}:   -10.624071544406192,
 		stateTag{'S', "x"}:    -9.237777183286303,
 		stateTag{'S', "y"}:    -9.083626503459044}
-	ProbTrans[stateTag{'E', "q"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "q"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.7031528191769754,
 		stateTag{'B', "ad"}:   -6.543262742292252,
 		stateTag{'B', "an"}:   -6.646446978527482,
@@ -1853,11 +1853,11 @@ func init() {
 		stateTag{'S', "vn"}:   -9.376476086348468,
 		stateTag{'S', "x"}:    -9.088794013896687,
 		stateTag{'S', "y"}:    -6.919740313527164}
-	ProbTrans[stateTag{'E', "qe"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "qe"}] = stateTagFloatMap{
 		stateTag{'B', "n"}: -0.6931471805599453,
 		stateTag{'S', "q"}: -0.6931471805599453}
-	ProbTrans[stateTag{'E', "qg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "r"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "qg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "r"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.546611504512179,
 		stateTag{'B', "ad"}:   -5.605998004408728,
 		stateTag{'B', "an"}:   -6.694425832790958,
@@ -1934,8 +1934,8 @@ func init() {
 		stateTag{'S', "vn"}:   -10.336213679371044,
 		stateTag{'S', "x"}:    -9.320982999641986,
 		stateTag{'S', "y"}:    -5.442561740760607}
-	ProbTrans[stateTag{'E', "rg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "rr"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "rg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "rr"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:   -5.10594547390058,
 		stateTag{'B', "b"}:   -5.10594547390058,
 		stateTag{'B', "c"}:   -4.412798293340635,
@@ -1966,7 +1966,7 @@ func init() {
 		stateTag{'S', "uj"}:  -1.1741198411762548,
 		stateTag{'S', "ul"}:  -5.10594547390058,
 		stateTag{'S', "v"}:   -2.70805020110221}
-	ProbTrans[stateTag{'E', "rz"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "rz"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -2.993855513541131,
 		stateTag{'B', "ad"}:   -6.970417040106848,
 		stateTag{'B', "an"}:   -6.682734967655067,
@@ -2015,7 +2015,7 @@ func init() {
 		stateTag{'S', "uj"}:   -8.069029328774958,
 		stateTag{'S', "v"}:    -2.993855513541131,
 		stateTag{'S', "vg"}:   -5.766444235780912}
-	ProbTrans[stateTag{'E', "s"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "s"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.116698496101698,
 		stateTag{'B', "ad"}:   -5.9592873005373885,
 		stateTag{'B', "an"}:   -7.419246796694014,
@@ -2087,7 +2087,7 @@ func init() {
 		stateTag{'S', "vn"}:   -9.91245224929671,
 		stateTag{'S', "x"}:    -8.8138399606286,
 		stateTag{'S', "y"}:    -6.5246778879666945}
-	ProbTrans[stateTag{'E', "t"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "t"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.4115592866919,
 		stateTag{'B', "ad"}:   -5.931133218221465,
 		stateTag{'B', "an"}:   -7.986690387030758,
@@ -2165,8 +2165,8 @@ func init() {
 		stateTag{'S', "vn"}:   -10.241484816188455,
 		stateTag{'S', "x"}:    -9.77148118694272,
 		stateTag{'S', "y"}:    -7.117652540007149}
-	ProbTrans[stateTag{'E', "tg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "u"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "tg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "u"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.591552560215763,
 		stateTag{'B', "ad"}:   -5.404747310163883,
 		stateTag{'B', "an"}:   -7.092146764067696,
@@ -2235,13 +2235,13 @@ func init() {
 		stateTag{'S', "vn"}:   -10.70306467671192,
 		stateTag{'S', "x"}:    -9.09362676427782,
 		stateTag{'S', "y"}:    -5.634160474491688}
-	ProbTrans[stateTag{'E', "ud"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "ug"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "uj"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "ul"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "uv"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "uz"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "v"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "ud"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "ug"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "uj"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "ul"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "uv"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "uz"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "v"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.8989602169930455,
 		stateTag{'B', "ad"}:   -5.664196681536004,
 		stateTag{'B', "an"}:   -7.241241872313853,
@@ -2323,7 +2323,7 @@ func init() {
 		stateTag{'S', "vn"}:   -10.39720023903398,
 		stateTag{'S', "x"}:    -9.163600741499367,
 		stateTag{'S', "y"}:    -5.864375190449522}
-	ProbTrans[stateTag{'E', "vd"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "vd"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:   -3.306416029258377,
 		stateTag{'B', "ad"}:  -6.725402952484031,
 		stateTag{'B', "an"}:  -6.9877672169515215,
@@ -2377,8 +2377,8 @@ func init() {
 		stateTag{'S', "v"}:   -2.8967615559949356,
 		stateTag{'S', "vg"}:  -7.344442160890254,
 		stateTag{'S', "y"}:   -8.597205129385623}
-	ProbTrans[stateTag{'E', "vg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "vi"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "vg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "vi"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:  -2.2512917986064953,
 		stateTag{'B', "b"}:  -2.9444389791664407,
 		stateTag{'B', "d"}:  -3.1675825304806504,
@@ -2400,7 +2400,7 @@ func init() {
 		stateTag{'S', "q"}:  -3.8607297110405954,
 		stateTag{'S', "r"}:  -4.553876891600541,
 		stateTag{'S', "v"}:  -3.8607297110405954}
-	ProbTrans[stateTag{'E', "vn"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "vn"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.235664336765162,
 		stateTag{'B', "ad"}:   -5.524392453954045,
 		stateTag{'B', "an"}:   -7.4911762261521115,
@@ -2476,7 +2476,7 @@ func init() {
 		stateTag{'S', "vn"}:   -11.19583954796731,
 		stateTag{'S', "x"}:    -9.787072330995361,
 		stateTag{'S', "y"}:    -6.886872484162933}
-	ProbTrans[stateTag{'E', "vq"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "vq"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.941642422609305,
 		stateTag{'B', "ad"}:   -6.327936783729195,
 		stateTag{'B', "an"}:   -6.327936783729195,
@@ -2518,9 +2518,9 @@ func init() {
 		stateTag{'S', "ul"}:   -3.3834978045627544,
 		stateTag{'S', "v"}:    -3.332204510175204,
 		stateTag{'S', "y"}:    -4.53617731450114}
-	ProbTrans[stateTag{'E', "w"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "x"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "y"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "w"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "x"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "y"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.603957329562882,
 		stateTag{'B', "ad"}:   -6.714170529909472,
 		stateTag{'B', "an"}:   -8.100464891029363,
@@ -2581,8 +2581,8 @@ func init() {
 		stateTag{'S', "vg"}:   -5.797879798035317,
 		stateTag{'S', "x"}:    -7.001852602361253,
 		stateTag{'S', "y"}:    -4.666477686544217}
-	ProbTrans[stateTag{'E', "yg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'E', "z"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "yg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'E', "z"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.784718459481977,
 		stateTag{'B', "ad"}:   -6.98058652610505,
 		stateTag{'B', "an"}:   -7.062264557119317,
@@ -2651,133 +2651,133 @@ func init() {
 		stateTag{'S', "vn"}:   -9.526117797709485,
 		stateTag{'S', "x"}:    -8.60982706583533,
 		stateTag{'S', "y"}:    -6.834874714923656}
-	ProbTrans[stateTag{'E', "zg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "a"}] = stateTagFloatMap{
+	probTrans[stateTag{'E', "zg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "a"}] = stateTagFloatMap{
 		stateTag{'E', "a"}: -0.15225895278450224,
 		stateTag{'M', "a"}: -1.9573362843447062}
-	ProbTrans[stateTag{'M', "ad"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "ad"}] = stateTagFloatMap{
 		stateTag{'E', "ad"}: -0.640037355245997,
 		stateTag{'M', "ad"}: -0.7492366472109889}
-	ProbTrans[stateTag{'M', "ag"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "an"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "b"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "ag"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "an"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "b"}] = stateTagFloatMap{
 		stateTag{'E', "b"}: -0.03697100476728258,
 		stateTag{'M', "b"}: -3.3160498792268744}
-	ProbTrans[stateTag{'M', "bg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "c"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "bg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "c"}] = stateTagFloatMap{
 		stateTag{'E', "c"}: -0.3618898524754362,
 		stateTag{'M', "c"}: -1.1919094133166193}
-	ProbTrans[stateTag{'M', "d"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "d"}] = stateTagFloatMap{
 		stateTag{'E', "d"}: -0.014864590735645855,
 		stateTag{'M', "d"}: -4.216196443872451}
-	ProbTrans[stateTag{'M', "df"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "dg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "e"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "df"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "dg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "e"}] = stateTagFloatMap{
 		stateTag{'E', "e"}: 0.0}
-	ProbTrans[stateTag{'M', "en"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "f"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "en"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "f"}] = stateTagFloatMap{
 		stateTag{'E', "f"}: 0.0}
-	ProbTrans[stateTag{'M', "g"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "h"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "i"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "g"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "h"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "i"}] = stateTagFloatMap{
 		stateTag{'E', "i"}: -0.7026619410944851,
 		stateTag{'M', "i"}: -0.6837220980982187}
-	ProbTrans[stateTag{'M', "in"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "in"}] = stateTagFloatMap{
 		stateTag{'E', "in"}: -0.6931471805599453,
 		stateTag{'M', "in"}: -0.6931471805599453}
-	ProbTrans[stateTag{'M', "j"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "j"}] = stateTagFloatMap{
 		stateTag{'E', "j"}: -0.14026125751410626,
 		stateTag{'M', "j"}: -2.0335595159078217}
-	ProbTrans[stateTag{'M', "jn"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "jn"}] = stateTagFloatMap{
 		stateTag{'E', "jn"}: 0.0}
-	ProbTrans[stateTag{'M', "k"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "l"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "k"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "l"}] = stateTagFloatMap{
 		stateTag{'E', "l"}: -0.6103493408406276,
 		stateTag{'M', "l"}: -0.7834244394528702}
-	ProbTrans[stateTag{'M', "ln"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "ln"}] = stateTagFloatMap{
 		stateTag{'E', "ln"}: -0.6931471805599453,
 		stateTag{'M', "ln"}: -0.6931471805599453}
-	ProbTrans[stateTag{'M', "m"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "m"}] = stateTagFloatMap{
 		stateTag{'E', "m"}: -0.24867623061733957,
 		stateTag{'M', "m"}: -1.513366287948698}
-	ProbTrans[stateTag{'M', "mg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "mq"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "mg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "mq"}] = stateTagFloatMap{
 		stateTag{'E', "mq"}: -0.020181594737323828,
 		stateTag{'M', "mq"}: -3.9130580682712353}
-	ProbTrans[stateTag{'M', "n"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "n"}] = stateTagFloatMap{
 		stateTag{'E', "n"}: -0.14378203809805257,
 		stateTag{'M', "n"}: -2.0104865313727696}
-	ProbTrans[stateTag{'M', "ng"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "nr"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "ng"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "nr"}] = stateTagFloatMap{
 		stateTag{'E', "nr"}: -0.033952407837838455,
 		stateTag{'M', "nr"}: -3.399723676897525}
-	ProbTrans[stateTag{'M', "nrfg"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "nrfg"}] = stateTagFloatMap{
 		stateTag{'E', "nrfg"}: -0.024812491911998164,
 		stateTag{'M', "nrfg"}: -3.708788640097414}
-	ProbTrans[stateTag{'M', "nrt"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "nrt"}] = stateTagFloatMap{
 		stateTag{'E', "nrt"}: -0.43009105470816617,
 		stateTag{'M', "nrt"}: -1.0511082812555934}
-	ProbTrans[stateTag{'M', "ns"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "ns"}] = stateTagFloatMap{
 		stateTag{'E', "ns"}: -0.41538716750484356,
 		stateTag{'M', "ns"}: -1.079058715594638}
-	ProbTrans[stateTag{'M', "nt"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "nt"}] = stateTagFloatMap{
 		stateTag{'E', "nt"}: -1.0619399219246302,
 		stateTag{'M', "nt"}: -0.42431826412433127}
-	ProbTrans[stateTag{'M', "nz"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "nz"}] = stateTagFloatMap{
 		stateTag{'E', "nz"}: -0.6129122790767475,
 		stateTag{'M', "nz"}: -0.7803857433216695}
-	ProbTrans[stateTag{'M', "o"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "o"}] = stateTagFloatMap{
 		stateTag{'E', "o"}: -0.43913545259227216,
 		stateTag{'M', "o"}: -1.0344929668659584}
-	ProbTrans[stateTag{'M', "p"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "p"}] = stateTagFloatMap{
 		stateTag{'E', "p"}: 0.0}
-	ProbTrans[stateTag{'M', "q"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "q"}] = stateTagFloatMap{
 		stateTag{'E', "q"}: -0.5887911556507256,
 		stateTag{'M', "q"}: -0.8096760200284628}
-	ProbTrans[stateTag{'M', "qe"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "qg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "r"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "qe"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "qg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "r"}] = stateTagFloatMap{
 		stateTag{'E', "r"}: -0.001225584220815199,
 		stateTag{'M', "r"}: -6.704950363246782}
-	ProbTrans[stateTag{'M', "rg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "rr"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "rg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "rr"}] = stateTagFloatMap{
 		stateTag{'E', "rr"}: 0.0}
-	ProbTrans[stateTag{'M', "rz"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "s"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "rz"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "s"}] = stateTagFloatMap{
 		stateTag{'E', "s"}: -0.038706454714843914,
 		stateTag{'M', "s"}: -3.2710397079253735}
-	ProbTrans[stateTag{'M', "t"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "t"}] = stateTagFloatMap{
 		stateTag{'E', "t"}: -0.0390980816630263, stateTag{'M', "t"}: -3.261167222997749}
-	ProbTrans[stateTag{'M', "tg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "u"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "tg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "u"}] = stateTagFloatMap{
 		stateTag{'E', "u"}: 0.0}
-	ProbTrans[stateTag{'M', "ud"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "ug"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "uj"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "ul"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "uv"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "uz"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "v"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "ud"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "ug"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "uj"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "ul"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "uv"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "uz"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "v"}] = stateTagFloatMap{
 		stateTag{'E', "v"}: -0.02741220765591975,
 		stateTag{'M', "v"}: -3.6104416243987187}
-	ProbTrans[stateTag{'M', "vd"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "vg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "vi"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "vd"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "vg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "vi"}] = stateTagFloatMap{
 		stateTag{'E', "vi"}: 0.0}
-	ProbTrans[stateTag{'M', "vn"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "vn"}] = stateTagFloatMap{
 		stateTag{'E', "vn"}: -0.005719329272592161,
 		stateTag{'M', "vn"}: -5.16676204219196}
-	ProbTrans[stateTag{'M', "vq"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "w"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "x"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "y"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "vq"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "w"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "x"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "y"}] = stateTagFloatMap{
 		stateTag{'E', "y"}: 0.0}
-	ProbTrans[stateTag{'M', "yg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'M', "z"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "yg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'M', "z"}] = stateTagFloatMap{
 		stateTag{'E', "z"}: -0.2694884162268495,
 		stateTag{'M', "z"}: -1.4429499090882365}
-	ProbTrans[stateTag{'M', "zg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "a"}] = stateTagFloatMap{
+	probTrans[stateTag{'M', "zg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "a"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.882268156170318,
 		stateTag{'B', "ad"}:   -7.26639576964248,
 		stateTag{'B', "an"}:   -8.094236458007124,
@@ -2853,7 +2853,7 @@ func init() {
 		stateTag{'S', "x"}:    -6.413885039066743,
 		stateTag{'S', "y"}:    -5.131363777151846,
 		stateTag{'S', "zg"}:   -13.464874486134788}
-	ProbTrans[stateTag{'S', "ad"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "ad"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:   -5.972111818592167,
 		stateTag{'B', "ad"}:  -6.377576926700331,
 		stateTag{'B', "b"}:   -7.0707241072602764,
@@ -2906,7 +2906,7 @@ func init() {
 		stateTag{'S', "vg"}:  -2.9435897222151852,
 		stateTag{'S', "x"}:   -4.5858174574722765,
 		stateTag{'S', "y"}:   -7.0707241072602764}
-	ProbTrans[stateTag{'S', "ag"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "ag"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.577175405927603,
 		stateTag{'B', "ad"}:   -6.896289800872859,
 		stateTag{'B', "an"}:   -9.60434000197507,
@@ -2978,7 +2978,7 @@ func init() {
 		stateTag{'S', "y"}:    -4.931511167513163,
 		stateTag{'S', "yg"}:   -9.60434000197507,
 		stateTag{'S', "zg"}:   -10.297487182535015}
-	ProbTrans[stateTag{'S', "an"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "an"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:  -4.527980547296962,
 		stateTag{'B', "an"}: -6.473890696352274,
 		stateTag{'B', "c"}:  -4.276666119016055,
@@ -3022,7 +3022,7 @@ func init() {
 		stateTag{'S', "v"}:  -1.7203005052459102,
 		stateTag{'S', "vg"}: -3.908941338890738,
 		stateTag{'S', "y"}:  -4.527980547296962}
-	ProbTrans[stateTag{'S', "b"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "b"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -5.5501579721628405,
 		stateTag{'B', "ad"}:   -8.42560407984233,
 		stateTag{'B', "an"}:   -9.054212739264702,
@@ -3094,7 +3094,7 @@ func init() {
 		stateTag{'S', "x"}:    -6.829589187740369,
 		stateTag{'S', "y"}:    -7.732456899282384,
 		stateTag{'S', "zg"}:   -10.03504199227643}
-	ProbTrans[stateTag{'S', "bg"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "bg"}] = stateTagFloatMap{
 		stateTag{'B', "n"}:  -2.4159137783010487,
 		stateTag{'B', "nr"}: -4.02535169073515,
 		stateTag{'S', "a"}:  -2.9267394020670396,
@@ -3113,7 +3113,7 @@ func init() {
 		stateTag{'S', "vg"}: -2.9267394020670396,
 		stateTag{'S', "x"}:  -3.332204510175204,
 		stateTag{'S', "y"}:  -4.02535169073515}
-	ProbTrans[stateTag{'S', "c"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "c"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.749888765843523,
 		stateTag{'B', "ad"}:   -5.751212180108722,
 		stateTag{'B', "an"}:   -6.839186070571776,
@@ -3190,7 +3190,7 @@ func init() {
 		stateTag{'S', "vn"}:   -9.38969000284559,
 		stateTag{'S', "x"}:    -8.592030123550158,
 		stateTag{'S', "y"}:    -9.555204441323163}
-	ProbTrans[stateTag{'S', "d"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "d"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.247460873265525,
 		stateTag{'B', "ad"}:   -5.180368772925723,
 		stateTag{'B', "an"}:   -7.2331315265056615,
@@ -3267,8 +3267,8 @@ func init() {
 		stateTag{'S', "x"}:    -8.311665920637243,
 		stateTag{'S', "y"}:    -8.273416038503242,
 		stateTag{'S', "yg"}:   -12.779870251552177}
-	ProbTrans[stateTag{'S', "df"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "dg"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "df"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "dg"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:   -3.0847761839373105,
 		stateTag{'B', "ad"}:  -5.975147941833475,
 		stateTag{'B', "an"}:  -6.973676771944603,
@@ -3327,7 +3327,7 @@ func init() {
 		stateTag{'S', "x"}:   -3.819720493175717,
 		stateTag{'S', "y"}:   -5.336067982543805,
 		stateTag{'S', "yg"}:  -8.919586920999915}
-	ProbTrans[stateTag{'S', "e"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "e"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -5.0759357200325885,
 		stateTag{'B', "ad"}:   -7.180069874302796,
 		stateTag{'B', "an"}:   -8.789507786736896,
@@ -3390,8 +3390,8 @@ func init() {
 		stateTag{'S', "vn"}:   -8.789507786736896,
 		stateTag{'S', "x"}:    -5.028307671043334,
 		stateTag{'S', "y"}:    -3.217353754559132}
-	ProbTrans[stateTag{'S', "en"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "f"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "en"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "f"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.5189380050412975,
 		stateTag{'B', "ad"}:   -5.568568393368359,
 		stateTag{'B', "an"}:   -8.630886271681646,
@@ -3467,7 +3467,7 @@ func init() {
 		stateTag{'S', "x"}:    -8.107031147625323,
 		stateTag{'S', "y"}:    -7.2907216822892575,
 		stateTag{'S', "yg"}:   -13.434907316414902}
-	ProbTrans[stateTag{'S', "g"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "g"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -5.476266964133363,
 		stateTag{'B', "ad"}:   -7.22211673205734,
 		stateTag{'B', "an"}:   -8.976135873302548,
@@ -3539,7 +3539,7 @@ func init() {
 		stateTag{'S', "x"}:    -3.428790641284272,
 		stateTag{'S', "y"}:    -5.659931704473785,
 		stateTag{'S', "zg"}:   -8.870775357644721}
-	ProbTrans[stateTag{'S', "h"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "h"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.294919559325406,
 		stateTag{'B', "ad"}:   -2.9543936166610956,
 		stateTag{'B', "an"}:   -7.057036981697891,
@@ -3603,9 +3603,9 @@ func init() {
 		stateTag{'S', "vg"}:   -4.771259007020227,
 		stateTag{'S', "x"}:    -8.848796450925946,
 		stateTag{'S', "y"}:    -6.902886301870633}
-	ProbTrans[stateTag{'S', "i"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "in"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "j"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "i"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "in"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "j"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -5.172473979259473,
 		stateTag{'B', "ad"}:   -6.87283716800434,
 		stateTag{'B', "an"}:   -8.009601222636825,
@@ -3680,8 +3680,8 @@ func init() {
 		stateTag{'S', "x"}:    -5.334303808006423,
 		stateTag{'S', "y"}:    -6.719450722069837,
 		stateTag{'S', "yg"}:   -9.80136069186488}
-	ProbTrans[stateTag{'S', "jn"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "k"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "jn"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "k"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.430072474283456,
 		stateTag{'B', "ad"}:   -5.732752695362214,
 		stateTag{'B', "an"}:   -8.130647968160584,
@@ -3751,9 +3751,9 @@ func init() {
 		stateTag{'S', "vn"}:   -10.270714131656854,
 		stateTag{'S', "x"}:    -7.872818858858484,
 		stateTag{'S', "y"}:    -6.509514015963292}
-	ProbTrans[stateTag{'S', "l"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "ln"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "m"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "l"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "ln"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "m"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.681467579073693,
 		stateTag{'B', "ad"}:   -6.248786735889066,
 		stateTag{'B', "an"}:   -8.34941116733404,
@@ -3830,7 +3830,7 @@ func init() {
 		stateTag{'S', "vn"}:   -10.11392099411472,
 		stateTag{'S', "x"}:    -7.968178372613644,
 		stateTag{'S', "y"}:    -6.600932206464448}
-	ProbTrans[stateTag{'S', "mg"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "mg"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:   -5.269145989247757,
 		stateTag{'B', "b"}:   -6.655440350367647,
 		stateTag{'B', "c"}:   -5.046002437933547,
@@ -3877,8 +3877,8 @@ func init() {
 		stateTag{'S', "v"}:   -2.577902906461928,
 		stateTag{'S', "vg"}:  -3.9473901492654373,
 		stateTag{'S', "x"}:   -3.822227006311431}
-	ProbTrans[stateTag{'S', "mq"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "n"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "mq"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "n"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.686340403757639,
 		stateTag{'B', "ad"}:   -6.376123176014915,
 		stateTag{'B', "an"}:   -8.580965984236023,
@@ -3957,7 +3957,7 @@ func init() {
 		stateTag{'S', "x"}:    -6.674577345448607,
 		stateTag{'S', "y"}:    -5.386183761117614,
 		stateTag{'S', "zg"}:   -13.397207140304054}
-	ProbTrans[stateTag{'S', "ng"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "ng"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.697871606694985,
 		stateTag{'B', "ad"}:   -6.304364008899328,
 		stateTag{'B', "an"}:   -8.94568634514544,
@@ -4036,7 +4036,7 @@ func init() {
 		stateTag{'S', "y"}:    -6.055314587249274,
 		stateTag{'S', "yg"}:   -11.479383159102872,
 		stateTag{'S', "zg"}:   -11.70252671041708}
-	ProbTrans[stateTag{'S', "nr"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "nr"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -5.2245052086251365,
 		stateTag{'B', "ad"}:   -6.9481268726859735,
 		stateTag{'B', "an"}:   -9.86889610776651,
@@ -4114,10 +4114,10 @@ func init() {
 		stateTag{'S', "y"}:    -6.577182958946042,
 		stateTag{'S', "yg"}:   -11.372973504542783,
 		stateTag{'S', "zg"}:   -12.066120685102728}
-	ProbTrans[stateTag{'S', "nrfg"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "nrt"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "ns"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "nt"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "nrfg"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "nrt"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "ns"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "nt"}] = stateTagFloatMap{
 		stateTag{'B', "ns"}: -1.791759469228055,
 		stateTag{'B', "vn"}: -3.9318256327243257,
 		stateTag{'S', "a"}:  -3.9318256327243257,
@@ -4133,9 +4133,9 @@ func init() {
 		stateTag{'S', "v"}:  -4.624972813284271,
 		stateTag{'S', "vg"}: -4.624972813284271,
 		stateTag{'S', "x"}:  -3.5263605246161616}
-	ProbTrans[stateTag{'S', "nz"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "nz"}] = stateTagFloatMap{
 		stateTag{'B', "nz"}: 0.0}
-	ProbTrans[stateTag{'S', "o"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "o"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:   -6.403905268952571,
 		stateTag{'B', "ad"}:  -8.013343181386672,
 		stateTag{'B', "b"}:   -7.607878073278508,
@@ -4193,7 +4193,7 @@ func init() {
 		stateTag{'S', "vg"}:  -4.2638391054563005,
 		stateTag{'S', "x"}:   -4.184701784897577,
 		stateTag{'S', "y"}:   -3.8236884393602466}
-	ProbTrans[stateTag{'S', "p"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "p"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.05760152463721,
 		stateTag{'B', "ad"}:   -6.282052474887318,
 		stateTag{'B', "an"}:   -7.575710610013756,
@@ -4274,7 +4274,7 @@ func init() {
 		stateTag{'S', "y"}:    -7.885759712612433,
 		stateTag{'S', "yg"}:   -14.331479531998012,
 		stateTag{'S', "zg"}:   -14.331479531998012}
-	ProbTrans[stateTag{'S', "q"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "q"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.030448538636748,
 		stateTag{'B', "ad"}:   -6.522417525558315,
 		stateTag{'B', "an"}:   -7.867067185406487,
@@ -4350,10 +4350,10 @@ func init() {
 		stateTag{'S', "x"}:    -6.752788779993978,
 		stateTag{'S', "y"}:    -4.34567253070957,
 		stateTag{'S', "yg"}:   -12.420944077007029}
-	ProbTrans[stateTag{'S', "qe"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "qg"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "qe"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "qg"}] = stateTagFloatMap{
 		stateTag{'S', "q"}: 0.0}
-	ProbTrans[stateTag{'S', "r"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "r"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.524933076979363,
 		stateTag{'B', "ad"}:   -5.679875906367215,
 		stateTag{'B', "an"}:   -8.304326538634133,
@@ -4431,7 +4431,7 @@ func init() {
 		stateTag{'S', "vn"}:   -9.744688121024298,
 		stateTag{'S', "x"}:    -8.315668815238066,
 		stateTag{'S', "y"}:    -5.562032321529741}
-	ProbTrans[stateTag{'S', "rg"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "rg"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.983606621708336,
 		stateTag{'B', "b"}:    -4.983606621708336,
 		stateTag{'B', "c"}:    -4.647134385087123,
@@ -4480,10 +4480,10 @@ func init() {
 		stateTag{'S', "vn"}:   -6.593044534142437,
 		stateTag{'S', "x"}:    -5.206750173022546,
 		stateTag{'S', "y"}:    -5.494432245474327}
-	ProbTrans[stateTag{'S', "rr"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "rz"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "s"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "t"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "rr"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "rz"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "s"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "t"}] = stateTagFloatMap{
 		stateTag{'B', "f"}:  -3.506557897319982,
 		stateTag{'B', "n"}:  -3.506557897319982,
 		stateTag{'B', "nr"}: -2.659260036932778,
@@ -4507,7 +4507,7 @@ func init() {
 		stateTag{'S', "uj"}: -2.995732273553991,
 		stateTag{'S', "ul"}: -4.605170185988091,
 		stateTag{'S', "v"}:  -1.2378743560016174}
-	ProbTrans[stateTag{'S', "tg"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "tg"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -5.510668424580223,
 		stateTag{'B', "ad"}:   -7.354613646978849,
 		stateTag{'B', "an"}:   -8.489593579817834,
@@ -4579,7 +4579,7 @@ func init() {
 		stateTag{'S', "vn"}:   -10.686818157154052,
 		stateTag{'S', "x"}:    -6.54368343076252,
 		stateTag{'S', "y"}:    -6.626375146607633}
-	ProbTrans[stateTag{'S', "u"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "u"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.060820938042829,
 		stateTag{'B', "ad"}:   -6.703913242870266,
 		stateTag{'B', "an"}:   -7.9441760486014035,
@@ -4652,7 +4652,7 @@ func init() {
 		stateTag{'S', "x"}:    -8.355090761477133,
 		stateTag{'S', "y"}:    -7.821573726509071,
 		stateTag{'S', "zg"}:   -12.465964625650443}
-	ProbTrans[stateTag{'S', "ud"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "ud"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.1518593137220194,
 		stateTag{'B', "ad"}:   -5.886559768042297,
 		stateTag{'B', "an"}:   -8.761664053807674,
@@ -4722,7 +4722,7 @@ func init() {
 		stateTag{'S', "vn"}:   -11.159559326606045,
 		stateTag{'S', "x"}:    -7.9014627885845625,
 		stateTag{'S', "y"}:    -6.372067583823998}
-	ProbTrans[stateTag{'S', "ug"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "ug"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.212048792566965,
 		stateTag{'B', "ad"}:   -6.357448302038598,
 		stateTag{'B', "an"}:   -7.502580606341601,
@@ -4792,7 +4792,7 @@ func init() {
 		stateTag{'S', "vn"}:   -10.14163793595686,
 		stateTag{'S', "x"}:    -9.04302564728875,
 		stateTag{'S', "y"}:    -5.383746662951104}
-	ProbTrans[stateTag{'S', "uj"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "uj"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.3174172564405104,
 		stateTag{'B', "ad"}:   -5.952569054914462,
 		stateTag{'B', "an"}:   -5.994046844318946,
@@ -4872,7 +4872,7 @@ func init() {
 		stateTag{'S', "vn"}:   -9.450072930102891,
 		stateTag{'S', "x"}:    -9.098675043265002,
 		stateTag{'S', "y"}:    -6.7508333586828355}
-	ProbTrans[stateTag{'S', "ul"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "ul"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.616755007317491,
 		stateTag{'B', "ad"}:   -5.796477741523672,
 		stateTag{'B', "an"}:   -7.389440816754267,
@@ -4949,7 +4949,7 @@ func init() {
 		stateTag{'S', "x"}:    -8.954142835346977,
 		stateTag{'S', "y"}:    -4.944822988470596,
 		stateTag{'S', "zg"}:   -13.113025918706649}
-	ProbTrans[stateTag{'S', "uv"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "uv"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.628041966911131,
 		stateTag{'B', "ad"}:   -5.920532105901576,
 		stateTag{'B', "an"}:   -8.384385346491744,
@@ -5020,7 +5020,7 @@ func init() {
 		stateTag{'S', "vn"}:   -11.562439176839689,
 		stateTag{'S', "x"}:    -8.672067418943525,
 		stateTag{'S', "y"}:    -7.271979735691298}
-	ProbTrans[stateTag{'S', "uz"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "uz"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -3.6847973057368475,
 		stateTag{'B', "ad"}:   -6.299867942373015,
 		stateTag{'B', "an"}:   -7.058766500495741,
@@ -5093,7 +5093,7 @@ func init() {
 		stateTag{'S', "vn"}:   -10.084057576291276,
 		stateTag{'S', "x"}:    -8.558001272796227,
 		stateTag{'S', "y"}:    -4.911303432718586}
-	ProbTrans[stateTag{'S', "v"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "v"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.244285160192155,
 		stateTag{'B', "ad"}:   -5.95251064842533,
 		stateTag{'B', "an"}:   -7.751567260771836,
@@ -5176,8 +5176,8 @@ func init() {
 		stateTag{'S', "y"}:    -5.5300299330049185,
 		stateTag{'S', "yg"}:   -14.487347275014162,
 		stateTag{'S', "zg"}:   -13.571056543140008}
-	ProbTrans[stateTag{'S', "vd"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "vg"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "vd"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "vg"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -4.766108483951023,
 		stateTag{'B', "ad"}:   -7.053015764225838,
 		stateTag{'B', "an"}:   -8.867248089305953,
@@ -5256,8 +5256,8 @@ func init() {
 		stateTag{'S', "y"}:    -5.979404777763146,
 		stateTag{'S', "yg"}:   -10.859678253996158,
 		stateTag{'S', "zg"}:   -10.571996181544378}
-	ProbTrans[stateTag{'S', "vi"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "vn"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "vi"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "vn"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -5.462418377228463,
 		stateTag{'B', "ad"}:   -7.659642954564682,
 		stateTag{'B', "b"}:    -6.561030665896573,
@@ -5311,9 +5311,9 @@ func init() {
 		stateTag{'S', "vn"}:   -5.580201412884847,
 		stateTag{'S', "x"}:    -6.2733485934447915,
 		stateTag{'S', "y"}:    -6.050205042130582}
-	ProbTrans[stateTag{'S', "vq"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "w"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "x"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "vq"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "w"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "x"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -5.527565702477573,
 		stateTag{'B', "ad"}:   -7.724790279813792,
 		stateTag{'B', "an"}:   -9.228867676590067,
@@ -5383,7 +5383,7 @@ func init() {
 		stateTag{'S', "y"}:    -5.31684467116192,
 		stateTag{'S', "yg"}:   -9.922014857150012,
 		stateTag{'S', "zg"}:   -8.535720496030121}
-	ProbTrans[stateTag{'S', "y"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "y"}] = stateTagFloatMap{
 		stateTag{'B', "a"}:    -5.035070048455653,
 		stateTag{'B', "ad"}:   -6.579044920106327,
 		stateTag{'B', "an"}:   -8.62921607948605,
@@ -5455,7 +5455,7 @@ func init() {
 		stateTag{'S', "vn"}:   -11.194165436947586,
 		stateTag{'S', "x"}:    -6.559436448717951,
 		stateTag{'S', "y"}:    -4.479994907038114}
-	ProbTrans[stateTag{'S', "yg"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "yg"}] = stateTagFloatMap{
 		stateTag{'B', "n"}:   -3.0204248861443626,
 		stateTag{'B', "nrt"}: -2.327277705584417,
 		stateTag{'B', "nz"}:  -3.713572066704308,
@@ -5474,8 +5474,8 @@ func init() {
 		stateTag{'S', "r"}:   -3.713572066704308,
 		stateTag{'S', "tg"}:  -3.713572066704308,
 		stateTag{'S', "v"}:   -2.1041341542702074}
-	ProbTrans[stateTag{'S', "z"}] = stateTagFloatMap{}
-	ProbTrans[stateTag{'S', "zg"}] = stateTagFloatMap{
+	probTrans[stateTag{'S', "z"}] = stateTagFloatMap{}
+	probTrans[stateTag{'S', "zg"}] = stateTagFloatMap{
 		stateTag{'B', "v"}:  -3.713572066704308,
 		stateTag{'S', "a"}:  -3.713572066704308,
 		stateTag{'S', "ag"}: -3.0204248861443626,
@@ -5494,7 +5494,7 @@ func init() {
 		stateTag{'S', "x"}:  -3.713572066704308,
 		stateTag{'S', "y"}:  -3.713572066704308}
 
-	for key, _ := range ProbTrans {
-		ProbTransKeys = append(ProbTransKeys, key)
+	for key, _ := range probTrans {
+		probTransKeys = append(probTransKeys, key)
 	}
 }
