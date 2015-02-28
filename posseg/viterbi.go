@@ -55,7 +55,7 @@ func viterbi(obs []rune) (float64, []stateTag) {
 	mem_path[0] = make(map[stateTag]stateTag)
 	ys := charStateTab.get(obs[0]) // default is all_states
 	for _, y := range ys {
-		V[0][y] = probEmit[y].get(obs[0]) + ProbStart[y]
+		V[0][y] = probEmit[y].get(obs[0]) + probStart[y]
 		mem_path[0][y] = emptyStateTag()
 	}
 	for t := 1; t < obsLength; t++ {
