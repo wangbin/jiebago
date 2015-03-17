@@ -43,11 +43,13 @@ func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 				if width > step {
 					for i := 0; i < width-step+1; i++ {
 						gram = string(runes[i : i+step])
+						gramLen := len(gram)
 						if value, ok := jiebago.Trie.Freq[gram]; ok && value > 0 {
+							gramStart := start + len(string(runes[:i]))
 							token := analysis.Token{
 								Term:     []byte(gram),
-								Start:    start,
-								End:      start + len(gram),
+								Start:    gramStart,
+								End:      gramStart + gramLen,
 								Position: pos,
 								Type:     detectTokenType(gram),
 							}
