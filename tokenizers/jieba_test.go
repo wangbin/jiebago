@@ -5218,7 +5218,7 @@ func TestJiebaTokenizerDefaultModeWithHMM(t *testing.T) {
 		},
 	}
 
-	tokenizer, _ := NewJiebaTokenizer("../../dict.txt", true, false)
+	tokenizer, _ := NewJiebaTokenizer("../dict.txt", true, false)
 	for _, test := range tests {
 		actual := tokenizer.Tokenize(test.input)
 		if !reflect.DeepEqual(actual, test.output) {
@@ -11056,7 +11056,7 @@ func TestJiebaTokenizerSearchModeWithHMM(t *testing.T) {
 		},
 	}
 
-	tokenizer, _ := NewJiebaTokenizer("../../dict.txt", true, true)
+	tokenizer, _ := NewJiebaTokenizer("../dict.txt", true, true)
 	for _, test := range tests {
 		actual := tokenizer.Tokenize(test.input)
 		if !reflect.DeepEqual(actual, test.output) {
@@ -16473,7 +16473,7 @@ func TestJiebaTokenizerDefaultModeWithoutHMM(t *testing.T) {
 		},
 	}
 
-	tokenizer, _ := NewJiebaTokenizer("../../dict.txt", false, false)
+	tokenizer, _ := NewJiebaTokenizer("../dict.txt", false, false)
 	for _, test := range tests {
 		actual := tokenizer.Tokenize(test.input)
 		if !reflect.DeepEqual(actual, test.output) {
@@ -22505,7 +22505,7 @@ func TestJiebaTokenizerSearchModeWithoutHMM(t *testing.T) {
 		},
 	}
 
-	tokenizer, _ := NewJiebaTokenizer("../../dict.txt", false, true)
+	tokenizer, _ := NewJiebaTokenizer("../dict.txt", false, true)
 	for _, test := range tests {
 		actual := tokenizer.Tokenize(test.input)
 		if !reflect.DeepEqual(actual, test.output) {
