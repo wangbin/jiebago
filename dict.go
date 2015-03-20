@@ -18,11 +18,11 @@ func DictPath(dictFileName string) (string, error) {
 		return dictFileName, nil
 	}
 	var dictFilePath string
-	pwd, err := os.Getwd()
+	cwd, err := os.Getwd()
 	if err != nil {
 		return dictFilePath, err
 	}
-	dictFilePath = filepath.Clean(filepath.Join(pwd, dictFileName))
+	dictFilePath = filepath.Clean(filepath.Join(cwd, dictFileName))
 	return dictFilePath, nil
 }
 
