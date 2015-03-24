@@ -3,7 +3,6 @@ package jiebago
 import (
 	"bufio"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -11,19 +10,6 @@ import (
 type WordTagFreq struct {
 	Word, Tag string
 	Freq      float64
-}
-
-func DictPath(dictFileName string) (string, error) {
-	if filepath.IsAbs(dictFileName) {
-		return dictFileName, nil
-	}
-	var dictFilePath string
-	cwd, err := os.Getwd()
-	if err != nil {
-		return dictFilePath, err
-	}
-	dictFilePath = filepath.Clean(filepath.Join(cwd, dictFileName))
-	return dictFilePath, nil
 }
 
 func ParseDictFile(dictFilePath string) (wtfs []*WordTagFreq, err error) {

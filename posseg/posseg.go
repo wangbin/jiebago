@@ -72,14 +72,13 @@ func cutDetail(sentence string) chan WordTag {
 	result := make(chan WordTag)
 
 	go func() {
-		blocks := jiebago.RegexpSplit(reHanDetail, sentence)
-		for _, blk := range blocks {
+		for blk := range jiebago.RegexpSplit(reHanDetail, sentence) {
 			if reHanDetail.MatchString(blk) {
 				for wordTag := range cutDetailInternal(blk) {
 					result <- wordTag
 				}
 			} else {
-				for _, x := range jiebago.RegexpSplit(reSkipDetail, blk) {
+				for x := range jiebago.RegexpSplit(reSkipDetail, blk) {
 					if len(x) == 0 {
 						continue
 					}
@@ -242,7 +241,6 @@ func Cut(sentence string, HMM bool) chan WordTag {
 		delete(jiebago.UserWordTagTab, key)
 	}
 	result := make(chan WordTag)
-	blocks := jiebago.RegexpSplit(reHanInternal, sentence)
 	var cut cutFunc
 	if HMM {
 		cut = cutDAG
@@ -250,13 +248,13 @@ func Cut(sentence string, HMM bool) chan WordTag {
 		cut = cutDAGNoHMM
 	}
 	go func() {
-		for _, blk := range blocks {
+		for blk := range jiebago.RegexpSplit(reHanInternal, sentence) {
 			if reHanInternal.MatchString(blk) {
 				for wordTag := range cut(blk) {
 					result <- wordTag
 				}
 			} else {
-				for _, x := range jiebago.RegexpSplit(reSkipInternal, blk) {
+				for x := range jiebago.RegexpSplit(reSkipInternal, blk) {
 					if reSkipInternal.MatchString(x) {
 						result <- WordTag{x, "x"}
 					} else {

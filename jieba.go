@@ -48,30 +48,6 @@ func (rs routes) Swap(i, j int) {
 	rs[i], rs[j] = rs[j], rs[i]
 }
 
-// Split sentence using regular expression.
-func RegexpSplit(r *regexp.Regexp, sentence string) []string {
-	result := make([]string, 0)
-	locs := r.FindAllStringIndex(sentence, -1)
-	lastLoc := 0
-	if len(locs) == 0 {
-		return []string{sentence}
-	}
-	for _, loc := range locs {
-		if loc[0] == lastLoc {
-			result = append(result, sentence[loc[0]:loc[1]])
-		} else {
-			result = append(result, sentence[lastLoc:loc[0]])
-			result = append(result, sentence[loc[0]:loc[1]])
-		}
-		lastLoc = loc[1]
-	}
-	if lastLoc < len(sentence) {
-		result = append(result, sentence[lastLoc:])
-	}
-
-	return result
-}
-
 // Build a directed acyclic graph (DAG) for sentence.
 func DAG(sentence string) map[int][]int {
 	dag := make(map[int][]int)
@@ -286,7 +262,6 @@ func Cut(sentence string, isCutAll bool, HMM bool) chan string {
 			reHan = reHanDefault
 			reSkip = reSkipDefault
 		}
-		blocks := RegexpSplit(reHan, sentence)
 		var cut cutFunc
 		if HMM {
 			cut = cutDAG
@@ -296,7 +271,7 @@ func Cut(sentence string, isCutAll bool, HMM bool) chan string {
 		if isCutAll {
 			cut = cutAll
 		}
-		for _, blk := range blocks {
+		for blk := range RegexpSplit(reHan, sentence) {
 			if len(blk) == 0 {
 				continue
 			}
@@ -305,19 +280,26 @@ func Cut(sentence string, isCutAll bool, HMM bool) chan string {
 					result <- x
 				}
 			} else {
-				type skipSplitFunc func(sentence string) []string
+				type skipSplitFunc func(sentence string) chan string
 				var ssf skipSplitFunc
 				if isCutAll {
-					ssf = func(sentence string) []string {
-						return reSkip.Split(sentence, -1)
+					ssf = func(sentence string) chan string {
+						ch := make(chan string)
+						go func() {
+							for _, s := range reSkip.Split(sentence, -1) {
+								ch <- s
+							}
+							close(ch)
+						}()
+						return ch
 					}
 				} else {
-					ssf = func(sentence string) []string {
+					ssf = func(sentence string) chan string {
 						return RegexpSplit(reSkip, sentence)
 					}
 				}
 
-				for _, x := range ssf(blk) {
+				for x := range ssf(blk) {
 					if reSkip.MatchString(x) {
 						result <- x
 					} else if !isCutAll {
