@@ -5,53 +5,28 @@ import (
 	"sort"
 )
 
-var (
-	loader *idfLoader
-)
-
-func init() {
-	loader = newIDFLoader()
+type IDFLoader struct {
+	IDFFreq map[string]float64
+	Median  float64
 }
 
-type idfLoader struct {
-	Path   string
-	Freq   map[string]float64
-	Median float64
-}
-
-func newIDFLoader() *idfLoader {
-	loader := new(idfLoader)
-	loader.Freq = make(map[string]float64)
-	return loader
-}
-
-func (loader *idfLoader) newPath(idfFilePath string) error {
-	if loader.Path == idfFilePath {
-		return nil
-	}
-	wtfs, err := jiebago.ParseDictFile(idfFilePath)
+func NewIDFLoader(IDFFileName string) (*IDFLoader, error) {
+	IDFFilePath, err := jiebago.DictPath(IDFFileName)
 	if err != nil {
-		return err
+		return nil, err
+	}
+	wtfs, err := jiebago.ParseDictFile(IDFFilePath)
+	if err != nil {
+		return nil, err
 	}
 
-	freqs := make([]float64, 0)
-
-	for _, wtf := range wtfs {
-		loader.Freq[wtf.Word] = wtf.Freq
-		freqs = append(freqs, wtf.Freq)
+	freqs := make([]float64, len(wtfs))
+	loader := &IDFLoader{make(map[string]float64), 0.0}
+	for index, wtf := range wtfs {
+		loader.IDFFreq[wtf.Word] = wtf.Freq
+		freqs[index] = wtf.Freq
 	}
-
 	sort.Float64s(freqs)
 	loader.Median = freqs[len(freqs)/2]
-	return nil
-}
-
-// Set the IDF file path, could be absolute path of IDF file, or IDF file
-// name in current directory.
-func SetIdf(idfFileName string) error {
-	idfFilePath, err := jiebago.DictPath(idfFileName)
-	if err != nil {
-		return err
-	}
-	return loader.newPath(idfFilePath)
+	return loader, nil
 }

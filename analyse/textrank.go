@@ -115,7 +115,7 @@ func (u *undirectWeightedGraph) rank() wordWeights {
 
 // Extract keywords from sentence using TextRank algorithm. the allowed POS list
 // could be manually speificed.
-func TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
+func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
 	posFilt := make(map[string]int)
 	for _, pos := range allowPOS {
 		posFilt[pos] = 1
@@ -124,7 +124,7 @@ func TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
 	cm := make(map[[2]string]float64)
 	span := 5
 	wordTags := make([]posseg.WordTag, 0)
-	for wordTag := range posseg.Cut(sentence, true) {
+	for wordTag := range t.Cut(sentence, true) {
 		wordTags = append(wordTags, wordTag)
 	}
 	for i, _ := range wordTags {
@@ -156,13 +156,21 @@ func TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
 
 // Extract keywords from sentence using TextRank algorithm.
 // topK specify how many top keywords to be returned at most.
-func TextRank(sentence string, topK int) wordWeights {
-	return TextRankWithPOS(sentence, topK, defaultAllowPOS)
+func (t *TextRanker) TextRank(sentence string, topK int) wordWeights {
+	return t.TextRankWithPOS(sentence, topK, defaultAllowPOS)
 }
 
 // Set the dictionary, could be absolute path of dictionary file, or dictionary
 // name in current directory. This function must be called before cut any
 // sentence.
-func SetDictionary(dictFileName string) error {
-	return posseg.SetDictionary(dictFileName)
+func NewTextRanker(dictFileName string) (*TextRanker, error) {
+	p, err := posseg.NewPosseg(dictFileName)
+	if err != nil {
+		return nil, err
+	}
+	return &TextRanker{p}, nil
+}
+
+type TextRanker struct {
+	*posseg.Posseg
 }

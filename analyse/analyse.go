@@ -35,16 +35,49 @@ func (ws wordWeights) Swap(i, j int) {
 	ws[i], ws[j] = ws[j], ws[i]
 }
 
+type TagExtracter struct {
+	*jiebago.Jieba
+	*IDFLoader
+	stopWords map[string]int
+}
+
+func NewTagExtracter(dictFileName, IDFFileName string) (*TagExtracter, error) {
+	j, err := jiebago.NewJieba(dictFileName)
+	if err != nil {
+		return nil, err
+	}
+	i, err := NewIDFLoader(IDFFileName)
+	if err != nil {
+		return nil, err
+	}
+	return &TagExtracter{j, i, StopWords}, nil
+}
+
+// Set the stop words file path, could be absolute path of stop words file, or
+// file name in current directory.
+func (t *TagExtracter) SetStopWords(stopWordsFileName string) error {
+	stopWordsFilePath, err := jiebago.DictPath(stopWordsFileName)
+	if err != nil {
+		return err
+	}
+
+	wtfs, err := jiebago.ParseDictFile(stopWordsFilePath)
+	for _, wtf := range wtfs {
+		t.stopWords[wtf.Word] = 1
+	}
+	return nil
+}
+
 // Keyword extraction.
-func ExtractTags(sentence string, topK int) (tags wordWeights) {
+func (t *TagExtracter) ExtractTags(sentence string, topK int) (tags wordWeights) {
 	freq := make(map[string]float64)
 
-	for w := range jiebago.Cut(sentence, false, true) {
+	for w := range t.Cut(sentence, false, true) {
 		w = strings.TrimSpace(w)
 		if utf8.RuneCountInString(w) < 2 {
 			continue
 		}
-		if _, ok := stopWords[w]; ok {
+		if _, ok := t.stopWords[w]; ok {
 			continue
 		}
 		if f, ok := freq[w]; ok {
@@ -63,10 +96,10 @@ func ExtractTags(sentence string, topK int) (tags wordWeights) {
 	ws := make(wordWeights, 0)
 	for k, v := range freq {
 		var ti wordWeight
-		if freq_, ok := loader.Freq[k]; ok {
+		if freq_, ok := t.IDFFreq[k]; ok {
 			ti = wordWeight{Word: k, Weight: freq_ * v}
 		} else {
-			ti = wordWeight{Word: k, Weight: loader.Median * v}
+			ti = wordWeight{Word: k, Weight: t.Median * v}
 		}
 		ws = append(ws, ti)
 	}

@@ -1,7 +1,6 @@
 package analyse
 
 import (
-	"github.com/wangbin/jiebago"
 	"math"
 	"testing"
 )
@@ -256,11 +255,10 @@ var (
 )
 
 func TestExtractTags(t *testing.T) {
-	jiebago.SetDictionary("../dict.txt")
-	SetIdf("idf.txt")
+	et, _ := NewTagExtracter("../dict.txt", "idf.txt")
 
 	for index, sentence := range test_contents {
-		result := ExtractTags(sentence, 20)
+		result := et.ExtractTags(sentence, 20)
 		if len(result) != len(Tags[index]) {
 			t.Errorf("%s = %v", sentence, result)
 		}
@@ -273,9 +271,8 @@ func TestExtractTags(t *testing.T) {
 }
 
 func TestExtratTagsWithWeight(t *testing.T) {
-	jiebago.SetDictionary("../dict.txt")
-	SetIdf("idf.txt")
-	result := ExtractTags(Lyric, 10)
+	et, _ := NewTagExtracter("../dict.txt", "idf.txt")
+	result := et.ExtractTags(Lyric, 10)
 	for index, tag := range result {
 		if LyciWeight[index].Word != tag.Word ||
 			math.Abs(LyciWeight[index].Weight-tag.Weight) > 1e-6 {
@@ -285,10 +282,9 @@ func TestExtratTagsWithWeight(t *testing.T) {
 }
 
 func TestExtractTagsWithStopWordsFile(t *testing.T) {
-	jiebago.SetDictionary("../dict.txt")
-	SetIdf("idf.txt")
-	SetStopWords("stop_words.txt")
-	result := ExtractTags(Lyric, 7)
+	et, _ := NewTagExtracter("../dict.txt", "idf.txt")
+	et.SetStopWords("stop_words.txt")
+	result := et.ExtractTags(Lyric, 7)
 	for index, tag := range result {
 		if LyciWeight2[index].Word != tag.Word ||
 			math.Abs(LyciWeight2[index].Weight-tag.Weight) > 1e-6 {

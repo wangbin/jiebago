@@ -23,8 +23,8 @@ var (
 )
 
 func TestTextRank(t *testing.T) {
-	SetDictionary("../dict.txt")
-	results := TextRank(sentence, 10)
+	tr, _ := NewTextRanker("../dict.txt")
+	results := tr.TextRank(sentence, 10)
 	for index, tw := range results {
 		if tw.Word != tagRanks[index].Word || math.Abs(tw.Weight-tagRanks[index].Weight) > 1e-6 {
 			t.Errorf("%v != %v", tw, tagRanks[index])

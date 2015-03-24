@@ -14,16 +14,16 @@ const Name = "jieba"
 var IdeographRegexp = regexp.MustCompile(`\p{Han}+`)
 
 type JiebaTokenizer struct {
-	dictFileName    string
+	j               *jiebago.Jieba
 	hmm, searchMode bool
 }
 
 func NewJiebaTokenizer(dictFileName string, hmm, searchMode bool) (analysis.Tokenizer, error) {
-	err := jiebago.SetDictionary(dictFileName)
+	j, err := jiebago.NewJieba(dictFileName)
 	return &JiebaTokenizer{
-		dictFileName: dictFileName,
-		hmm:          hmm,
-		searchMode:   searchMode,
+		j:          j,
+		hmm:        hmm,
+		searchMode: searchMode,
 	}, err
 }
 
@@ -35,7 +35,7 @@ func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 	pos := 1
 	var width int
 	var gram string
-	for word := range jiebago.Cut(string(input), false, jt.hmm) {
+	for word := range jt.j.Cut(string(input), false, jt.hmm) {
 		if jt.searchMode {
 			runes := []rune(word)
 			width = len(runes)
@@ -44,7 +44,7 @@ func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 					for i := 0; i < width-step+1; i++ {
 						gram = string(runes[i : i+step])
 						gramLen := len(gram)
-						if value, ok := jiebago.Trie.Freq[gram]; ok && value > 0 {
+						if value, ok := jt.j.Freq[gram]; ok && value > 0 {
 							gramStart := start + len(string(runes[:i]))
 							token := analysis.Token{
 								Term:     []byte(gram),
