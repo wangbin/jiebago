@@ -3,10 +3,10 @@ package posseg
 import (
 	"github.com/wangbin/jiebago"
 	"regexp"
+	"strings"
 )
 
 var (
-	wordTagMap     = make(map[string]string)
 	reHanDetail    = regexp.MustCompile(`\p{Han}+`)
 	reSkipDetail   = regexp.MustCompile(`[[\.[:digit:]]+|[:alnum:]]+`)
 	reEng          = regexp.MustCompile(`[[:alnum:]]`)
@@ -20,26 +20,48 @@ type WordTag struct {
 	Word, Tag string
 }
 
+type Posseg struct {
+	*jiebago.Jieba
+	Flag map[string]string
+}
+
+func (p *Posseg) Add(wtf *jiebago.WordTagFreq) {
+	if len(wtf.Tag) > 0 {
+		p.Flag[wtf.Word] = strings.TrimSpace(wtf.Tag)
+	}
+	p.AddWord(wtf)
+}
+
 // Set dictionary, it could be absolute path of dictionary file, or dictionary
 // name in current diectory.
-func SetDictionary(dictFileName string) error {
-	err := jiebago.SetDictionary(dictFileName)
-	if err != nil {
-		return err
-	}
+func NewPosseg(dictFileName string) (*Posseg, error) {
+	j := &jiebago.Jieba{Total: 0.0, Freq: make(map[string]float64)}
+	p := &Posseg{j, make(map[string]string)}
 	dictFilePath, err := jiebago.DictPath(dictFileName)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	wtfs, err := jiebago.ParseDictFile(dictFilePath)
 
 	for _, wtf := range wtfs {
-		wordTagMap[wtf.Word] = wtf.Tag
+		p.Add(wtf)
+	}
+	return p, nil
+}
+
+// Load user specified dictionary file.
+func (p *Posseg) LoadUserDict(dictFilePath string) error {
+	wtfs, err := jiebago.ParseDictFile(dictFilePath)
+	if err != nil {
+		return err
+	}
+	for _, wtf := range wtfs {
+		p.Add(wtf)
 	}
 	return nil
 }
 
-func cutDetailInternal(sentence string) chan WordTag {
+func (p *Posseg) cutDetailInternal(sentence string) chan WordTag {
 	result := make(chan WordTag)
 
 	go func() {
@@ -68,13 +90,13 @@ func cutDetailInternal(sentence string) chan WordTag {
 	return result
 }
 
-func cutDetail(sentence string) chan WordTag {
+func (p *Posseg) cutDetail(sentence string) chan WordTag {
 	result := make(chan WordTag)
 
 	go func() {
 		for blk := range jiebago.RegexpSplit(reHanDetail, sentence) {
 			if reHanDetail.MatchString(blk) {
-				for wordTag := range cutDetailInternal(blk) {
+				for wordTag := range p.cutDetailInternal(blk) {
 					result <- wordTag
 				}
 			} else {
@@ -100,12 +122,12 @@ func cutDetail(sentence string) chan WordTag {
 
 type cutFunc func(sentence string) chan WordTag
 
-func cutDAG(sentence string) chan WordTag {
+func (p *Posseg) cutDAG(sentence string) chan WordTag {
 	result := make(chan WordTag)
 
 	go func() {
-		dag := jiebago.DAG(sentence)
-		routes := jiebago.Calc(sentence, dag)
+		dag := p.DAG(sentence)
+		routes := p.Calc(sentence, dag)
 		x := 0
 		var y int
 		runes := []rune(sentence)
@@ -123,7 +145,7 @@ func cutDAG(sentence string) chan WordTag {
 				if len(buf) > 0 {
 					if len(buf) == 1 {
 						sbuf := string(buf)
-						if tag, ok := wordTagMap[sbuf]; ok {
+						if tag, ok := p.Flag[sbuf]; ok {
 							result <- WordTag{sbuf, tag}
 						} else {
 							result <- WordTag{sbuf, "x"}
@@ -131,14 +153,14 @@ func cutDAG(sentence string) chan WordTag {
 						buf = make([]rune, 0)
 					} else {
 						bufString := string(buf)
-						if v, ok := jiebago.Trie.Freq[bufString]; !ok || v == 0.0 {
-							for t := range cutDetail(bufString) {
+						if v, ok := p.Freq[bufString]; !ok || v == 0.0 {
+							for t := range p.cutDetail(bufString) {
 								result <- t
 							}
 						} else {
 							for _, elem := range buf {
 								selem := string(elem)
-								if tag, ok := wordTagMap[selem]; ok {
+								if tag, ok := p.Flag[selem]; ok {
 									result <- WordTag{string(elem), tag}
 								} else {
 									result <- WordTag{string(elem), "x"}
@@ -150,7 +172,7 @@ func cutDAG(sentence string) chan WordTag {
 					}
 				}
 				sl_word := string(l_word)
-				if tag, ok := wordTagMap[sl_word]; ok {
+				if tag, ok := p.Flag[sl_word]; ok {
 					result <- WordTag{sl_word, tag}
 				} else {
 					result <- WordTag{sl_word, "x"}
@@ -162,21 +184,21 @@ func cutDAG(sentence string) chan WordTag {
 		if len(buf) > 0 {
 			if len(buf) == 1 {
 				sbuf := string(buf)
-				if tag, ok := wordTagMap[sbuf]; ok {
+				if tag, ok := p.Flag[sbuf]; ok {
 					result <- WordTag{sbuf, tag}
 				} else {
 					result <- WordTag{sbuf, "x"}
 				}
 			} else {
 				bufString := string(buf)
-				if v, ok := jiebago.Trie.Freq[bufString]; !ok || v == 0.0 {
-					for t := range cutDetail(bufString) {
+				if v, ok := p.Freq[bufString]; !ok || v == 0.0 {
+					for t := range p.cutDetail(bufString) {
 						result <- t
 					}
 				} else {
 					for _, elem := range buf {
 						selem := string(elem)
-						if tag, ok := wordTagMap[selem]; ok {
+						if tag, ok := p.Flag[selem]; ok {
 							result <- WordTag{selem, tag}
 						} else {
 							result <- WordTag{selem, "x"}
@@ -190,12 +212,12 @@ func cutDAG(sentence string) chan WordTag {
 	return result
 }
 
-func cutDAGNoHMM(sentence string) chan WordTag {
+func (p *Posseg) cutDAGNoHMM(sentence string) chan WordTag {
 	result := make(chan WordTag)
 
 	go func() {
-		dag := jiebago.DAG(sentence)
-		routes := jiebago.Calc(sentence, dag)
+		dag := p.DAG(sentence)
+		routes := p.Calc(sentence, dag)
 		x := 0
 		var y int
 		runes := []rune(sentence)
@@ -216,7 +238,7 @@ func cutDAGNoHMM(sentence string) chan WordTag {
 					buf = make([]rune, 0)
 				}
 				sl_word := string(l_word)
-				if tag, ok := wordTagMap[sl_word]; ok {
+				if tag, ok := p.Flag[sl_word]; ok {
 					result <- WordTag{sl_word, tag}
 				} else {
 					result <- WordTag{sl_word, "x"}
@@ -235,17 +257,13 @@ func cutDAGNoHMM(sentence string) chan WordTag {
 
 // Tags the POS of each word after segmentation, using labels compatible with
 // ictclas.
-func Cut(sentence string, HMM bool) chan WordTag {
-	for key := range jiebago.UserWordTagTab {
-		wordTagMap[key] = jiebago.UserWordTagTab[key]
-		delete(jiebago.UserWordTagTab, key)
-	}
+func (p *Posseg) Cut(sentence string, HMM bool) chan WordTag {
 	result := make(chan WordTag)
 	var cut cutFunc
 	if HMM {
-		cut = cutDAG
+		cut = p.cutDAG
 	} else {
-		cut = cutDAGNoHMM
+		cut = p.cutDAGNoHMM
 	}
 	go func() {
 		for blk := range jiebago.RegexpSplit(reHanInternal, sentence) {

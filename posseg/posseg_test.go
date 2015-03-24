@@ -1,7 +1,6 @@
 package posseg
 
 import (
-	"github.com/wangbin/jiebago"
 	"testing"
 )
 
@@ -277,18 +276,21 @@ func chanToArray(ch chan WordTag) []WordTag {
 }
 
 func TestCut(t *testing.T) {
-	SetDictionary("../dict.txt")
+	p, err := NewPosseg("../dict.txt")
+	if err != nil {
+		t.Fatal(err)
+	}
 	for index, content := range test_contents {
-		result := chanToArray(Cut(content, true))
+		result := chanToArray(p.Cut(content, true))
 		if len(defaultCutResult[index]) != len(result) {
 			t.Error(content)
 		}
 		for i, _ := range result {
 			if result[i] != defaultCutResult[index][i] {
-				t.Error(content)
+				t.Errorf("expect %s, got %s", defaultCutResult[index][i], result[i])
 			}
 		}
-		result = chanToArray(Cut(content, false))
+		result = chanToArray(p.Cut(content, false))
 		if len(noHMMCutResult[index]) != len(result) {
 			t.Error(content)
 		}
@@ -305,7 +307,7 @@ func TestBug132(t *testing.T) {
 	/*
 		https://github.com/fxsjy/jieba/issues/132
 	*/
-	SetDictionary("../dict.txt")
+	p, _ := NewPosseg("../dict.txt")
 	sentence := "又跛又啞"
 	cutResult := []WordTag{
 		WordTag{"又", "d"},
@@ -313,7 +315,7 @@ func TestBug132(t *testing.T) {
 		WordTag{"又", "d"},
 		WordTag{"啞", "v"},
 	}
-	result := chanToArray(Cut(sentence, true))
+	result := chanToArray(p.Cut(sentence, true))
 	if len(cutResult) != len(result) {
 		t.Error(result)
 	}
@@ -328,7 +330,7 @@ func TestBug137(t *testing.T) {
 	/*
 		https://github.com/fxsjy/jieba/issues/137
 	*/
-	SetDictionary("../dict.txt")
+	p, _ := NewPosseg("../dict.txt")
 	sentence := "前港督衛奕信在八八年十月宣布成立中央政策研究組"
 	cutResult := []WordTag{
 		WordTag{"前", "f"},
@@ -345,7 +347,7 @@ func TestBug137(t *testing.T) {
 		WordTag{"研究", "vn"},
 		WordTag{"組", "x"},
 	}
-	result := chanToArray(Cut(sentence, true))
+	result := chanToArray(p.Cut(sentence, true))
 	if len(cutResult) != len(result) {
 		t.Error(result)
 	}
@@ -357,8 +359,8 @@ func TestBug137(t *testing.T) {
 }
 
 func TestUserDict(t *testing.T) {
-	SetDictionary("../dict.txt")
-	jiebago.LoadUserDict("../userdict.txt")
+	p, _ := NewPosseg("../dict.txt")
+	p.LoadUserDict("../userdict.txt")
 	sentence := "李小福是创新办主任也是云计算方面的专家; 什么是八一双鹿例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
 
 	cutResult := []WordTag{
@@ -400,7 +402,7 @@ func TestUserDict(t *testing.T) {
 		WordTag{"N", "eng"},
 		WordTag{"类型", "n"}}
 
-	result := chanToArray(Cut(sentence, true))
+	result := chanToArray(p.Cut(sentence, true))
 	if len(cutResult) != len(result) {
 		t.Error(result)
 	}

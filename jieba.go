@@ -49,7 +49,7 @@ func (rs routes) Swap(i, j int) {
 }
 
 // Build a directed acyclic graph (DAG) for sentence.
-func DAG(sentence string) map[int][]int {
+func (j *Jieba) DAG(sentence string) map[int][]int {
 	dag := make(map[int][]int)
 	runes := []rune(sentence)
 	n := len(runes)
@@ -60,7 +60,7 @@ func DAG(sentence string) map[int][]int {
 		i = k
 		frag = string(runes[k])
 		for {
-			if freq, ok := Trie.Freq[frag]; !ok {
+			if freq, ok := j.Freq[frag]; !ok {
 				break
 			} else {
 				if freq > 0.0 {
@@ -81,19 +81,19 @@ func DAG(sentence string) map[int][]int {
 	return dag
 }
 
-func Calc(sentence string, dag map[int][]int) map[int]*route {
+func (j *Jieba) Calc(sentence string, dag map[int][]int) map[int]*route {
 	runes := []rune(sentence)
 	number := len(runes)
 	rs := make(map[int]*route)
 	rs[number] = &route{Freq: 0.0, Index: 0}
-	logTotal := math.Log(Trie.Total)
+	logTotal := math.Log(j.Total)
 	for idx := number - 1; idx >= 0; idx-- {
 		candidates := make(routes, 0)
 		for _, i := range dag[idx] {
 			word := string(runes[idx : i+1])
 			var r *route
-			if _, ok := Trie.Freq[word]; ok {
-				r = &route{Freq: math.Log(Trie.Freq[word]) - logTotal + rs[i+1].Freq, Index: i}
+			if _, ok := j.Freq[word]; ok {
+				r = &route{Freq: math.Log(j.Freq[word]) - logTotal + rs[i+1].Freq, Index: i}
 			} else {
 				r = &route{Freq: math.Log(1.0) - logTotal + rs[i+1].Freq, Index: i}
 			}
@@ -107,11 +107,11 @@ func Calc(sentence string, dag map[int][]int) map[int]*route {
 
 type cutFunc func(sentence string) chan string
 
-func cutDAG(sentence string) chan string {
+func (j *Jieba) cutDAG(sentence string) chan string {
 	result := make(chan string)
 	go func() {
-		dag := DAG(sentence)
-		routes := Calc(sentence, dag)
+		dag := j.DAG(sentence)
+		routes := j.Calc(sentence, dag)
 		x := 0
 		var y int
 		runes := []rune(sentence)
@@ -132,7 +132,7 @@ func cutDAG(sentence string) chan string {
 						buf = make([]rune, 0)
 					} else {
 						bufString := string(buf)
-						if v, ok := Trie.Freq[bufString]; !ok || v == 0.0 {
+						if v, ok := j.Freq[bufString]; !ok || v == 0.0 {
 							for x := range finalseg.Cut(bufString) {
 								result <- x
 							}
@@ -154,7 +154,7 @@ func cutDAG(sentence string) chan string {
 				result <- string(buf)
 			} else {
 				bufString := string(buf)
-				if v, ok := Trie.Freq[bufString]; !ok || v == 0.0 {
+				if v, ok := j.Freq[bufString]; !ok || v == 0.0 {
 					for t := range finalseg.Cut(bufString) {
 						result <- t
 					}
@@ -170,12 +170,12 @@ func cutDAG(sentence string) chan string {
 	return result
 }
 
-func cutDAGNoHMM(sentence string) chan string {
+func (j *Jieba) cutDAGNoHMM(sentence string) chan string {
 	result := make(chan string)
 
 	go func() {
-		dag := DAG(sentence)
-		routes := Calc(sentence, dag)
+		dag := j.DAG(sentence)
+		routes := j.Calc(sentence, dag)
 		x := 0
 		var y int
 		runes := []rune(sentence)
@@ -208,12 +208,12 @@ func cutDAGNoHMM(sentence string) chan string {
 	return result
 }
 
-func cutAll(sentence string) chan string {
+func (j *Jieba) cutAll(sentence string) chan string {
 	result := make(chan string)
 
 	go func() {
 		runes := []rune(sentence)
-		dag := DAG(sentence)
+		dag := j.DAG(sentence)
 		old_j := -1
 		ks := make([]int, 0)
 		for k := range dag {
@@ -251,7 +251,7 @@ which is suitable for text analysis.
 
 HMM contols whether to use the Hidden Markov Mode.
 */
-func Cut(sentence string, isCutAll bool, HMM bool) chan string {
+func (j *Jieba) Cut(sentence string, isCutAll bool, HMM bool) chan string {
 	result := make(chan string)
 	go func() {
 		var reHan, reSkip *regexp.Regexp
@@ -264,12 +264,12 @@ func Cut(sentence string, isCutAll bool, HMM bool) chan string {
 		}
 		var cut cutFunc
 		if HMM {
-			cut = cutDAG
+			cut = j.cutDAG
 		} else {
-			cut = cutDAGNoHMM
+			cut = j.cutDAGNoHMM
 		}
 		if isCutAll {
-			cut = cutAll
+			cut = j.cutAll
 		}
 		for blk := range RegexpSplit(reHan, sentence) {
 			if len(blk) == 0 {
@@ -320,17 +320,17 @@ func Cut(sentence string, isCutAll bool, HMM bool) chan string {
 // Cut sentence using Search Engine Mode, based on the Accurate Mode, attempts
 // to cut long words into several short words, which can raise the recall rate.
 // Suitable for search engines.
-func CutForSearch(sentence string, hmm bool) chan string {
+func (j *Jieba) CutForSearch(sentence string, hmm bool) chan string {
 	result := make(chan string)
 	go func() {
-		for word := range Cut(sentence, false, hmm) {
+		for word := range j.Cut(sentence, false, hmm) {
 			runes := []rune(word)
 			for _, increment := range []int{2, 3} {
 				if len(runes) > increment {
 					var gram2 string
 					for i := 0; i < len(runes)-increment+1; i++ {
 						gram2 = string(runes[i : i+increment])
-						if v, ok := Trie.Freq[gram2]; ok && v > 0.0 {
+						if v, ok := j.Freq[gram2]; ok && v > 0.0 {
 							result <- gram2
 						}
 					}
