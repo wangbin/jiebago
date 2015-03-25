@@ -50,10 +50,10 @@ func viterbi(obs []rune) []string {
 			}
 		}
 		//use Go's map to implement Python's Set()
-		prev_states_expect_next := make(map[string]string)
+		prev_states_expect_next := make(map[string]int)
 		for _, x := range prev_states {
 			for y, _ := range probTrans[x] {
-				prev_states_expect_next[y] = y
+				prev_states_expect_next[y] = 1
 			}
 		}
 		tmp_obs_states := charStateTab.get(obs[t])

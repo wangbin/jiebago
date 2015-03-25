@@ -128,15 +128,11 @@ func (p *Posseg) cutDAG(sentence string) chan WordTag {
 	go func() {
 		dag := p.DAG(sentence)
 		routes := p.Calc(sentence, dag)
-		x := 0
 		var y int
 		runes := []rune(sentence)
 		length := len(runes)
 		buf := make([]rune, 0)
-		for {
-			if x >= length {
-				break
-			}
+		for x := 0; x < length; {
 			y = routes[x].Index + 1
 			l_word := runes[x:y]
 			if y-x == 1 {
