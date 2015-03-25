@@ -66,24 +66,24 @@ func (p *Posseg) cutDetailInternal(sentence string) chan WordTag {
 
 	go func() {
 		runes := []rune(sentence)
-		_, posList := viterbi(runes)
+		posList := viterbi(runes)
 		begin := 0
 		next := 0
 		for i, char := range runes {
-			pos := posList[i].State
-			switch pos {
+			pos := posList[i]
+			switch pos[0] {
 			case 'B':
 				begin = i
 			case 'E':
-				result <- WordTag{string(runes[begin : i+1]), posList[i].Tag}
+				result <- WordTag{string(runes[begin : i+1]), string(pos[1:])}
 				next = i + 1
 			case 'S':
-				result <- WordTag{string(char), posList[i].Tag}
+				result <- WordTag{string(char), string(pos[1:])}
 				next = i + 1
 			}
 		}
 		if next < len(runes) {
-			result <- WordTag{string(runes[next:]), posList[next].Tag}
+			result <- WordTag{string(runes[next:]), string(posList[next][1:])}
 		}
 		close(result)
 	}()
