@@ -60,13 +60,13 @@ func (j *Jieba) load(dictFileName string) error {
 	}
 
 	if !isDictCached {
-		wtfs, err := ParseDictFile(dictFilePath)
+		entries, err := ParseDictFile(dictFilePath)
 		if err != nil {
 			return err
 		}
 
-		for _, wtf := range wtfs {
-			j.AddWord(wtf)
+		for _, entry := range entries {
+			j.AddEntry(entry)
 		}
 		// dump trie
 		cacheFile, err = os.OpenFile(cacheFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
@@ -85,27 +85,30 @@ func (j *Jieba) load(dictFileName string) error {
 	return nil
 }
 
-func (j *Jieba) AddWord(wtf *WordTagFreq) {
-	j.Freq[wtf.Word] = wtf.Freq
-	j.Total += wtf.Freq
-	runes := []rune(wtf.Word)
-	count := len(runes)
-	for i := 0; i < count; i++ {
-		wfrag := string(runes[0 : i+1])
-		if _, ok := j.Freq[wfrag]; !ok {
-			j.Freq[wfrag] = 0.0
+func (j *Jieba) AddEntry(entry *Entry) {
+	j.Add(entry.Word, entry.Freq)
+}
+
+func (j *Jieba) Add(word string, freq float64) {
+	j.Freq[word] = freq
+	j.Total += freq
+	runes := []rune(word)
+	for i := 0; i < len(runes); i++ {
+		frag := string(runes[0 : i+1])
+		if _, ok := j.Freq[frag]; !ok {
+			j.Freq[frag] = 0.0
 		}
 	}
 }
 
 // Load user specified dictionary file.
 func (j *Jieba) LoadUserDict(dictFilePath string) error {
-	wtfs, err := ParseDictFile(dictFilePath)
+	entries, err := ParseDictFile(dictFilePath)
 	if err != nil {
 		return err
 	}
-	for _, wtf := range wtfs {
-		j.AddWord(wtf)
+	for _, entry := range entries {
+		j.Add(entry.Word, entry.Freq)
 	}
 	return nil
 }

@@ -7,18 +7,13 @@ import (
 	"strings"
 )
 
-type WordTagFreq struct {
-	Word, Tag string
-	Freq      float64
-}
-
-func ParseDictFile(dictFilePath string) (wtfs []*WordTagFreq, err error) {
-	var dictFile *os.File
-	dictFile, err = os.Open(dictFilePath)
+func ParseDictFile(dictFilePath string) ([]*Entry, error) {
+	dictFile, err := os.Open(dictFilePath)
 	if err != nil {
-		return
+		return nil, err
 	}
 	defer dictFile.Close()
+	entries := make([]*Entry, 0)
 	scanner := bufio.NewScanner(dictFile)
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -26,18 +21,18 @@ func ParseDictFile(dictFilePath string) (wtfs []*WordTagFreq, err error) {
 		length := len(fields)
 		word := fields[0]
 		word = strings.Replace(word, "\ufeff", "", 1)
-		wtf := &WordTagFreq{Word: word}
+		entry := NewEntry()
+		entry.Word = word
 		if length > 1 {
-			wtf.Freq, err = strconv.ParseFloat(fields[1], 64)
+			entry.Freq, err = strconv.ParseFloat(fields[1], 64)
 			if err != nil {
-				return
+				return nil, err
 			}
 		}
 		if length > 2 {
-			wtf.Tag = fields[2]
+			entry.Flag = fields[2]
 		}
-		wtfs = append(wtfs, wtf)
+		entries = append(entries, entry)
 	}
-	err = scanner.Err()
-	return
+	return entries, scanner.Err()
 }

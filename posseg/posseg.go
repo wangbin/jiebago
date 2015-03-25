@@ -25,11 +25,11 @@ type Posseg struct {
 	Flag map[string]string
 }
 
-func (p *Posseg) Add(wtf *jiebago.WordTagFreq) {
-	if len(wtf.Tag) > 0 {
-		p.Flag[wtf.Word] = strings.TrimSpace(wtf.Tag)
+func (p *Posseg) AddEntry(entry *jiebago.Entry) {
+	if len(entry.Tag) > 0 {
+		p.Flag[Entry.Word] = strings.TrimSpace(Entry.Flag)
 	}
-	p.AddWord(wtf)
+	p.Add(entry.Word, entry.Freq)
 }
 
 // Set dictionary, it could be absolute path of dictionary file, or dictionary
