@@ -8,6 +8,12 @@ import (
 type IDFLoader struct {
 	IDFFreq map[string]float64
 	Median  float64
+	freqs   []float64
+}
+
+func (l *IDFLoader) AddEntry(entry *jiebago.Entry) {
+	l.IDFFreq[entry.Word] = entry.Freq
+	l.freqs = append(l.freqs, entry.Freq)
 }
 
 func NewIDFLoader(IDFFileName string) (*IDFLoader, error) {
@@ -15,18 +21,14 @@ func NewIDFLoader(IDFFileName string) (*IDFLoader, error) {
 	if err != nil {
 		return nil, err
 	}
-	wtfs, err := jiebago.ParseDictFile(IDFFilePath)
+	loader := &IDFLoader{make(map[string]float64), 0.0, make([]float64, 0)}
+	err = jiebago.LoadDict(loader, IDFFilePath, false)
 	if err != nil {
 		return nil, err
 	}
 
-	freqs := make([]float64, len(wtfs))
-	loader := &IDFLoader{make(map[string]float64), 0.0}
-	for index, wtf := range wtfs {
-		loader.IDFFreq[wtf.Word] = wtf.Freq
-		freqs[index] = wtf.Freq
-	}
-	sort.Float64s(freqs)
-	loader.Median = freqs[len(freqs)/2]
+	sort.Float64s(loader.freqs)
+	loader.Median = loader.freqs[len(loader.freqs)/2]
+	loader.freqs = []float64{}
 	return loader, nil
 }

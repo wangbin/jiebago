@@ -60,13 +60,9 @@ func (j *Jieba) load(dictFileName string) error {
 	}
 
 	if !isDictCached {
-		entries, err := ParseDictFile(dictFilePath)
+		err = LoadDict(j, dictFilePath, false)
 		if err != nil {
 			return err
-		}
-
-		for _, entry := range entries {
-			j.AddEntry(entry)
 		}
 		// dump trie
 		cacheFile, err = os.OpenFile(cacheFilePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
@@ -103,14 +99,7 @@ func (j *Jieba) Add(word string, freq float64) {
 
 // Load user specified dictionary file.
 func (j *Jieba) LoadUserDict(dictFilePath string) error {
-	entries, err := ParseDictFile(dictFilePath)
-	if err != nil {
-		return err
-	}
-	for _, entry := range entries {
-		j.Add(entry.Word, entry.Freq)
-	}
-	return nil
+	return LoadDict(j, dictFilePath, false)
 }
 
 // Set the dictionary, could be absolute path of dictionary file, or dictionary

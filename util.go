@@ -1,15 +1,15 @@
 package jiebago
 
 import (
-	//	"bufio"
+	"bufio"
 	//	"crypto/md5"
 	//	"encoding/gob"
 	//	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
-	//	"strconv"
-	//	"strings"
+	"strconv"
+	"strings"
 )
 
 func DictPath(dictFileName string) (string, error) {
@@ -23,6 +23,35 @@ func DictPath(dictFileName string) (string, error) {
 	}
 	dictFilePath = filepath.Clean(filepath.Join(cwd, dictFileName))
 	return dictFilePath, nil
+}
+
+func LoadDict(l DictLoader, dictFilePath string, usingFlag bool) error {
+	dictFile, err := os.Open(dictFilePath)
+	if err != nil {
+		return err
+	}
+	defer dictFile.Close()
+	scanner := bufio.NewScanner(dictFile)
+	var entry *Entry
+	var line string
+	var fields []string
+	for scanner.Scan() {
+		line = scanner.Text()
+		fields = strings.Split(line, " ")
+		entry = NewEntry()
+		entry.Word = strings.Replace(fields[0], "\ufeff", "", 1)
+		if length := len(fields); length > 1 {
+			entry.Freq, err = strconv.ParseFloat(fields[1], 64)
+			if err != nil {
+				return err
+			}
+			if usingFlag && length > 2 {
+				entry.Flag = fields[2]
+			}
+		}
+		l.AddEntry(entry)
+	}
+	return scanner.Err()
 }
 
 /*
@@ -54,34 +83,6 @@ func isCached(dictPath, cachePath string) (bool, error) {
 func load(cachePath string, d DictLoader) error {
 	dec := gob.NewDecoder(cacheFile)
 	return dec.Decode(&d)
-}
-
-func read(dictPath, d DictLoader, pos bool) error {
-	dictFile, err := os.Open(dictFilePath)
-	if err != nil {
-		return err
-	}
-	defer dictFile.Close()
-	scanner := bufio.NewScanner(dictFile)
-	var token *Token
-	var line string
-	var fields []string
-	for scanner.Scan() {
-		line = scanner.Text()
-		fields = strings.Split(line, " ")
-		token = &Token{Term: strings.Replace(fields[0], "\ufeff", "", 1)}
-		if length := len(fields); length > 1 {
-			token.Freq, err = strconv.ParseFloat(fields[1], 64)
-			if err != nil {
-				return err
-			}
-			if pos && length > 2 {
-				token.Pos = fields[2]
-			}
-		}
-		d.Add(token)
-	}
-	return scanner.Err()
 }
 
 func dump(cachePath string, d DictLoader) error {

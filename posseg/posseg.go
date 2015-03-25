@@ -26,8 +26,8 @@ type Posseg struct {
 }
 
 func (p *Posseg) AddEntry(entry *jiebago.Entry) {
-	if len(entry.Tag) > 0 {
-		p.Flag[Entry.Word] = strings.TrimSpace(Entry.Flag)
+	if len(entry.Flag) > 0 {
+		p.Flag[entry.Word] = strings.TrimSpace(entry.Flag)
 	}
 	p.Add(entry.Word, entry.Freq)
 }
@@ -41,24 +41,13 @@ func NewPosseg(dictFileName string) (*Posseg, error) {
 	if err != nil {
 		return nil, err
 	}
-	wtfs, err := jiebago.ParseDictFile(dictFilePath)
-
-	for _, wtf := range wtfs {
-		p.Add(wtf)
-	}
-	return p, nil
+	err = jiebago.LoadDict(p, dictFilePath, true)
+	return p, err
 }
 
 // Load user specified dictionary file.
 func (p *Posseg) LoadUserDict(dictFilePath string) error {
-	wtfs, err := jiebago.ParseDictFile(dictFilePath)
-	if err != nil {
-		return err
-	}
-	for _, wtf := range wtfs {
-		p.Add(wtf)
-	}
-	return nil
+	return jiebago.LoadDict(p, dictFilePath, true)
 }
 
 func (p *Posseg) cutDetailInternal(sentence string) chan WordTag {

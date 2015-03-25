@@ -14,7 +14,6 @@ func NewEntry() *Entry {
 	return &Entry{new(Pair), 0.0}
 }
 
-type Loader interface {
-	AddEntry(Entry)
-	CachePath(string) string
+type DictLoader interface {
+	AddEntry(*Entry)
 }

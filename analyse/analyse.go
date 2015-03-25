@@ -41,6 +41,10 @@ type TagExtracter struct {
 	stopWords map[string]int
 }
 
+func (t *TagExtracter) AddEntry(entry *jiebago.Entry) {
+	t.stopWords[entry.Word] = 1
+}
+
 func NewTagExtracter(dictFileName, IDFFileName string) (*TagExtracter, error) {
 	j, err := jiebago.NewJieba(dictFileName)
 	if err != nil {
@@ -61,11 +65,7 @@ func (t *TagExtracter) SetStopWords(stopWordsFileName string) error {
 		return err
 	}
 
-	wtfs, err := jiebago.ParseDictFile(stopWordsFilePath)
-	for _, wtf := range wtfs {
-		t.stopWords[wtf.Word] = 1
-	}
-	return nil
+	return jiebago.LoadDict(t, stopWordsFilePath, false)
 }
 
 // Keyword extraction.
