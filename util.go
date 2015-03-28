@@ -5,6 +5,7 @@ import (
 	"crypto/md5"
 	"encoding/gob"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -26,6 +27,8 @@ func DictPath(dictFileName string) (string, error) {
 }
 
 func LoadDict(l DictLoader, dictFilePath string, usingFlag bool) error {
+	log.Printf("Building Trie..., from %s\n", dictFilePath)
+
 	dictFile, err := os.Open(dictFilePath)
 	if err != nil {
 		return err
@@ -59,22 +62,14 @@ func cachePath(dictPath string) string {
 		fmt.Sprintf("jieba.%x.cache", md5.Sum([]byte(dictPath))))
 }
 
-func fileInfo(filePath string, missingOk bool) (os.FileInfo, error) {
-	fi, err := os.Stat(filePath)
-	if missingOk && err == os.ErrNotExist {
-		return fi, nil
-	}
-	return fi, err
-}
-
 func cached(dictPath, cachePath string) (bool, error) {
-	dictFileInfo, err := fileInfo(dictPath, false)
+	dictFileInfo, err := os.Stat(dictPath)
 	if err != nil {
 		return false, err
 	}
-	cacheFileInfo, err := fileInfo(cachePath, true)
+	cacheFileInfo, err := os.Stat(cachePath)
 	if err != nil {
-		return false, err
+		return false, nil
 	}
 	return cacheFileInfo.ModTime().After(dictFileInfo.ModTime()), nil
 }
@@ -87,7 +82,7 @@ func load(l DictLoader, cachePath string) error {
 	defer cacheFile.Close()
 
 	dec := gob.NewDecoder(cacheFile)
-	return dec.Decode(&l)
+	return dec.Decode(l)
 }
 
 func dump(l DictLoader, cachePath string) error {
@@ -114,6 +109,7 @@ func SetDict(l DictLoader, dictName string, pos bool) error {
 	if cached {
 		err = load(l, cachePath)
 		if err == nil {
+			log.Printf("loaded model from cache %s\n", cachePath)
 			return nil
 		}
 		cached = false
@@ -124,7 +120,12 @@ func SetDict(l DictLoader, dictName string, pos bool) error {
 		return err
 	}
 
-	return dump(l, cachePath)
+	err = dump(l, cachePath)
+	if err == nil {
+		log.Printf("dumped model from cache %s\n", cachePath)
+		return nil
+	}
+	return err
 }
 
 // Split sentence using regular expression.
