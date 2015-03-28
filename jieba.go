@@ -9,6 +9,8 @@ import (
 	"sort"
 )
 
+const cacheNameFormat = "jieba.%x.cache"
+
 var (
 	// Word/Tag Map load from user dictionary
 	UserWordTagTab = make(map[string]string)
@@ -55,6 +57,10 @@ type Jieba struct {
 
 func (j *Jieba) AddEntry(entry *Entry) {
 	j.Add(entry.Word, entry.Freq)
+}
+
+func (j *Jieba) CacheNameFormat() string {
+	return cacheNameFormat
 }
 
 func (j *Jieba) Add(word string, freq float64) {

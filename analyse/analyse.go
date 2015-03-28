@@ -38,11 +38,7 @@ func (ws wordWeights) Swap(i, j int) {
 type TagExtracter struct {
 	*jiebago.Jieba
 	*IDFLoader
-	stopWords map[string]int
-}
-
-func (t *TagExtracter) AddEntry(entry *jiebago.Entry) {
-	t.stopWords[entry.Word] = 1
+	*StopWordLoader
 }
 
 func NewTagExtracter(dictFileName, IDFFileName string) (*TagExtracter, error) {
@@ -54,18 +50,7 @@ func NewTagExtracter(dictFileName, IDFFileName string) (*TagExtracter, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &TagExtracter{j, i, StopWords}, nil
-}
-
-// Set the stop words file path, could be absolute path of stop words file, or
-// file name in current directory.
-func (t *TagExtracter) SetStopWords(stopWordsFileName string) error {
-	stopWordsFilePath, err := jiebago.DictPath(stopWordsFileName)
-	if err != nil {
-		return err
-	}
-
-	return jiebago.LoadDict(t, stopWordsFilePath, false)
+	return &TagExtracter{j, i, NewStopWordLoader()}, nil
 }
 
 // Keyword extraction.
@@ -77,7 +62,7 @@ func (t *TagExtracter) ExtractTags(sentence string, topK int) (tags wordWeights)
 		if utf8.RuneCountInString(w) < 2 {
 			continue
 		}
-		if _, ok := t.stopWords[w]; ok {
+		if t.IsStopWord(w) {
 			continue
 		}
 		if f, ok := freq[w]; ok {

@@ -57,9 +57,9 @@ func LoadDict(l DictLoader, dictFilePath string, usingFlag bool) error {
 	return scanner.Err()
 }
 
-func cachePath(dictPath string) string {
+func cacheFilePath(c Cacher, dictPath string) string {
 	return filepath.Join(os.TempDir(),
-		fmt.Sprintf("jieba.%x.cache", md5.Sum([]byte(dictPath))))
+		fmt.Sprintf(c.CacheNameFormat(), md5.Sum([]byte(dictPath))))
 }
 
 func cached(dictPath, cachePath string) (bool, error) {
@@ -85,14 +85,14 @@ func load(l DictLoader, cachePath string) error {
 	return dec.Decode(l)
 }
 
-func dump(l DictLoader, cachePath string) error {
+func dump(c Cacher, cachePath string) error {
 	cacheFile, err := os.OpenFile(cachePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}
 	defer cacheFile.Close()
 	enc := gob.NewEncoder(cacheFile)
-	return enc.Encode(l)
+	return enc.Encode(c)
 }
 
 func SetDict(l DictLoader, dictName string, pos bool) error {
@@ -100,30 +100,33 @@ func SetDict(l DictLoader, dictName string, pos bool) error {
 	if err != nil {
 		return err
 	}
-	cachePath := cachePath(dictPath)
-	cached, err := cached(dictPath, cachePath)
-	if err != nil {
-		return err
-	}
 
-	if cached {
-		err = load(l, cachePath)
-		if err == nil {
-			log.Printf("loaded model from cache %s\n", cachePath)
-			return nil
+	var cachePath string
+	if c, ok := l.(Cacher); ok {
+		cachePath = cacheFilePath(c, dictPath)
+		cached, err := cached(dictPath, cachePath)
+		if err != nil {
+			return err
 		}
-		cached = false
-	}
 
+		if cached {
+			err = load(l, cachePath)
+			if err == nil {
+				log.Printf("loaded model from cache %s\n", cachePath)
+				return nil
+			}
+		}
+	}
 	err = LoadDict(l, dictPath, pos)
 	if err != nil {
 		return err
 	}
-
-	err = dump(l, cachePath)
-	if err == nil {
-		log.Printf("dumped model from cache %s\n", cachePath)
-		return nil
+	if c, ok := l.(Cacher); ok {
+		err = dump(c, cachePath)
+		if err == nil {
+			log.Printf("dumped model from cache %s\n", cachePath)
+			return nil
+		}
 	}
 	return err
 }

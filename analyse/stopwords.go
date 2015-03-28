@@ -1,6 +1,8 @@
 package analyse
 
-var StopWords = map[string]int{
+import "github.com/wangbin/jiebago"
+
+var defaultStopWords = map[string]int{
 	"the":   1,
 	"of":    1,
 	"is":    1,
@@ -32,4 +34,33 @@ var StopWords = map[string]int{
 	"one":   1,
 	"has":   1,
 	"or":    1,
+}
+
+type StopWordLoader struct {
+	stopWords map[string]int
+}
+
+func (s *StopWordLoader) AddEntry(entry *jiebago.Entry) {
+	s.stopWords[entry.Word] = 1
+}
+
+func NewStopWordLoader() *StopWordLoader {
+	s := new(StopWordLoader)
+	s.stopWords = defaultStopWords
+	return s
+}
+
+// Set the stop words file path, could be absolute path of stop words file, or
+// file name in current directory.
+func (s *StopWordLoader) SetStopWords(stopWordsFileName string) error {
+	stopWordsFilePath, err := jiebago.DictPath(stopWordsFileName)
+	if err != nil {
+		return err
+	}
+	return jiebago.LoadDict(s, stopWordsFilePath, false)
+}
+
+func (s StopWordLoader) IsStopWord(word string) bool {
+	_, ok := s.stopWords[word]
+	return ok
 }

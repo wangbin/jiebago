@@ -17,3 +17,7 @@ func NewEntry() *Entry {
 type DictLoader interface {
 	AddEntry(*Entry)
 }
+
+type Cacher interface {
+	CacheNameFormat() string
+}
