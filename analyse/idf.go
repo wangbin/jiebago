@@ -17,12 +17,8 @@ func (l *IDFLoader) AddEntry(entry *jiebago.Entry) {
 }
 
 func NewIDFLoader(IDFFileName string) (*IDFLoader, error) {
-	IDFFilePath, err := jiebago.DictPath(IDFFileName)
-	if err != nil {
-		return nil, err
-	}
 	loader := &IDFLoader{make(map[string]float64), 0.0, make([]float64, 0)}
-	err = jiebago.LoadDict(loader, IDFFilePath, false)
+	err = jiebago.LoadDict(loader, IDFFileName, false)
 	if err != nil {
 		return nil, err
 	}

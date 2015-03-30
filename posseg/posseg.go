@@ -37,12 +37,11 @@ func (p *Posseg) AddEntry(entry *jiebago.Entry) {
 func NewPosseg(dictFileName string) (*Posseg, error) {
 	j := &jiebago.Jieba{Total: 0.0, Freq: make(map[string]float64)}
 	p := &Posseg{j, make(map[string]string)}
-	dictFilePath, err := jiebago.DictPath(dictFileName)
+	err := jiebago.LoadDict(p, dictFileName, true)
 	if err != nil {
 		return nil, err
 	}
-	err = jiebago.LoadDict(p, dictFilePath, true)
-	return p, err
+	return p, nil
 }
 
 // Load user specified dictionary file.

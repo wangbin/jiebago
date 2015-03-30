@@ -53,11 +53,7 @@ func NewStopWordLoader() *StopWordLoader {
 // Set the stop words file path, could be absolute path of stop words file, or
 // file name in current directory.
 func (s *StopWordLoader) SetStopWords(stopWordsFileName string) error {
-	stopWordsFilePath, err := jiebago.DictPath(stopWordsFileName)
-	if err != nil {
-		return err
-	}
-	return jiebago.LoadDict(s, stopWordsFilePath, false)
+	return jiebago.LoadDict(s, stopWordsFileName, false)
 }
 
 func (s StopWordLoader) IsStopWord(word string) bool {

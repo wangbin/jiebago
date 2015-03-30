@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-func DictPath(dictFileName string) (string, error) {
+func dictPath(dictFileName string) (string, error) {
 	if filepath.IsAbs(dictFileName) {
 		return dictFileName, nil
 	}
@@ -26,7 +26,12 @@ func DictPath(dictFileName string) (string, error) {
 	return dictFilePath, nil
 }
 
-func LoadDict(l DictLoader, dictFilePath string, usingFlag bool) error {
+func LoadDict(l DictLoader, dictFileName string, usingFlag bool) error {
+	dictFilePath, err := dictPath(dictFileName)
+	if err != nil {
+		return err
+	}
+
 	log.Printf("Building Trie..., from %s\n", dictFilePath)
 
 	dictFile, err := os.Open(dictFilePath)
@@ -96,7 +101,7 @@ func dump(c Cacher, cachePath string) error {
 }
 
 func SetDict(l DictLoader, dictName string, pos bool) error {
-	dictPath, err := DictPath(dictName)
+	dictPath, err := dictPath(dictName)
 	if err != nil {
 		return err
 	}
