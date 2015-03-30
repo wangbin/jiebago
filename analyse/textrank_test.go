@@ -27,7 +27,7 @@ func TestTextRank(t *testing.T) {
 	results := tr.TextRank(sentence, 10)
 	for index, tw := range results {
 		if tw.Word != tagRanks[index].Word || math.Abs(tw.Weight-tagRanks[index].Weight) > 1e-6 {
-			t.Errorf("%v != %v", tw, tagRanks[index])
+			t.Fatalf("%v != %v", tw, tagRanks[index])
 		}
 	}
 }

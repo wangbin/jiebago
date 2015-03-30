@@ -630,7 +630,7 @@ func TestCutDAG(t *testing.T) {
 
 	result := chanToArray(j.cutDAG("BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 11 {
-		t.Error(result)
+		t.Fatal(result)
 	}
 }
 
@@ -639,7 +639,7 @@ func TestCutDAGNoHmm(t *testing.T) {
 
 	result := chanToArray(j.cutDAGNoHMM("BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 11 {
-		t.Error(result)
+		t.Fatal(result)
 	}
 }
 
@@ -647,12 +647,12 @@ func TestRegexpSplit(t *testing.T) {
 	result := chanToArray(RegexpSplit(regexp.MustCompile(`\p{Han}+`),
 		"BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 3 {
-		t.Error(result)
+		t.Fatal(result)
 	}
 	result = chanToArray(RegexpSplit(regexp.MustCompile(`([\p{Han}#]+)`),
 		",BP神经网络如何训练才能在分类时#增加区分度？"))
 	if len(result) != 3 {
-		t.Error(result)
+		t.Fatal(result)
 	}
 }
 
@@ -663,12 +663,12 @@ func TestDefaultCut(t *testing.T) {
 	for index, content := range test_contents {
 		result = chanToArray(j.Cut(content, true))
 		if len(result) != len(defaultCutResult[index]) {
-			t.Errorf("default cut for %s length should be %d not %d\n",
+			t.Fatalf("default cut for %s length should be %d not %d\n",
 				content, len(defaultCutResult[index]), len(result))
 		}
 		for i, r := range result {
 			if r != defaultCutResult[index][i] {
-				t.Error(r)
+				t.Fatal(r)
 			}
 		}
 	}
@@ -681,12 +681,12 @@ func TestCutAll(t *testing.T) {
 	for index, content := range test_contents {
 		result = chanToArray(j.CutAll(content))
 		if len(result) != len(cutAllResult[index]) {
-			t.Errorf("cut all for %s length should be %d not %d\n",
+			t.Fatalf("cut all for %s length should be %d not %d\n",
 				content, len(cutAllResult[index]), len(result))
 		}
 		for i, c := range result {
 			if c != cutAllResult[index][i] {
-				t.Error(c)
+				t.Fatal(c)
 			}
 		}
 	}
@@ -699,12 +699,12 @@ func TestDefaultCutNoHMM(t *testing.T) {
 	for index, content := range test_contents {
 		result = chanToArray(j.Cut(content, false))
 		if len(result) != len(defaultCutNoHMMResult[index]) {
-			t.Errorf("default cut no hmm for %s length should be %d not %d\n",
+			t.Fatalf("default cut no hmm for %s length should be %d not %d\n",
 				content, len(defaultCutNoHMMResult[index]), len(result))
 		}
 		for i, c := range result {
 			if c != defaultCutNoHMMResult[index][i] {
-				t.Error(c)
+				t.Fatal(c)
 			}
 		}
 	}
@@ -717,24 +717,24 @@ func TestCutForSearch(t *testing.T) {
 	for index, content := range test_contents {
 		result = chanToArray(j.CutForSearch(content, true))
 		if len(result) != len(cutForSearchResult[index]) {
-			t.Errorf("cut for search for %s length should be %d not %d\n",
+			t.Fatalf("cut for search for %s length should be %d not %d\n",
 				content, len(cutForSearchResult[index]), len(result))
 		}
 		for i, c := range result {
 			if c != cutForSearchResult[index][i] {
-				t.Error(c)
+				t.Fatal(c)
 			}
 		}
 	}
 	for index, content := range test_contents {
 		result = chanToArray(j.CutForSearch(content, false))
 		if len(result) != len(cutForSearchNoHMMResult[index]) {
-			t.Errorf("cut for search no hmm for %s length should be %d not %d\n",
+			t.Fatalf("cut for search no hmm for %s length should be %d not %d\n",
 				content, len(cutForSearchNoHMMResult[index]), len(result))
 		}
 		for i, c := range result {
 			if c != cutForSearchNoHMMResult[index][i] {
-				t.Error(c)
+				t.Fatal(c)
 			}
 		}
 	}
@@ -746,12 +746,12 @@ func TestSetdictionary(t *testing.T) {
 	for index, content := range test_contents {
 		result = chanToArray(j.Cut(content, true))
 		if len(result) != len(userDictCutResult[index]) {
-			t.Errorf("default cut with user dictionary for %s length should be %d not %d\n",
+			t.Fatalf("default cut with user dictionary for %s length should be %d not %d\n",
 				content, len(userDictCutResult[index]), len(result))
 		}
 		for i, c := range result {
 			if c != userDictCutResult[index][i] {
-				t.Error(c)
+				t.Fatal(c)
 			}
 		}
 	}
@@ -766,11 +766,11 @@ func TestLoadUserDict(t *testing.T) {
 
 	words := chanToArray(j.Cut(sentence, true))
 	if len(words) != len(result) {
-		t.Error(len(words))
+		t.Fatal(len(words))
 	}
 	for index, word := range words {
 		if word != result[index] {
-			t.Error(word)
+			t.Fatal(word)
 		}
 	}
 
@@ -778,11 +778,11 @@ func TestLoadUserDict(t *testing.T) {
 	result = []string{"easy_install", " ", "is", " ", "great"}
 	words = chanToArray(j.Cut(sentence, true))
 	if len(words) != len(result) {
-		t.Error(len(words))
+		t.Fatal(len(words))
 	}
 	for index, word := range words {
 		if word != result[index] {
-			t.Error(word)
+			t.Fatal(word)
 		}
 	}
 
@@ -790,12 +790,12 @@ func TestLoadUserDict(t *testing.T) {
 	result = []string{"python", " ", "的", "正则表达式", "是", "好用", "的"}
 	words = chanToArray(j.Cut(sentence, true))
 	if len(words) != len(result) {
-		t.Error(words)
-		t.Error(result)
+		t.Fatal(words)
+		t.Fatal(result)
 	}
 	for index, word := range words {
 		if word != result[index] {
-			t.Error(word)
+			t.Fatal(word)
 		}
 	}
 }

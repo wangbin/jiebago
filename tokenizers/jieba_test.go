@@ -22509,7 +22509,7 @@ func TestJiebaTokenizerSearchModeWithoutHMM(t *testing.T) {
 	for _, test := range tests {
 		actual := tokenizer.Tokenize(test.input)
 		if !reflect.DeepEqual(actual, test.output) {
-			t.Errorf("Expected %v, got %v for %s", test.output, actual, string(test.input))
+			t.Fatalf("Expected %v, got %v for %s", test.output, actual, string(test.input))
 		}
 	}
 }

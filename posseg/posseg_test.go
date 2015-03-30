@@ -283,20 +283,20 @@ func TestCut(t *testing.T) {
 	for index, content := range test_contents {
 		result := chanToArray(p.Cut(content, true))
 		if len(defaultCutResult[index]) != len(result) {
-			t.Error(content)
+			t.Fatal(content)
 		}
 		for i, _ := range result {
 			if result[i] != defaultCutResult[index][i] {
-				t.Errorf("expect %s, got %s", defaultCutResult[index][i], result[i])
+				t.Fatalf("expect %s, got %s", defaultCutResult[index][i], result[i])
 			}
 		}
 		result = chanToArray(p.Cut(content, false))
 		if len(noHMMCutResult[index]) != len(result) {
-			t.Error(content)
+			t.Fatal(content)
 		}
 		for i, _ := range result {
 			if result[i] != noHMMCutResult[index][i] {
-				t.Error(content)
+				t.Fatal(content)
 			}
 		}
 
@@ -317,11 +317,11 @@ func TestBug132(t *testing.T) {
 	}
 	result := chanToArray(p.Cut(sentence, true))
 	if len(cutResult) != len(result) {
-		t.Error(result)
+		t.Fatal(result)
 	}
 	for i, _ := range result {
 		if result[i] != cutResult[i] {
-			t.Error(result[i])
+			t.Fatal(result[i])
 		}
 	}
 }
@@ -349,11 +349,11 @@ func TestBug137(t *testing.T) {
 	}
 	result := chanToArray(p.Cut(sentence, true))
 	if len(cutResult) != len(result) {
-		t.Error(result)
+		t.Fatal(result)
 	}
 	for i, _ := range result {
 		if result[i] != cutResult[i] {
-			t.Error(result[i])
+			t.Fatal(result[i])
 		}
 	}
 }
@@ -404,11 +404,11 @@ func TestUserDict(t *testing.T) {
 
 	result := chanToArray(p.Cut(sentence, true))
 	if len(cutResult) != len(result) {
-		t.Error(result)
+		t.Fatal(result)
 	}
 	for i, _ := range result {
 		if result[i] != cutResult[i] {
-			t.Error(result[i])
+			t.Fatal(result[i])
 		}
 	}
 }

@@ -260,11 +260,11 @@ func TestExtractTags(t *testing.T) {
 	for index, sentence := range test_contents {
 		result := et.ExtractTags(sentence, 20)
 		if len(result) != len(Tags[index]) {
-			t.Errorf("%s = %v", sentence, result)
+			t.Fatalf("%s = %v", sentence, result)
 		}
 		for i, tag := range result {
 			if tag.Word != Tags[index][i] {
-				t.Errorf("%s != %s", tag, Tags[index][i])
+				t.Fatalf("%s != %s", tag, Tags[index][i])
 			}
 		}
 	}
@@ -276,7 +276,7 @@ func TestExtratTagsWithWeight(t *testing.T) {
 	for index, tag := range result {
 		if LyciWeight[index].Word != tag.Word ||
 			math.Abs(LyciWeight[index].Weight-tag.Weight) > 1e-6 {
-			t.Errorf("%v != %v", tag, LyciWeight[index])
+			t.Fatalf("%v != %v", tag, LyciWeight[index])
 		}
 	}
 }
@@ -288,7 +288,7 @@ func TestExtractTagsWithStopWordsFile(t *testing.T) {
 	for index, tag := range result {
 		if LyciWeight2[index].Word != tag.Word ||
 			math.Abs(LyciWeight2[index].Weight-tag.Weight) > 1e-6 {
-			t.Errorf("%v != %v", tag, LyciWeight2[index])
+			t.Fatalf("%v != %v", tag, LyciWeight2[index])
 		}
 	}
 }
