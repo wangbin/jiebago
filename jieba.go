@@ -86,11 +86,10 @@ func (j *Jieba) DAG(sentence string) map[int][]int {
 	dag := make(map[int][]int)
 	runes := []rune(sentence)
 	n := len(runes)
-	i := 0
 	var frag string
 	for k := 0; k < n; k++ {
 		tmpList := make([]int, 0)
-		i = k
+		i := k
 		frag = string(runes[k])
 		for {
 			if freq, ok := j.Freq[frag]; !ok {
@@ -284,64 +283,54 @@ which is suitable for text analysis.
 
 HMM contols whether to use the Hidden Markov Mode.
 */
-func (j *Jieba) Cut(sentence string, isCutAll bool, HMM bool) chan string {
+func (j *Jieba) Cut(sentence string, hmm bool) chan string {
 	result := make(chan string)
+	var cut cutFunc
+	if hmm {
+		cut = j.cutDAG
+	} else {
+		cut = j.cutDAGNoHMM
+	}
 	go func() {
-		var reHan, reSkip *regexp.Regexp
-		if isCutAll {
-			reHan = reHanCutAll
-			reSkip = reSkipCutAll
-		} else {
-			reHan = reHanDefault
-			reSkip = reSkipDefault
-		}
-		var cut cutFunc
-		if HMM {
-			cut = j.cutDAG
-		} else {
-			cut = j.cutDAGNoHMM
-		}
-		if isCutAll {
-			cut = j.cutAll
-		}
-		for blk := range RegexpSplit(reHan, sentence) {
+		for blk := range RegexpSplit(reHanDefault, sentence) {
 			if len(blk) == 0 {
 				continue
 			}
-			if reHan.MatchString(blk) {
+			if reHanDefault.MatchString(blk) {
 				for x := range cut(blk) {
 					result <- x
 				}
 			} else {
-				type skipSplitFunc func(sentence string) chan string
-				var ssf skipSplitFunc
-				if isCutAll {
-					ssf = func(sentence string) chan string {
-						ch := make(chan string)
-						go func() {
-							for _, s := range reSkip.Split(sentence, -1) {
-								ch <- s
-							}
-							close(ch)
-						}()
-						return ch
-					}
-				} else {
-					ssf = func(sentence string) chan string {
-						return RegexpSplit(reSkip, sentence)
-					}
-				}
-
-				for x := range ssf(blk) {
-					if reSkip.MatchString(x) {
+				for x := range RegexpSplit(reSkipDefault, blk) {
+					if reSkipDefault.MatchString(x) {
 						result <- x
-					} else if !isCutAll {
+					} else {
 						for _, xx := range x {
 							result <- string(xx)
 						}
-					} else {
-						result <- x
 					}
+				}
+			}
+		}
+		close(result)
+	}()
+	return result
+}
+
+func (j *Jieba) CutAll(sentence string) chan string {
+	result := make(chan string)
+	go func() {
+		for blk := range RegexpSplit(reHanCutAll, sentence) {
+			if len(blk) == 0 {
+				continue
+			}
+			if reHanCutAll.MatchString(blk) {
+				for x := range j.cutAll(blk) {
+					result <- x
+				}
+			} else {
+				for _, x := range reSkipCutAll.Split(blk, -1) {
+					result <- x
 				}
 			}
 		}
@@ -356,7 +345,7 @@ func (j *Jieba) Cut(sentence string, isCutAll bool, HMM bool) chan string {
 func (j *Jieba) CutForSearch(sentence string, hmm bool) chan string {
 	result := make(chan string)
 	go func() {
-		for word := range j.Cut(sentence, false, hmm) {
+		for word := range j.Cut(sentence, hmm) {
 			runes := []rune(word)
 			for _, increment := range []int{2, 3} {
 				if len(runes) > increment {

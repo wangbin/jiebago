@@ -661,7 +661,7 @@ func TestDefaultCut(t *testing.T) {
 
 	var result []string
 	for index, content := range test_contents {
-		result = chanToArray(j.Cut(content, false, true))
+		result = chanToArray(j.Cut(content, true))
 		if len(result) != len(defaultCutResult[index]) {
 			t.Errorf("default cut for %s length should be %d not %d\n",
 				content, len(defaultCutResult[index]), len(result))
@@ -679,7 +679,7 @@ func TestCutAll(t *testing.T) {
 
 	var result []string
 	for index, content := range test_contents {
-		result = chanToArray(j.Cut(content, true, true))
+		result = chanToArray(j.CutAll(content))
 		if len(result) != len(cutAllResult[index]) {
 			t.Errorf("cut all for %s length should be %d not %d\n",
 				content, len(cutAllResult[index]), len(result))
@@ -697,7 +697,7 @@ func TestDefaultCutNoHMM(t *testing.T) {
 
 	var result []string
 	for index, content := range test_contents {
-		result = chanToArray(j.Cut(content, false, false))
+		result = chanToArray(j.Cut(content, false))
 		if len(result) != len(defaultCutNoHMMResult[index]) {
 			t.Errorf("default cut no hmm for %s length should be %d not %d\n",
 				content, len(defaultCutNoHMMResult[index]), len(result))
@@ -744,7 +744,7 @@ func TestSetdictionary(t *testing.T) {
 	var result []string
 	j, _ := NewJieba("foobar.txt")
 	for index, content := range test_contents {
-		result = chanToArray(j.Cut(content, false, true))
+		result = chanToArray(j.Cut(content, true))
 		if len(result) != len(userDictCutResult[index]) {
 			t.Errorf("default cut with user dictionary for %s length should be %d not %d\n",
 				content, len(userDictCutResult[index]), len(result))
@@ -764,7 +764,7 @@ func TestLoadUserDict(t *testing.T) {
 	sentence := "李小福是创新办主任也是云计算方面的专家; 什么是八一双鹿例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
 	result := []string{"李小福", "是", "创新办", "主任", "也", "是", "云计算", "方面", "的", "专家", ";", " ", "什么", "是", "八一双鹿", "例如", "我", "输入", "一个", "带", "“", "韩玉赏鉴", "”", "的", "标题", "，", "在", "自定义词", "库中", "也", "增加", "了", "此", "词为", "N", "类型"}
 
-	words := chanToArray(j.Cut(sentence, false, true))
+	words := chanToArray(j.Cut(sentence, true))
 	if len(words) != len(result) {
 		t.Error(len(words))
 	}
@@ -776,7 +776,7 @@ func TestLoadUserDict(t *testing.T) {
 
 	sentence = "easy_install is great"
 	result = []string{"easy_install", " ", "is", " ", "great"}
-	words = chanToArray(j.Cut(sentence, false, true))
+	words = chanToArray(j.Cut(sentence, true))
 	if len(words) != len(result) {
 		t.Error(len(words))
 	}
@@ -788,7 +788,7 @@ func TestLoadUserDict(t *testing.T) {
 
 	sentence = "python 的正则表达式是好用的"
 	result = []string{"python", " ", "的", "正则表达式", "是", "好用", "的"}
-	words = chanToArray(j.Cut(sentence, false, true))
+	words = chanToArray(j.Cut(sentence, true))
 	if len(words) != len(result) {
 		t.Error(words)
 		t.Error(result)
