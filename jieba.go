@@ -55,7 +55,7 @@ type Jieba struct {
 	Freq  map[string]float64
 }
 
-func (j *Jieba) AddEntry(entry *Entry) {
+func (j *Jieba) AddEntry(entry Entry) {
 	j.Add(entry.Word, entry.Freq)
 }
 

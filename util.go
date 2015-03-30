@@ -40,13 +40,12 @@ func LoadDict(l DictLoader, dictFileName string, usingFlag bool) error {
 	}
 	defer dictFile.Close()
 	scanner := bufio.NewScanner(dictFile)
-	var entry *Entry
+	var entry Entry
 	var line string
 	var fields []string
 	for scanner.Scan() {
 		line = scanner.Text()
 		fields = strings.Split(line, " ")
-		entry = NewEntry()
 		entry.Word = strings.Replace(fields[0], "\ufeff", "", 1)
 		if length := len(fields); length > 1 {
 			entry.Freq, err = strconv.ParseFloat(fields[1], 64)

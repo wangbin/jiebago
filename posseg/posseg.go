@@ -16,8 +16,8 @@ var (
 	reSkipInternal = regexp.MustCompile(`(\r\n|\s)`)
 )
 
-type WordTag struct {
-	Word, Tag string
+type Pair struct {
+	Word, Flag string
 }
 
 type Posseg struct {
@@ -25,7 +25,7 @@ type Posseg struct {
 	Flag map[string]string
 }
 
-func (p *Posseg) AddEntry(entry *jiebago.Entry) {
+func (p *Posseg) AddEntry(entry jiebago.Entry) {
 	if len(entry.Flag) > 0 {
 		p.Flag[entry.Word] = strings.TrimSpace(entry.Flag)
 	}
@@ -49,8 +49,8 @@ func (p *Posseg) LoadUserDict(dictFilePath string) error {
 	return jiebago.LoadDict(p, dictFilePath, true)
 }
 
-func (p *Posseg) cutDetailInternal(sentence string) chan WordTag {
-	result := make(chan WordTag)
+func (p *Posseg) cutDetailInternal(sentence string) chan Pair {
+	result := make(chan Pair)
 
 	go func() {
 		runes := []rune(sentence)
@@ -63,23 +63,23 @@ func (p *Posseg) cutDetailInternal(sentence string) chan WordTag {
 			case 'B':
 				begin = i
 			case 'E':
-				result <- WordTag{string(runes[begin : i+1]), string(pos[1:])}
+				result <- Pair{string(runes[begin : i+1]), string(pos[1:])}
 				next = i + 1
 			case 'S':
-				result <- WordTag{string(char), string(pos[1:])}
+				result <- Pair{string(char), string(pos[1:])}
 				next = i + 1
 			}
 		}
 		if next < len(runes) {
-			result <- WordTag{string(runes[next:]), string(posList[next][1:])}
+			result <- Pair{string(runes[next:]), string(posList[next][1:])}
 		}
 		close(result)
 	}()
 	return result
 }
 
-func (p *Posseg) cutDetail(sentence string) chan WordTag {
-	result := make(chan WordTag)
+func (p *Posseg) cutDetail(sentence string) chan Pair {
+	result := make(chan Pair)
 
 	go func() {
 		for blk := range jiebago.RegexpSplit(reHanDetail, sentence) {
@@ -94,11 +94,11 @@ func (p *Posseg) cutDetail(sentence string) chan WordTag {
 					}
 					switch {
 					case reNum.MatchString(x):
-						result <- WordTag{x, "m"}
+						result <- Pair{x, "m"}
 					case reEng.MatchString(x):
-						result <- WordTag{x, "eng"}
+						result <- Pair{x, "eng"}
 					default:
-						result <- WordTag{x, "x"}
+						result <- Pair{x, "x"}
 					}
 				}
 			}
@@ -108,10 +108,10 @@ func (p *Posseg) cutDetail(sentence string) chan WordTag {
 	return result
 }
 
-type cutFunc func(sentence string) chan WordTag
+type cutFunc func(sentence string) chan Pair
 
-func (p *Posseg) cutDAG(sentence string) chan WordTag {
-	result := make(chan WordTag)
+func (p *Posseg) cutDAG(sentence string) chan Pair {
+	result := make(chan Pair)
 
 	go func() {
 		dag := p.DAG(sentence)
@@ -130,9 +130,9 @@ func (p *Posseg) cutDAG(sentence string) chan WordTag {
 					if len(buf) == 1 {
 						sbuf := string(buf)
 						if tag, ok := p.Flag[sbuf]; ok {
-							result <- WordTag{sbuf, tag}
+							result <- Pair{sbuf, tag}
 						} else {
-							result <- WordTag{sbuf, "x"}
+							result <- Pair{sbuf, "x"}
 						}
 						buf = make([]rune, 0)
 					} else {
@@ -145,9 +145,9 @@ func (p *Posseg) cutDAG(sentence string) chan WordTag {
 							for _, elem := range buf {
 								selem := string(elem)
 								if tag, ok := p.Flag[selem]; ok {
-									result <- WordTag{string(elem), tag}
+									result <- Pair{string(elem), tag}
 								} else {
-									result <- WordTag{string(elem), "x"}
+									result <- Pair{string(elem), "x"}
 								}
 
 							}
@@ -157,9 +157,9 @@ func (p *Posseg) cutDAG(sentence string) chan WordTag {
 				}
 				sl_word := string(l_word)
 				if tag, ok := p.Flag[sl_word]; ok {
-					result <- WordTag{sl_word, tag}
+					result <- Pair{sl_word, tag}
 				} else {
-					result <- WordTag{sl_word, "x"}
+					result <- Pair{sl_word, "x"}
 				}
 			}
 			x = y
@@ -169,9 +169,9 @@ func (p *Posseg) cutDAG(sentence string) chan WordTag {
 			if len(buf) == 1 {
 				sbuf := string(buf)
 				if tag, ok := p.Flag[sbuf]; ok {
-					result <- WordTag{sbuf, tag}
+					result <- Pair{sbuf, tag}
 				} else {
-					result <- WordTag{sbuf, "x"}
+					result <- Pair{sbuf, "x"}
 				}
 			} else {
 				bufString := string(buf)
@@ -183,9 +183,9 @@ func (p *Posseg) cutDAG(sentence string) chan WordTag {
 					for _, elem := range buf {
 						selem := string(elem)
 						if tag, ok := p.Flag[selem]; ok {
-							result <- WordTag{selem, tag}
+							result <- Pair{selem, tag}
 						} else {
-							result <- WordTag{selem, "x"}
+							result <- Pair{selem, "x"}
 						}
 					}
 				}
@@ -196,8 +196,8 @@ func (p *Posseg) cutDAG(sentence string) chan WordTag {
 	return result
 }
 
-func (p *Posseg) cutDAGNoHMM(sentence string) chan WordTag {
-	result := make(chan WordTag)
+func (p *Posseg) cutDAGNoHMM(sentence string) chan Pair {
+	result := make(chan Pair)
 
 	go func() {
 		dag := p.DAG(sentence)
@@ -218,20 +218,20 @@ func (p *Posseg) cutDAGNoHMM(sentence string) chan WordTag {
 				x = y
 			} else {
 				if len(buf) > 0 {
-					result <- WordTag{string(buf), "eng"}
+					result <- Pair{string(buf), "eng"}
 					buf = make([]rune, 0)
 				}
 				sl_word := string(l_word)
 				if tag, ok := p.Flag[sl_word]; ok {
-					result <- WordTag{sl_word, tag}
+					result <- Pair{sl_word, tag}
 				} else {
-					result <- WordTag{sl_word, "x"}
+					result <- Pair{sl_word, "x"}
 				}
 				x = y
 			}
 		}
 		if len(buf) > 0 {
-			result <- WordTag{string(buf), "eng"}
+			result <- Pair{string(buf), "eng"}
 			buf = make([]rune, 0)
 		}
 		close(result)
@@ -241,8 +241,8 @@ func (p *Posseg) cutDAGNoHMM(sentence string) chan WordTag {
 
 // Tags the POS of each word after segmentation, using labels compatible with
 // ictclas.
-func (p *Posseg) Cut(sentence string, HMM bool) chan WordTag {
-	result := make(chan WordTag)
+func (p *Posseg) Cut(sentence string, HMM bool) chan Pair {
+	result := make(chan Pair)
 	var cut cutFunc
 	if HMM {
 		cut = p.cutDAG
@@ -258,18 +258,18 @@ func (p *Posseg) Cut(sentence string, HMM bool) chan WordTag {
 			} else {
 				for x := range jiebago.RegexpSplit(reSkipInternal, blk) {
 					if reSkipInternal.MatchString(x) {
-						result <- WordTag{x, "x"}
+						result <- Pair{x, "x"}
 					} else {
 						for _, xx := range x {
 							s := string(xx)
 							switch {
 							case reNum.MatchString(s):
-								result <- WordTag{s, "m"}
+								result <- Pair{s, "m"}
 							case reEng.MatchString(x):
-								result <- WordTag{x, "eng"}
+								result <- Pair{x, "eng"}
 								break
 							default:
-								result <- WordTag{s, "x"}
+								result <- Pair{s, "x"}
 							}
 						}
 					}

@@ -40,7 +40,7 @@ type StopWordLoader struct {
 	stopWords map[string]int
 }
 
-func (s *StopWordLoader) AddEntry(entry *jiebago.Entry) {
+func (s *StopWordLoader) AddEntry(entry jiebago.Entry) {
 	s.stopWords[entry.Word] = 1
 }
 

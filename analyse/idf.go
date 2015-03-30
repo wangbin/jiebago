@@ -11,7 +11,7 @@ type IDFLoader struct {
 	freqs   []float64
 }
 
-func (l *IDFLoader) AddEntry(entry *jiebago.Entry) {
+func (l *IDFLoader) AddEntry(entry jiebago.Entry) {
 	l.IDFFreq[entry.Word] = entry.Freq
 	l.freqs = append(l.freqs, entry.Freq)
 }
