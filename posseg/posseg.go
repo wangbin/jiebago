@@ -35,8 +35,7 @@ func (p *Posseg) AddEntry(entry jiebago.Entry) {
 // Set dictionary, it could be absolute path of dictionary file, or dictionary
 // name in current diectory.
 func NewPosseg(dictFileName string) (*Posseg, error) {
-	j := jiebago.New()
-	p := &Posseg{j, make(map[string]string)}
+	p := &Posseg{jiebago.New(), make(map[string]string)}
 	err := jiebago.LoadDict(p, dictFileName, true)
 	if err != nil {
 		return nil, err
@@ -114,10 +113,10 @@ func (p *Posseg) cutDAG(sentence string) chan Pair {
 	result := make(chan Pair)
 
 	go func() {
-		dag := p.DAG(sentence)
-		routes := p.Calc(sentence, dag)
-		var y int
 		runes := []rune(sentence)
+		dag := jiebago.DAG(p, runes)
+		routes := jiebago.Routes(p, runes, dag)
+		var y int
 		length := len(runes)
 		buf := make([]rune, 0)
 		for x := 0; x < length; {
@@ -200,11 +199,11 @@ func (p *Posseg) cutDAGNoHMM(sentence string) chan Pair {
 	result := make(chan Pair)
 
 	go func() {
-		dag := p.DAG(sentence)
-		routes := p.Calc(sentence, dag)
+		runes := []rune(sentence)
+		dag := jiebago.DAG(p, runes)
+		routes := jiebago.Routes(p, runes, dag)
 		x := 0
 		var y int
-		runes := []rune(sentence)
 		length := len(runes)
 		buf := make([]rune, 0)
 		for {

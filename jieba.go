@@ -3,7 +3,6 @@ package jiebago
 
 import (
 	"github.com/wangbin/jiebago/finalseg"
-	"math"
 	"regexp"
 	"sort"
 )
@@ -16,29 +15,9 @@ var (
 	reSkipDefault = regexp.MustCompile(`(\r\n|\s)`)
 )
 
-type route struct {
-	Freq  float64
-	Index int
-}
-
-type routes []*route
-
-func (rs routes) Len() int {
-	return len(rs)
-}
-
-func (rs routes) Less(i, j int) bool {
-	if rs[i].Freq < rs[j].Freq {
-		return true
-	}
-	if rs[i].Freq == rs[j].Freq {
-		return rs[i].Index < rs[j].Index
-	}
-	return false
-}
-
-func (rs routes) Swap(i, j int) {
-	rs[i], rs[j] = rs[j], rs[i]
+type Segmenter interface {
+	Freq(string) (float64, bool)
+	Total() float64
 }
 
 type Jieba struct {
@@ -84,65 +63,9 @@ func New() *Jieba {
 // name in current directory. This function must be called before cut any
 // sentence.
 func Open(dictFileName string) (*Jieba, error) {
-	j := &Jieba{total: 0.0, freqMap: make(map[string]float64)}
+	j := New()
 	err := LoadDict(j, dictFileName, false)
 	return j, err
-}
-
-// Build a directed acyclic graph (DAG) for sentence.
-func (j *Jieba) DAG(sentence string) map[int][]int {
-	dag := make(map[int][]int)
-	runes := []rune(sentence)
-	n := len(runes)
-	var frag string
-	for k := 0; k < n; k++ {
-		tmpList := make([]int, 0)
-		i := k
-		frag = string(runes[k])
-		for {
-			if freq, ok := j.Freq(frag); !ok {
-				break
-			} else {
-				if freq > 0.0 {
-					tmpList = append(tmpList, i)
-				}
-			}
-			i += 1
-			if i >= n {
-				break
-			}
-			frag = string(runes[k : i+1])
-		}
-		if len(tmpList) == 0 {
-			tmpList = append(tmpList, k)
-		}
-		dag[k] = tmpList
-	}
-	return dag
-}
-
-func (j *Jieba) Calc(sentence string, dag map[int][]int) map[int]*route {
-	runes := []rune(sentence)
-	number := len(runes)
-	rs := make(map[int]*route)
-	rs[number] = &route{Freq: 0.0, Index: 0}
-	logTotal := math.Log(j.Total())
-	for idx := number - 1; idx >= 0; idx-- {
-		candidates := make(routes, 0)
-		for _, i := range dag[idx] {
-			word := string(runes[idx : i+1])
-			var r *route
-			if freq, ok := j.Freq(word); ok {
-				r = &route{Freq: math.Log(freq) - logTotal + rs[i+1].Freq, Index: i}
-			} else {
-				r = &route{Freq: math.Log(1.0) - logTotal + rs[i+1].Freq, Index: i}
-			}
-			candidates = append(candidates, r)
-		}
-		sort.Sort(sort.Reverse(candidates))
-		rs[idx] = candidates[0]
-	}
-	return rs
 }
 
 type cutFunc func(sentence string) chan string
@@ -150,11 +73,11 @@ type cutFunc func(sentence string) chan string
 func (j *Jieba) cutDAG(sentence string) chan string {
 	result := make(chan string)
 	go func() {
-		dag := j.DAG(sentence)
-		routes := j.Calc(sentence, dag)
+		runes := []rune(sentence)
+		dag := DAG(j, runes)
+		routes := Routes(j, runes, dag)
 		x := 0
 		var y int
-		runes := []rune(sentence)
 		length := len(runes)
 		buf := make([]rune, 0)
 		for {
@@ -214,11 +137,11 @@ func (j *Jieba) cutDAGNoHMM(sentence string) chan string {
 	result := make(chan string)
 
 	go func() {
-		dag := j.DAG(sentence)
-		routes := j.Calc(sentence, dag)
+		runes := []rune(sentence)
+		dag := DAG(j, runes)
+		routes := Routes(j, runes, dag)
 		x := 0
 		var y int
-		runes := []rune(sentence)
 		length := len(runes)
 		buf := make([]rune, 0)
 		for {
@@ -253,7 +176,7 @@ func (j *Jieba) cutAll(sentence string) chan string {
 
 	go func() {
 		runes := []rune(sentence)
-		dag := j.DAG(sentence)
+		dag := DAG(j, runes)
 		old_j := -1
 		ks := make([]int, 0)
 		for k := range dag {
