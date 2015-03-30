@@ -161,7 +161,7 @@ func (t *TextRanker) TextRank(sentence string, topK int) wordWeights {
 // name in current directory. This function must be called before cut any
 // sentence.
 func NewTextRanker(dictFileName string) (*TextRanker, error) {
-	p, err := posseg.NewPosseg(dictFileName)
+	p, err := posseg.Open(dictFileName)
 	if err != nil {
 		return nil, err
 	}

@@ -2,17 +2,19 @@
 package jiebago
 
 import (
+	"errors"
 	"github.com/wangbin/jiebago/finalseg"
 	"regexp"
 	"sort"
 )
 
 var (
-	reEng         = regexp.MustCompile(`[[:alnum:]]`)
-	reHanCutAll   = regexp.MustCompile(`\p{Han}+`)
-	reSkipCutAll  = regexp.MustCompile(`[^[:alnum:]+#\n]`)
-	reHanDefault  = regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
-	reSkipDefault = regexp.MustCompile(`(\r\n|\s)`)
+	ErrInitialized = errors.New("already initialized")
+	reEng          = regexp.MustCompile(`[[:alnum:]]`)
+	reHanCutAll    = regexp.MustCompile(`\p{Han}+`)
+	reSkipCutAll   = regexp.MustCompile(`[^[:alnum:]+#\n]`)
+	reHanDefault   = regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
+	reSkipDefault  = regexp.MustCompile(`(\r\n|\s)`)
 )
 
 type Segmenter interface {
@@ -51,8 +53,15 @@ func (j *Jieba) Add(word string, freq float64) {
 }
 
 // Load user specified dictionary file.
-func (j *Jieba) LoadUserDict(dictFilePath string) error {
-	return LoadDict(j, dictFilePath, false)
+func (j *Jieba) LoadUserDict(dictFileName string) error {
+	return LoadDict(j, dictFileName, false)
+}
+
+func (j *Jieba) SetDict(dictFileName string) error {
+	if len(j.freqMap) > 0 || j.total > 0.0 {
+		return ErrInitialized
+	}
+	return LoadDict(j, dictFileName, false)
 }
 
 func New() *Jieba {

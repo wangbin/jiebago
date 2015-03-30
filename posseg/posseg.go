@@ -22,30 +22,43 @@ type Pair struct {
 
 type Posseg struct {
 	*jiebago.Jieba
-	Flag map[string]string
+	flagMap map[string]string
 }
 
 func (p *Posseg) AddEntry(entry jiebago.Entry) {
 	if len(entry.Flag) > 0 {
-		p.Flag[entry.Word] = strings.TrimSpace(entry.Flag)
+		p.flagMap[entry.Word] = strings.TrimSpace(entry.Flag)
 	}
 	p.Add(entry.Word, entry.Freq)
 }
 
+func (p Posseg) Flag(word string) (string, bool) {
+	flag, ok := p.flagMap[word]
+	return flag, ok
+}
+
 // Set dictionary, it could be absolute path of dictionary file, or dictionary
 // name in current diectory.
-func NewPosseg(dictFileName string) (*Posseg, error) {
-	p := &Posseg{jiebago.New(), make(map[string]string)}
+func Open(dictFileName string) (*Posseg, error) {
+	p := New()
 	err := jiebago.LoadDict(p, dictFileName, true)
-	if err != nil {
-		return nil, err
-	}
-	return p, nil
+	return p, err
 }
 
 // Load user specified dictionary file.
-func (p *Posseg) LoadUserDict(dictFilePath string) error {
-	return jiebago.LoadDict(p, dictFilePath, true)
+func (p *Posseg) LoadUserDict(dictFileName string) error {
+	return jiebago.LoadDict(p, dictFileName, true)
+}
+
+func (p *Posseg) SetDict(dictFileName string) error {
+	if len(p.flagMap) > 0 || p.Total() > 0.0 {
+		return jiebago.ErrInitialized
+	}
+	return jiebago.LoadDict(p, dictFileName, false)
+}
+
+func New() *Posseg {
+	return &Posseg{jiebago.New(), make(map[string]string)}
 }
 
 func (p *Posseg) cutDetailInternal(sentence string) chan Pair {
@@ -128,7 +141,7 @@ func (p *Posseg) cutDAG(sentence string) chan Pair {
 				if len(buf) > 0 {
 					if len(buf) == 1 {
 						sbuf := string(buf)
-						if tag, ok := p.Flag[sbuf]; ok {
+						if tag, ok := p.Flag(sbuf); ok {
 							result <- Pair{sbuf, tag}
 						} else {
 							result <- Pair{sbuf, "x"}
@@ -143,7 +156,7 @@ func (p *Posseg) cutDAG(sentence string) chan Pair {
 						} else {
 							for _, elem := range buf {
 								selem := string(elem)
-								if tag, ok := p.Flag[selem]; ok {
+								if tag, ok := p.Flag(selem); ok {
 									result <- Pair{string(elem), tag}
 								} else {
 									result <- Pair{string(elem), "x"}
@@ -155,7 +168,7 @@ func (p *Posseg) cutDAG(sentence string) chan Pair {
 					}
 				}
 				sl_word := string(l_word)
-				if tag, ok := p.Flag[sl_word]; ok {
+				if tag, ok := p.Flag(sl_word); ok {
 					result <- Pair{sl_word, tag}
 				} else {
 					result <- Pair{sl_word, "x"}
@@ -167,7 +180,7 @@ func (p *Posseg) cutDAG(sentence string) chan Pair {
 		if len(buf) > 0 {
 			if len(buf) == 1 {
 				sbuf := string(buf)
-				if tag, ok := p.Flag[sbuf]; ok {
+				if tag, ok := p.Flag(sbuf); ok {
 					result <- Pair{sbuf, tag}
 				} else {
 					result <- Pair{sbuf, "x"}
@@ -181,7 +194,7 @@ func (p *Posseg) cutDAG(sentence string) chan Pair {
 				} else {
 					for _, elem := range buf {
 						selem := string(elem)
-						if tag, ok := p.Flag[selem]; ok {
+						if tag, ok := p.Flag(selem); ok {
 							result <- Pair{selem, tag}
 						} else {
 							result <- Pair{selem, "x"}
@@ -221,7 +234,7 @@ func (p *Posseg) cutDAGNoHMM(sentence string) chan Pair {
 					buf = make([]rune, 0)
 				}
 				sl_word := string(l_word)
-				if tag, ok := p.Flag[sl_word]; ok {
+				if tag, ok := p.Flag(sl_word); ok {
 					result <- Pair{sl_word, tag}
 				} else {
 					result <- Pair{sl_word, "x"}
