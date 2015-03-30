@@ -2,10 +2,6 @@ package jiebago
 
 import (
 	"bufio"
-	"crypto/md5"
-	"encoding/gob"
-	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -32,13 +28,12 @@ func LoadDict(l DictLoader, dictFileName string, usingFlag bool) error {
 		return err
 	}
 
-	log.Printf("Building Trie..., from %s\n", dictFilePath)
-
 	dictFile, err := os.Open(dictFilePath)
 	if err != nil {
 		return err
 	}
 	defer dictFile.Close()
+
 	scanner := bufio.NewScanner(dictFile)
 	var entry Entry
 	var line string
@@ -59,80 +54,6 @@ func LoadDict(l DictLoader, dictFileName string, usingFlag bool) error {
 		l.AddEntry(entry)
 	}
 	return scanner.Err()
-}
-
-func cacheFilePath(c Cacher, dictPath string) string {
-	return filepath.Join(os.TempDir(),
-		fmt.Sprintf(c.CacheNameFormat(), md5.Sum([]byte(dictPath))))
-}
-
-func cached(dictPath, cachePath string) (bool, error) {
-	dictFileInfo, err := os.Stat(dictPath)
-	if err != nil {
-		return false, err
-	}
-	cacheFileInfo, err := os.Stat(cachePath)
-	if err != nil {
-		return false, nil
-	}
-	return cacheFileInfo.ModTime().After(dictFileInfo.ModTime()), nil
-}
-
-func load(l DictLoader, cachePath string) error {
-	cacheFile, err := os.Open(cachePath)
-	if err != nil {
-		return err
-	}
-	defer cacheFile.Close()
-
-	dec := gob.NewDecoder(cacheFile)
-	return dec.Decode(l)
-}
-
-func dump(c Cacher, cachePath string) error {
-	cacheFile, err := os.OpenFile(cachePath, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
-	if err != nil {
-		return err
-	}
-	defer cacheFile.Close()
-	enc := gob.NewEncoder(cacheFile)
-	return enc.Encode(c)
-}
-
-func SetDict(l DictLoader, dictName string, pos bool) error {
-	dictPath, err := dictPath(dictName)
-	if err != nil {
-		return err
-	}
-
-	var cachePath string
-	if c, ok := l.(Cacher); ok {
-		cachePath = cacheFilePath(c, dictPath)
-		cached, err := cached(dictPath, cachePath)
-		if err != nil {
-			return err
-		}
-
-		if cached {
-			err = load(l, cachePath)
-			if err == nil {
-				log.Printf("loaded model from cache %s\n", cachePath)
-				return nil
-			}
-		}
-	}
-	err = LoadDict(l, dictPath, pos)
-	if err != nil {
-		return err
-	}
-	if c, ok := l.(Cacher); ok {
-		err = dump(c, cachePath)
-		if err == nil {
-			log.Printf("dumped model from cache %s\n", cachePath)
-			return nil
-		}
-	}
-	return err
 }
 
 // Split sentence using regular expression.

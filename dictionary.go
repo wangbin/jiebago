@@ -9,7 +9,3 @@ type Entry struct {
 type DictLoader interface {
 	AddEntry(Entry)
 }
-
-type Cacher interface {
-	CacheNameFormat() string
-}

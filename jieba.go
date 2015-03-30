@@ -85,7 +85,7 @@ func (j *Jieba) LoadUserDict(dictFilePath string) error {
 // sentence.
 func NewJieba(dictFileName string) (*Jieba, error) {
 	j := &Jieba{Total: 0.0, Freq: make(map[string]float64)}
-	err := SetDict(j, dictFileName, false)
+	err := LoadDict(j, dictFileName, false)
 	return j, err
 }
 
