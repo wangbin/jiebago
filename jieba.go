@@ -2,7 +2,6 @@
 package jiebago
 
 import (
-	"fmt"
 	"github.com/wangbin/jiebago/finalseg"
 	"math"
 	"regexp"
@@ -20,10 +19,6 @@ var (
 type route struct {
 	Freq  float64
 	Index int
-}
-
-func (r route) String() string {
-	return fmt.Sprintf("(%f, %d)", r.Freq, r.Index)
 }
 
 type routes []*route
@@ -47,8 +42,17 @@ func (rs routes) Swap(i, j int) {
 }
 
 type Jieba struct {
-	Total float64
-	Freq  map[string]float64
+	total   float64
+	freqMap map[string]float64
+}
+
+func (j Jieba) Freq(key string) (float64, bool) {
+	freq, ok := j.freqMap[key]
+	return freq, ok
+}
+
+func (j Jieba) Total() float64 {
+	return j.total
 }
 
 func (j *Jieba) AddEntry(entry Entry) {
@@ -56,13 +60,13 @@ func (j *Jieba) AddEntry(entry Entry) {
 }
 
 func (j *Jieba) Add(word string, freq float64) {
-	j.Freq[word] = freq
-	j.Total += freq
+	j.freqMap[word] = freq
+	j.total += freq
 	runes := []rune(word)
 	for i := 0; i < len(runes); i++ {
 		frag := string(runes[0 : i+1])
-		if _, ok := j.Freq[frag]; !ok {
-			j.Freq[frag] = 0.0
+		if _, ok := j.Freq(frag); !ok {
+			j.freqMap[frag] = 0.0
 		}
 	}
 }
@@ -72,11 +76,15 @@ func (j *Jieba) LoadUserDict(dictFilePath string) error {
 	return LoadDict(j, dictFilePath, false)
 }
 
+func New() *Jieba {
+	return &Jieba{total: 0.0, freqMap: make(map[string]float64)}
+}
+
 // Set the dictionary, could be absolute path of dictionary file, or dictionary
 // name in current directory. This function must be called before cut any
 // sentence.
-func NewJieba(dictFileName string) (*Jieba, error) {
-	j := &Jieba{Total: 0.0, Freq: make(map[string]float64)}
+func Open(dictFileName string) (*Jieba, error) {
+	j := &Jieba{total: 0.0, freqMap: make(map[string]float64)}
 	err := LoadDict(j, dictFileName, false)
 	return j, err
 }
@@ -92,7 +100,7 @@ func (j *Jieba) DAG(sentence string) map[int][]int {
 		i := k
 		frag = string(runes[k])
 		for {
-			if freq, ok := j.Freq[frag]; !ok {
+			if freq, ok := j.Freq(frag); !ok {
 				break
 			} else {
 				if freq > 0.0 {
@@ -118,14 +126,14 @@ func (j *Jieba) Calc(sentence string, dag map[int][]int) map[int]*route {
 	number := len(runes)
 	rs := make(map[int]*route)
 	rs[number] = &route{Freq: 0.0, Index: 0}
-	logTotal := math.Log(j.Total)
+	logTotal := math.Log(j.Total())
 	for idx := number - 1; idx >= 0; idx-- {
 		candidates := make(routes, 0)
 		for _, i := range dag[idx] {
 			word := string(runes[idx : i+1])
 			var r *route
-			if _, ok := j.Freq[word]; ok {
-				r = &route{Freq: math.Log(j.Freq[word]) - logTotal + rs[i+1].Freq, Index: i}
+			if freq, ok := j.Freq(word); ok {
+				r = &route{Freq: math.Log(freq) - logTotal + rs[i+1].Freq, Index: i}
 			} else {
 				r = &route{Freq: math.Log(1.0) - logTotal + rs[i+1].Freq, Index: i}
 			}
@@ -164,7 +172,7 @@ func (j *Jieba) cutDAG(sentence string) chan string {
 						buf = make([]rune, 0)
 					} else {
 						bufString := string(buf)
-						if v, ok := j.Freq[bufString]; !ok || v == 0.0 {
+						if v, ok := j.Freq(bufString); !ok || v == 0.0 {
 							for x := range finalseg.Cut(bufString) {
 								result <- x
 							}
@@ -186,7 +194,7 @@ func (j *Jieba) cutDAG(sentence string) chan string {
 				result <- string(buf)
 			} else {
 				bufString := string(buf)
-				if v, ok := j.Freq[bufString]; !ok || v == 0.0 {
+				if v, ok := j.Freq(bufString); !ok || v == 0.0 {
 					for t := range finalseg.Cut(bufString) {
 						result <- t
 					}
@@ -352,7 +360,7 @@ func (j *Jieba) CutForSearch(sentence string, hmm bool) chan string {
 					var gram2 string
 					for i := 0; i < len(runes)-increment+1; i++ {
 						gram2 = string(runes[i : i+increment])
-						if v, ok := j.Freq[gram2]; ok && v > 0.0 {
+						if v, ok := j.Freq(gram2); ok && v > 0.0 {
 							result <- gram2
 						}
 					}

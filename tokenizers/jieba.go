@@ -19,7 +19,7 @@ type JiebaTokenizer struct {
 }
 
 func NewJiebaTokenizer(dictFileName string, hmm, searchMode bool) (analysis.Tokenizer, error) {
-	j, err := jiebago.NewJieba(dictFileName)
+	j, err := jiebago.Open(dictFileName)
 	return &JiebaTokenizer{
 		j:          j,
 		hmm:        hmm,
@@ -44,7 +44,7 @@ func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 					for i := 0; i < width-step+1; i++ {
 						gram = string(runes[i : i+step])
 						gramLen := len(gram)
-						if value, ok := jt.j.Freq[gram]; ok && value > 0 {
+						if value, ok := jt.j.Freq(gram); ok && value > 0 {
 							gramStart := start + len(string(runes[:i]))
 							token := analysis.Token{
 								Term:     []byte(gram),

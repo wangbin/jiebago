@@ -42,7 +42,7 @@ type TagExtracter struct {
 }
 
 func NewTagExtracter(dictFileName, IDFFileName string) (*TagExtracter, error) {
-	j, err := jiebago.NewJieba(dictFileName)
+	j, err := jiebago.Open(dictFileName)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func NewTagExtracter(dictFileName, IDFFileName string) (*TagExtracter, error) {
 func (t *TagExtracter) ExtractTags(sentence string, topK int) (tags wordWeights) {
 	freq := make(map[string]float64)
 
-	for w := range t.Cut(sentence, false, true) {
+	for w := range t.Cut(sentence, true) {
 		w = strings.TrimSpace(w)
 		if utf8.RuneCountInString(w) < 2 {
 			continue

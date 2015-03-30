@@ -35,7 +35,7 @@ func (p *Posseg) AddEntry(entry jiebago.Entry) {
 // Set dictionary, it could be absolute path of dictionary file, or dictionary
 // name in current diectory.
 func NewPosseg(dictFileName string) (*Posseg, error) {
-	j := &jiebago.Jieba{Total: 0.0, Freq: make(map[string]float64)}
+	j := jiebago.New()
 	p := &Posseg{j, make(map[string]string)}
 	err := jiebago.LoadDict(p, dictFileName, true)
 	if err != nil {
@@ -137,7 +137,7 @@ func (p *Posseg) cutDAG(sentence string) chan Pair {
 						buf = make([]rune, 0)
 					} else {
 						bufString := string(buf)
-						if v, ok := p.Freq[bufString]; !ok || v == 0.0 {
+						if v, ok := p.Freq(bufString); !ok || v == 0.0 {
 							for t := range p.cutDetail(bufString) {
 								result <- t
 							}
@@ -175,7 +175,7 @@ func (p *Posseg) cutDAG(sentence string) chan Pair {
 				}
 			} else {
 				bufString := string(buf)
-				if v, ok := p.Freq[bufString]; !ok || v == 0.0 {
+				if v, ok := p.Freq(bufString); !ok || v == 0.0 {
 					for t := range p.cutDetail(bufString) {
 						result <- t
 					}

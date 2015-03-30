@@ -626,7 +626,7 @@ func chanToArray(ch chan string) []string {
 }
 
 func TestCutDAG(t *testing.T) {
-	j, _ := NewJieba("dict.txt")
+	j, _ := Open("dict.txt")
 
 	result := chanToArray(j.cutDAG("BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 11 {
@@ -635,7 +635,7 @@ func TestCutDAG(t *testing.T) {
 }
 
 func TestCutDAGNoHmm(t *testing.T) {
-	j, _ := NewJieba("dict.txt")
+	j, _ := Open("dict.txt")
 
 	result := chanToArray(j.cutDAGNoHMM("BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 11 {
@@ -657,7 +657,7 @@ func TestRegexpSplit(t *testing.T) {
 }
 
 func TestDefaultCut(t *testing.T) {
-	j, _ := NewJieba("dict.txt")
+	j, _ := Open("dict.txt")
 
 	var result []string
 	for index, content := range test_contents {
@@ -675,7 +675,7 @@ func TestDefaultCut(t *testing.T) {
 }
 
 func TestCutAll(t *testing.T) {
-	j, _ := NewJieba("dict.txt")
+	j, _ := Open("dict.txt")
 
 	var result []string
 	for index, content := range test_contents {
@@ -693,7 +693,7 @@ func TestCutAll(t *testing.T) {
 }
 
 func TestDefaultCutNoHMM(t *testing.T) {
-	j, _ := NewJieba("dict.txt")
+	j, _ := Open("dict.txt")
 
 	var result []string
 	for index, content := range test_contents {
@@ -711,7 +711,7 @@ func TestDefaultCutNoHMM(t *testing.T) {
 }
 
 func TestCutForSearch(t *testing.T) {
-	j, _ := NewJieba("dict.txt")
+	j, _ := Open("dict.txt")
 
 	var result []string
 	for index, content := range test_contents {
@@ -742,7 +742,7 @@ func TestCutForSearch(t *testing.T) {
 
 func TestSetdictionary(t *testing.T) {
 	var result []string
-	j, _ := NewJieba("foobar.txt")
+	j, _ := Open("foobar.txt")
 	for index, content := range test_contents {
 		result = chanToArray(j.Cut(content, true))
 		if len(result) != len(userDictCutResult[index]) {
@@ -758,7 +758,7 @@ func TestSetdictionary(t *testing.T) {
 }
 
 func TestLoadUserDict(t *testing.T) {
-	j, _ := NewJieba("dict.txt")
+	j, _ := Open("dict.txt")
 	j.LoadUserDict("userdict.txt")
 
 	sentence := "李小福是创新办主任也是云计算方面的专家; 什么是八一双鹿例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
