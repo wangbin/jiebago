@@ -123,23 +123,20 @@ func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []strin
 	g := newUndirectWeightedGraph()
 	cm := make(map[[2]string]float64)
 	span := 5
-	wordTags := make([]posseg.WordTag, 0)
-	for wordTag := range t.Cut(sentence, true) {
-		wordTags = append(wordTags, wordTag)
+	pairs := make([]posseg.Pair, 0)
+	for pair := range t.Cut(sentence, true) {
+		pairs = append(pairs, pair)
 	}
-	for i, _ := range wordTags {
-		if _, ok := posFilt[wordTags[i].Tag]; ok {
-			for j := i + 1; j < i+span; j++ {
-				if j > len(wordTags) {
-					break
-				}
-				if _, ok := posFilt[wordTags[j].Tag]; !ok {
+	for i, _ := range pairs {
+		if _, ok := posFilt[pairs[i].Flag]; ok {
+			for j := i + 1; j < i+span && j <= len(pairs); j++ {
+				if _, ok := posFilt[pairs[j].Flag]; !ok {
 					continue
 				}
-				if _, ok := cm[[2]string{wordTags[i].Word, wordTags[j].Word}]; !ok {
-					cm[[2]string{wordTags[i].Word, wordTags[j].Word}] = 1.0
+				if _, ok := cm[[2]string{pairs[i].Word, pairs[j].Word}]; !ok {
+					cm[[2]string{pairs[i].Word, pairs[j].Word}] = 1.0
 				} else {
-					cm[[2]string{wordTags[i].Word, wordTags[j].Word}] += 1.0
+					cm[[2]string{pairs[i].Word, pairs[j].Word}] += 1.0
 				}
 			}
 		}
