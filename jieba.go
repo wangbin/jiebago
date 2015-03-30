@@ -9,16 +9,12 @@ import (
 	"sort"
 )
 
-const cacheNameFormat = "jieba.%x.cache"
-
 var (
-	// Word/Tag Map load from user dictionary
-	UserWordTagTab = make(map[string]string)
-	reEng          = regexp.MustCompile(`[[:alnum:]]`)
-	reHanCutAll    = regexp.MustCompile(`\p{Han}+`)
-	reSkipCutAll   = regexp.MustCompile(`[^[:alnum:]+#\n]`)
-	reHanDefault   = regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
-	reSkipDefault  = regexp.MustCompile(`(\r\n|\s)`)
+	reEng         = regexp.MustCompile(`[[:alnum:]]`)
+	reHanCutAll   = regexp.MustCompile(`\p{Han}+`)
+	reSkipCutAll  = regexp.MustCompile(`[^[:alnum:]+#\n]`)
+	reHanDefault  = regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
+	reSkipDefault = regexp.MustCompile(`(\r\n|\s)`)
 )
 
 type route struct {
@@ -57,10 +53,6 @@ type Jieba struct {
 
 func (j *Jieba) AddEntry(entry Entry) {
 	j.Add(entry.Word, entry.Freq)
-}
-
-func (j *Jieba) CacheNameFormat() string {
-	return cacheNameFormat
 }
 
 func (j *Jieba) Add(word string, freq float64) {
