@@ -799,3 +799,48 @@ func TestLoadUserDict(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkCutNoHMM(b *testing.B) {
+	j, _ := Open("dict.txt")
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(j.Cut(sentence, false))
+	}
+}
+
+func BenchmarkCut(b *testing.B) {
+	j, _ := Open("dict.txt")
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(j.Cut(sentence, true))
+	}
+}
+
+func BenchmarkCutAll(b *testing.B) {
+	j, _ := Open("dict.txt")
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(j.CutAll(sentence))
+	}
+}
+
+func BenchmarkCutForSearchNoHMM(b *testing.B) {
+	j, _ := Open("dict.txt")
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(j.CutForSearch(sentence, false))
+	}
+}
+
+func BenchmarkCutForSearch(b *testing.B) {
+	j, _ := Open("dict.txt")
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(j.CutForSearch(sentence, true))
+	}
+}
