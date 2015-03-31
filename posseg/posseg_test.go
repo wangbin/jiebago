@@ -412,3 +412,21 @@ func TestUserDict(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkCutNoHMM(b *testing.B) {
+	p, _ := Open("dict.txt")
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(p.Cut(sentence, false))
+	}
+}
+
+func BenchmarkCut(b *testing.B) {
+	p, _ := Open("dict.txt")
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(p.Cut(sentence, true))
+	}
+}
