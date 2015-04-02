@@ -690,8 +690,8 @@ func TestCutAll(t *testing.T) {
 		if len(result) != len(cutAllResult[index]) {
 			t.Errorf("cut all for %s length should be %d not %d\n",
 				content, len(cutAllResult[index]), len(result))
-			t.Errorf("expect: %v\n", strings.Join(defaultCutResult[index], "/"))
-			t.Fatalf("got: %v\n", strings.Join(result, "/"))
+			t.Errorf("expect: %v\n", defaultCutResult[index])
+			t.Fatalf("got: %v\n", result)
 		}
 		for i, c := range result {
 			if c != cutAllResult[index][i] {
