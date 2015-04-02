@@ -1,14 +1,15 @@
 package posseg
 
 import (
+	"fmt"
 	"github.com/wangbin/jiebago"
 	"regexp"
 	"strings"
 )
 
 var (
-	reHanDetail    = regexp.MustCompile(`\p{Han}+`)
-	reSkipDetail   = regexp.MustCompile(`[[\.[:digit:]]+|[:alnum:]]+`)
+	reHanDetail    = regexp.MustCompile(`(\p{Han}+)`)
+	reSkipDetail   = regexp.MustCompile(`([[\.[:digit:]]+|[:alnum:]]+)`)
 	reEng          = regexp.MustCompile(`[[:alnum:]]`)
 	reNum          = regexp.MustCompile(`[\.[:digit:]]+`)
 	reEng1         = regexp.MustCompile(`[[:alnum:]]$`)
@@ -18,6 +19,10 @@ var (
 
 type Pair struct {
 	Word, Flag string
+}
+
+func (p Pair) String() string {
+	return fmt.Sprintf("%s / %s", p.Word, p.Flag)
 }
 
 type Posseg struct {
@@ -92,15 +97,14 @@ func (p *Posseg) cutDetailInternal(sentence string) chan Pair {
 
 func (p *Posseg) cutDetail(sentence string) chan Pair {
 	result := make(chan Pair)
-
 	go func() {
-		for blk := range jiebago.RegexpSplit(reHanDetail, sentence) {
+		for _, blk := range jiebago.RegexpSplit(reHanDetail, sentence, -1) {
 			if reHanDetail.MatchString(blk) {
 				for wordTag := range p.cutDetailInternal(blk) {
 					result <- wordTag
 				}
 			} else {
-				for x := range jiebago.RegexpSplit(reSkipDetail, blk) {
+				for _, x := range jiebago.RegexpSplit(reSkipDetail, blk, -1) {
 					if len(x) == 0 {
 						continue
 					}
@@ -262,13 +266,13 @@ func (p *Posseg) Cut(sentence string, HMM bool) chan Pair {
 		cut = p.cutDAGNoHMM
 	}
 	go func() {
-		for blk := range jiebago.RegexpSplit(reHanInternal, sentence) {
+		for _, blk := range jiebago.RegexpSplit(reHanInternal, sentence, -1) {
 			if reHanInternal.MatchString(blk) {
 				for wordTag := range cut(blk) {
 					result <- wordTag
 				}
 			} else {
-				for x := range jiebago.RegexpSplit(reSkipInternal, blk) {
+				for _, x := range jiebago.RegexpSplit(reSkipInternal, blk, -1) {
 					if reSkipInternal.MatchString(x) {
 						result <- Pair{x, "x"}
 					} else {

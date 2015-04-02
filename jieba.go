@@ -11,11 +11,58 @@ import (
 var (
 	ErrInitialized = errors.New("already initialized")
 	reEng          = regexp.MustCompile(`[[:alnum:]]`)
-	reHanCutAll    = regexp.MustCompile(`\p{Han}+`)
+	reHanCutAll    = regexp.MustCompile(`(\p{Han}+)`)
 	reSkipCutAll   = regexp.MustCompile(`[^[:alnum:]+#\n]`)
 	reHanDefault   = regexp.MustCompile(`([\p{Han}+[:alnum:]+#&\._]+)`)
 	reSkipDefault  = regexp.MustCompile(`(\r\n|\s)`)
 )
+
+// RegexpSplit split slices s into substrings separated by the expression and
+// returns a slice of the substrings between those expression matches.
+// If capturing parentheses are used in expression, then the text of all groups
+// in the expression are also returned as part of the resulting slice.
+//
+// This function acts consistent with Python's re.split function.
+func RegexpSplit(re *regexp.Regexp, s string, n int) []string {
+	if n == 0 {
+		return nil
+	}
+
+	if len(re.String()) > 0 && len(s) == 0 {
+		return []string{""}
+	}
+
+	var matches [][]int
+	if len(re.SubexpNames()) > 1 {
+		matches = re.FindAllStringSubmatchIndex(s, n)
+	} else {
+		matches = re.FindAllStringIndex(s, n)
+	}
+	strings := make([]string, 0, len(matches))
+
+	beg := 0
+	end := 0
+	for _, match := range matches {
+		if n > 0 && len(strings) >= n-1 {
+			break
+		}
+
+		end = match[0]
+		if match[1] != 0 {
+			strings = append(strings, s[beg:end])
+		}
+		beg = match[1]
+		if len(re.SubexpNames()) > 1 {
+			strings = append(strings, s[match[0]:match[1]])
+		}
+	}
+
+	if end != len(s) {
+		strings = append(strings, s[beg:])
+	}
+
+	return strings
+}
 
 type Segmenter interface {
 	Freq(string) (float64, bool)
@@ -231,22 +278,23 @@ func (j *Jieba) Cut(sentence string, hmm bool) chan string {
 	} else {
 		cut = j.cutDAGNoHMM
 	}
+
 	go func() {
-		for blk := range RegexpSplit(reHanDefault, sentence) {
-			if len(blk) == 0 {
+		for _, block := range RegexpSplit(reHanDefault, sentence, -1) {
+			if len(block) == 0 {
 				continue
 			}
-			if reHanDefault.MatchString(blk) {
-				for x := range cut(blk) {
+			if reHanDefault.MatchString(block) {
+				for x := range cut(block) {
 					result <- x
 				}
 			} else {
-				for x := range RegexpSplit(reSkipDefault, blk) {
-					if reSkipDefault.MatchString(x) {
-						result <- x
+				for _, subBlock := range RegexpSplit(reSkipDefault, block, -1) {
+					if reSkipDefault.MatchString(subBlock) {
+						result <- subBlock
 					} else {
-						for _, xx := range x {
-							result <- string(xx)
+						for _, r := range subBlock {
+							result <- string(r)
 						}
 					}
 				}
@@ -260,17 +308,17 @@ func (j *Jieba) Cut(sentence string, hmm bool) chan string {
 func (j *Jieba) CutAll(sentence string) chan string {
 	result := make(chan string)
 	go func() {
-		for blk := range RegexpSplit(reHanCutAll, sentence) {
-			if len(blk) == 0 {
+		for _, block := range RegexpSplit(reHanCutAll, sentence, -1) {
+			if len(block) == 0 {
 				continue
 			}
-			if reHanCutAll.MatchString(blk) {
-				for x := range j.cutAll(blk) {
+			if reHanCutAll.MatchString(block) {
+				for x := range j.cutAll(block) {
 					result <- x
 				}
 			} else {
-				for _, x := range reSkipCutAll.Split(blk, -1) {
-					result <- x
+				for _, subBlock := range reSkipCutAll.Split(block, -1) {
+					result <- subBlock
 				}
 			}
 		}

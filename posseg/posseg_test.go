@@ -283,7 +283,10 @@ func TestCut(t *testing.T) {
 	for index, content := range test_contents {
 		result := chanToArray(p.Cut(content, true))
 		if len(defaultCutResult[index]) != len(result) {
-			t.Fatal(content)
+			t.Errorf("default cut for %s length should be %d not %d\n",
+				content, len(defaultCutResult[index]), len(result))
+			t.Errorf("expect: %v\n", defaultCutResult[index])
+			t.Fatalf("got: %v\n", result)
 		}
 		for i, _ := range result {
 			if result[i] != defaultCutResult[index][i] {

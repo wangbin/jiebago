@@ -644,13 +644,18 @@ func TestCutDAGNoHmm(t *testing.T) {
 }
 
 func TestRegexpSplit(t *testing.T) {
-	result := chanToArray(RegexpSplit(regexp.MustCompile(`\p{Han}+`),
-		"BP神经网络如何训练才能在分类时增加区分度？"))
+	result := RegexpSplit(regexp.MustCompile(`\p{Han}+`),
+		"BP神经网络如何训练才能在分类时增加区分度？", -1)
+	if len(result) != 2 {
+		t.Fatal(result)
+	}
+	result = RegexpSplit(regexp.MustCompile(`(\p{Han})+`),
+		"BP神经网络如何训练才能在分类时增加区分度？", -1)
 	if len(result) != 3 {
 		t.Fatal(result)
 	}
-	result = chanToArray(RegexpSplit(regexp.MustCompile(`([\p{Han}#]+)`),
-		",BP神经网络如何训练才能在分类时#增加区分度？"))
+	result = RegexpSplit(regexp.MustCompile(`([\p{Han}#]+)`),
+		",BP神经网络如何训练才能在分类时#增加区分度？", -1)
 	if len(result) != 3 {
 		t.Fatal(result)
 	}
@@ -663,8 +668,10 @@ func TestDefaultCut(t *testing.T) {
 	for index, content := range test_contents {
 		result = chanToArray(j.Cut(content, true))
 		if len(result) != len(defaultCutResult[index]) {
-			t.Fatalf("default cut for %s length should be %d not %d\n",
+			t.Errorf("default cut for %s length should be %d not %d\n",
 				content, len(defaultCutResult[index]), len(result))
+			t.Errorf("expect: %v\n", defaultCutResult[index])
+			t.Fatalf("got: %v\n", result)
 		}
 		for i, r := range result {
 			if r != defaultCutResult[index][i] {
@@ -681,8 +688,10 @@ func TestCutAll(t *testing.T) {
 	for index, content := range test_contents {
 		result = chanToArray(j.CutAll(content))
 		if len(result) != len(cutAllResult[index]) {
-			t.Fatalf("cut all for %s length should be %d not %d\n",
+			t.Errorf("cut all for %s length should be %d not %d\n",
 				content, len(cutAllResult[index]), len(result))
+			t.Errorf("expect: %v\n", strings.Join(defaultCutResult[index], "/"))
+			t.Fatalf("got: %v\n", strings.Join(result, "/"))
 		}
 		for i, c := range result {
 			if c != cutAllResult[index][i] {
