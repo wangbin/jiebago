@@ -40,3 +40,10 @@ func TestViterbi(t *testing.T) {
 		}
 	}
 }
+
+func BenchmarkViterbi(b *testing.B) {
+	ss := "李小福是创新办主任也是云计算方面的专家;"
+	for i := 0; i < b.N; i++ {
+		viterbi([]rune(ss))
+	}
+}

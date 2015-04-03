@@ -75,16 +75,17 @@ func viterbi(obs []rune) []string {
 		mem_path[t] = make(map[string]string) // TODO: value needed or not?
 		V[t] = make(map[string]float64)
 		for _, y := range obs_states {
-			pss := make(probStates, 0)
-			for _, y0 := range prev_states {
-				ps := probState{
+			var max, ps probState
+			for i, y0 := range prev_states {
+				ps = probState{
 					prob:  V[t-1][y0] + probTrans[y0].Get(y) + probEmit[y].get(obs[t]),
 					state: y0}
-				pss = append(pss, ps)
+				if i == 0 || ps.prob > max.prob || (ps.prob == max.prob && ps.state > max.state) {
+					max = ps
+				}
 			}
-			sort.Sort(sort.Reverse(pss))
-			V[t][y] = pss[0].prob
-			mem_path[t][y] = pss[0].state
+			V[t][y] = max.prob
+			mem_path[t][y] = max.state
 		}
 	}
 	last := make(probStates, 0)
