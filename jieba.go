@@ -4,6 +4,7 @@ package jiebago
 import (
 	"errors"
 	"github.com/wangbin/jiebago/finalseg"
+	"math"
 	"regexp"
 	"sort"
 )
@@ -67,11 +68,12 @@ func RegexpSplit(re *regexp.Regexp, s string, n int) []string {
 type Segmenter interface {
 	Freq(string) (float64, bool)
 	Total() float64
+	LogTotal() float64
 }
 
 type Jieba struct {
-	total   float64
-	freqMap map[string]float64
+	total, logTotal float64
+	freqMap         map[string]float64
 }
 
 func (j Jieba) Freq(key string) (float64, bool) {
@@ -81,6 +83,10 @@ func (j Jieba) Freq(key string) (float64, bool) {
 
 func (j Jieba) Total() float64 {
 	return j.total
+}
+
+func (j Jieba) LogTotal() float64 {
+	return j.logTotal
 }
 
 func (j *Jieba) AddEntry(entry Entry) {
@@ -97,6 +103,7 @@ func (j *Jieba) Add(word string, freq float64) {
 			j.freqMap[frag] = 0.0
 		}
 	}
+	j.logTotal = math.Log(j.total)
 }
 
 // Load user specified dictionary file.

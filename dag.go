@@ -2,7 +2,6 @@ package jiebago
 
 import (
 	"math"
-	"sort"
 )
 
 type route struct {
@@ -36,16 +35,17 @@ func DAG(s Segmenter, runes []rune) dag {
 	d := make(dag)
 	n := len(runes)
 	var frag string
+	var i int
 	for k := 0; k < n; k++ {
-		tmpList := make([]int, 0)
-		i := k
+		d[k] = make([]int, 0)
+		i = k
 		frag = string(runes[k])
 		for {
 			if freq, ok := s.Freq(frag); !ok {
 				break
 			} else {
 				if freq > 0.0 {
-					tmpList = append(tmpList, i)
+					d[k] = append(d[k], i)
 				}
 			}
 			i += 1
@@ -54,10 +54,9 @@ func DAG(s Segmenter, runes []rune) dag {
 			}
 			frag = string(runes[k : i+1])
 		}
-		if len(tmpList) == 0 {
-			tmpList = append(tmpList, k)
+		if len(d[k]) == 0 {
+			d[k] = append(d[k], k)
 		}
-		d[k] = tmpList
 	}
 	return d
 }
@@ -66,19 +65,21 @@ func Routes(s Segmenter, runes []rune, d dag) map[int]route {
 	n := len(runes)
 	rs := make(map[int]route)
 	rs[n] = route{Freq: 0.0, Index: 0}
-	logTotal := math.Log(s.Total())
+	logTotal := s.LogTotal()
+	var r route
 	for idx := n - 1; idx >= 0; idx-- {
-		candidates := make(routes, len(d[idx]))
-		for index, i := range d[idx] {
+		for _, i := range d[idx] {
 			word := string(runes[idx : i+1])
 			if freq, ok := s.Freq(word); ok {
-				candidates[index] = route{Freq: math.Log(freq) - logTotal + rs[i+1].Freq, Index: i}
+				r = route{Freq: math.Log(freq) - logTotal + rs[i+1].Freq, Index: i}
 			} else {
-				candidates[index] = route{Freq: math.Log(1.0) - logTotal + rs[i+1].Freq, Index: i}
+				r = route{Freq: math.Log(1.0) - logTotal + rs[i+1].Freq, Index: i}
+			}
+
+			if v, ok := rs[idx]; !ok || v.Freq < r.Freq || (v.Freq == r.Freq && v.Index < r.Index) {
+				rs[idx] = r
 			}
 		}
-		sort.Sort(sort.Reverse(candidates))
-		rs[idx] = candidates[0]
 	}
 	return rs
 }
