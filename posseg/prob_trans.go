@@ -4,13 +4,15 @@ import (
 	"math"
 )
 
+var inf = math.Inf(-1)
+
 type probTransMap map[string]float64
 
 func (m probTransMap) Get(key string) float64 {
 	if value, ok := m[key]; ok {
 		return value
 	} else {
-		return math.Inf(-1)
+		return inf
 	}
 }
 
