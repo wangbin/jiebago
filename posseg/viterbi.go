@@ -7,7 +7,7 @@ import (
 
 type probState struct {
 	prob  float64
-	state string
+	state uint16
 }
 
 func (ps probState) String() string {
@@ -31,26 +31,26 @@ func (pss probStates) Swap(i, j int) {
 	pss[i], pss[j] = pss[j], pss[i]
 }
 
-func viterbi(obs []rune) []string {
+func viterbi(obs []rune) []Tag {
 	obsLength := len(obs)
-	V := make([]map[string]float64, obsLength)
-	V[0] = make(map[string]float64)
-	mem_path := make([]map[string]string, obsLength)
-	mem_path[0] = make(map[string]string)
+	V := make([]map[uint16]float64, obsLength)
+	V[0] = make(map[uint16]float64)
+	mem_path := make([]map[uint16]uint16, obsLength)
+	mem_path[0] = make(map[uint16]uint16)
 	ys := charStateTab.get(obs[0]) // default is all_states
 	for _, y := range ys {
 		V[0][y] = probEmit[y].get(obs[0]) + probStart[y]
-		mem_path[0][y] = ""
+		mem_path[0][y] = 0
 	}
 	for t := 1; t < obsLength; t++ {
-		prev_states := make([]string, 0)
+		prev_states := make([]uint16, 0)
 		for x := range mem_path[t-1] {
 			if len(probTrans[x]) > 0 {
 				prev_states = append(prev_states, x)
 			}
 		}
 		//use Go's map to implement Python's Set()
-		prev_states_expect_next := make(map[string]int)
+		prev_states_expect_next := make(map[uint16]int)
 		for _, x := range prev_states {
 			for y := range probTrans[x] {
 				prev_states_expect_next[y] = 1
@@ -58,7 +58,7 @@ func viterbi(obs []rune) []string {
 		}
 		tmp_obs_states := charStateTab.get(obs[t])
 
-		obs_states := make([]string, 0)
+		obs_states := make([]uint16, 0)
 		for index := range tmp_obs_states {
 			if _, ok := prev_states_expect_next[tmp_obs_states[index]]; ok {
 				obs_states = append(obs_states, tmp_obs_states[index])
@@ -72,8 +72,8 @@ func viterbi(obs []rune) []string {
 		if len(obs_states) == 0 {
 			obs_states = probTransKeys
 		}
-		mem_path[t] = make(map[string]string) // TODO: value needed or not?
-		V[t] = make(map[string]float64)
+		mem_path[t] = make(map[uint16]uint16)
+		V[t] = make(map[uint16]float64)
 		for _, y := range obs_states {
 			var max, ps probState
 			for i, y0 := range prev_states {
@@ -97,10 +97,10 @@ func viterbi(obs []rune) []string {
 	}
 	sort.Sort(sort.Reverse(last))
 	state := last[0].state
-	route := make([]string, len(obs))
+	route := make([]Tag, len(obs))
 
 	for i := obsLength - 1; i >= 0; i-- {
-		route[i] = state
+		route[i] = Tag(state)
 		state = mem_path[i][state]
 	}
 	return route

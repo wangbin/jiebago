@@ -76,19 +76,19 @@ func (p *Posseg) cutDetailInternal(sentence string) chan Pair {
 		next := 0
 		for i, char := range runes {
 			pos := posList[i]
-			switch pos[0] {
-			case 'B':
+			switch pos.Tag() {
+			case "B":
 				begin = i
-			case 'E':
-				result <- Pair{string(runes[begin : i+1]), string(pos[1:])}
+			case "E":
+				result <- Pair{string(runes[begin : i+1]), pos.POS()}
 				next = i + 1
-			case 'S':
-				result <- Pair{string(char), string(pos[1:])}
+			case "S":
+				result <- Pair{string(char), pos.POS()}
 				next = i + 1
 			}
 		}
 		if next < len(runes) {
-			result <- Pair{string(runes[next:]), string(posList[next][1:])}
+			result <- Pair{string(runes[next:]), posList[next].POS()}
 		}
 		close(result)
 	}()
