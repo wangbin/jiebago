@@ -28,8 +28,8 @@ func TestLoadUserDictionary(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to load userdict.txt, err = %s", err)
 	}
-	if f, _ := d.Frequency("八一双鹿"); f != 3.0 {
-		t.Fatalf("Wrong frequency for word \"八一双鹿\", expect 3.0, got %f", f)
+	if _, ok := d.Frequency("八一双鹿"); !ok {
+		t.Fatalf("Failed to load userdict.txt, no frequency for word  \"八一双鹿\"")
 	}
 }
 
