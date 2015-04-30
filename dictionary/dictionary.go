@@ -16,6 +16,10 @@ type Dictionary struct {
 	sync.RWMutex
 }
 
+func New() *Dictionary {
+	return &Dictionary{freqMap: make(map[string]float64)}
+}
+
 func (d *Dictionary) addToken(token Token) {
 	d.freqMap[token.text] = token.frequency
 	d.total += token.frequency
@@ -84,6 +88,8 @@ func (d *Dictionary) loadDictionary(fileName string, isUserDictionary bool) erro
 
 	if !isUserDictionary && len(d.freqMap) > 0 {
 		d.freqMap = make(map[string]float64)
+		d.total = 0.0
+		d.logTotal = 0.0
 	}
 	for scanner.Scan() {
 		line = scanner.Text()
