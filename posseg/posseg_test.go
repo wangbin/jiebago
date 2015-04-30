@@ -5,6 +5,7 @@ import (
 )
 
 var (
+	seg           *Segmenter
 	test_contents = []string{
 		"这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。",
 		"我不喜欢日本和服。",
@@ -92,183 +93,188 @@ var (
 		"你认识那个和主席握手的的哥吗？他开一辆黑色的士。",
 		"枪杆子中出政权"}
 
-	defaultCutResult = [][]Pair{[]Pair{Pair{"这", "r"}, Pair{"是", "v"}, Pair{"一个", "m"}, Pair{"伸手不见五指", "i"}, Pair{"的", "uj"}, Pair{"黑夜", "n"}, Pair{"。", "x"}, Pair{"我", "r"}, Pair{"叫", "v"}, Pair{"孙悟空", "nr"}, Pair{"，", "x"}, Pair{"我", "r"}, Pair{"爱", "v"}, Pair{"北京", "ns"}, Pair{"，", "x"}, Pair{"我", "r"}, Pair{"爱", "v"}, Pair{"Python", "eng"}, Pair{"和", "c"}, Pair{"C++", "nz"}, Pair{"。", "x"}},
-		[]Pair{Pair{"我", "r"}, Pair{"不", "d"}, Pair{"喜欢", "v"}, Pair{"日本", "ns"}, Pair{"和服", "nz"}, Pair{"。", "x"}},
-		[]Pair{Pair{"雷猴", "n"}, Pair{"回归", "v"}, Pair{"人间", "n"}, Pair{"。", "x"}},
-		[]Pair{Pair{"工信处", "n"}, Pair{"女干事", "n"}, Pair{"每月", "r"}, Pair{"经过", "p"}, Pair{"下属", "v"}, Pair{"科室", "n"}, Pair{"都", "d"}, Pair{"要", "v"}, Pair{"亲口", "n"}, Pair{"交代", "n"}, Pair{"24", "m"}, Pair{"口", "n"}, Pair{"交换机", "n"}, Pair{"等", "u"}, Pair{"技术性", "n"}, Pair{"器件", "n"}, Pair{"的", "uj"}, Pair{"安装", "v"}, Pair{"工作", "vn"}},
-		[]Pair{Pair{"我", "r"}, Pair{"需要", "v"}, Pair{"廉租房", "n"}},
-		[]Pair{Pair{"永和", "nz"}, Pair{"服装", "vn"}, Pair{"饰品", "n"}, Pair{"有限公司", "n"}},
-		[]Pair{Pair{"我", "r"}, Pair{"爱", "v"}, Pair{"北京", "ns"}, Pair{"天安门", "ns"}},
-		[]Pair{Pair{"abc", "eng"}},
-		[]Pair{Pair{"隐", "n"}, Pair{"马尔可夫", "nr"}},
-		[]Pair{Pair{"雷猴", "n"}, Pair{"是", "v"}, Pair{"个", "q"}, Pair{"好", "a"}, Pair{"网站", "n"}},
-		[]Pair{Pair{"“", "x"}, Pair{"Microsoft", "eng"}, Pair{"”", "x"}, Pair{"一", "m"}, Pair{"词", "n"}, Pair{"由", "p"}, Pair{"“", "x"}, Pair{"MICROcomputer", "eng"}, Pair{"（", "x"}, Pair{"微型", "b"}, Pair{"计算机", "n"}, Pair{"）", "x"}, Pair{"”", "x"}, Pair{"和", "c"}, Pair{"“", "x"}, Pair{"SOFTware", "eng"}, Pair{"（", "x"}, Pair{"软件", "n"}, Pair{"）", "x"}, Pair{"”", "x"}, Pair{"两", "m"}, Pair{"部分", "n"}, Pair{"组成", "v"}},
-		[]Pair{Pair{"草泥马", "n"}, Pair{"和", "c"}, Pair{"欺实", "v"}, Pair{"马", "n"}, Pair{"是", "v"}, Pair{"今年", "t"}, Pair{"的", "uj"}, Pair{"流行", "v"}, Pair{"词汇", "n"}},
-		[]Pair{Pair{"伊藤", "nr"}, Pair{"洋华堂", "n"}, Pair{"总府", "n"}, Pair{"店", "n"}},
-		[]Pair{Pair{"中国科学院计算技术研究所", "nt"}},
-		[]Pair{Pair{"罗密欧", "nr"}, Pair{"与", "p"}, Pair{"朱丽叶", "nr"}},
-		[]Pair{Pair{"我", "r"}, Pair{"购买", "v"}, Pair{"了", "ul"}, Pair{"道具", "n"}, Pair{"和", "c"}, Pair{"服装", "vn"}},
-		[]Pair{Pair{"PS", "eng"}, Pair{":", "x"}, Pair{" ", "x"}, Pair{"我", "r"}, Pair{"觉得", "v"}, Pair{"开源", "n"}, Pair{"有", "v"}, Pair{"一个", "m"}, Pair{"好处", "d"}, Pair{"，", "x"}, Pair{"就是", "d"}, Pair{"能够", "v"}, Pair{"敦促", "v"}, Pair{"自己", "r"}, Pair{"不断改进", "l"}, Pair{"，", "x"}, Pair{"避免", "v"}, Pair{"敞", "v"}, Pair{"帚", "ng"}, Pair{"自珍", "b"}},
-		[]Pair{Pair{"湖北省", "ns"}, Pair{"石首市", "ns"}},
-		[]Pair{Pair{"湖北省", "ns"}, Pair{"十堰市", "ns"}},
-		[]Pair{Pair{"总经理", "n"}, Pair{"完成", "v"}, Pair{"了", "ul"}, Pair{"这件", "mq"}, Pair{"事情", "n"}},
-		[]Pair{Pair{"电脑", "n"}, Pair{"修好", "v"}, Pair{"了", "ul"}},
-		[]Pair{Pair{"做好", "v"}, Pair{"了", "ul"}, Pair{"这件", "mq"}, Pair{"事情", "n"}, Pair{"就", "d"}, Pair{"一了百了", "l"}, Pair{"了", "ul"}},
-		[]Pair{Pair{"人们", "n"}, Pair{"审美", "vn"}, Pair{"的", "uj"}, Pair{"观点", "n"}, Pair{"是", "v"}, Pair{"不同", "a"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"我们", "r"}, Pair{"买", "v"}, Pair{"了", "ul"}, Pair{"一个", "m"}, Pair{"美的", "nr"}, Pair{"空调", "n"}},
-		[]Pair{Pair{"线程", "n"}, Pair{"初始化", "l"}, Pair{"时", "n"}, Pair{"我们", "r"}, Pair{"要", "v"}, Pair{"注意", "v"}},
-		[]Pair{Pair{"一个", "m"}, Pair{"分子", "n"}, Pair{"是", "v"}, Pair{"由", "p"}, Pair{"好多", "m"}, Pair{"原子", "n"}, Pair{"组织", "v"}, Pair{"成", "v"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"祝", "v"}, Pair{"你", "r"}, Pair{"马到功成", "i"}},
-		[]Pair{Pair{"他", "r"}, Pair{"掉", "v"}, Pair{"进", "v"}, Pair{"了", "ul"}, Pair{"无底洞", "ns"}, Pair{"里", "f"}},
-		[]Pair{Pair{"中国", "ns"}, Pair{"的", "uj"}, Pair{"首都", "d"}, Pair{"是", "v"}, Pair{"北京", "ns"}},
-		[]Pair{Pair{"孙君意", "nr"}},
-		[]Pair{Pair{"外交部", "nt"}, Pair{"发言人", "l"}, Pair{"马朝旭", "nr"}},
-		[]Pair{Pair{"领导人", "n"}, Pair{"会议", "n"}, Pair{"和", "c"}, Pair{"第四届", "m"}, Pair{"东亚", "ns"}, Pair{"峰会", "n"}},
-		[]Pair{Pair{"在", "p"}, Pair{"过去", "t"}, Pair{"的", "uj"}, Pair{"这", "r"}, Pair{"五年", "t"}},
-		[]Pair{Pair{"还", "d"}, Pair{"需要", "v"}, Pair{"很", "d"}, Pair{"长", "a"}, Pair{"的", "uj"}, Pair{"路", "n"}, Pair{"要", "v"}, Pair{"走", "v"}},
-		[]Pair{Pair{"60", "m"}, Pair{"周年", "t"}, Pair{"首都", "d"}, Pair{"阅兵", "v"}},
-		[]Pair{Pair{"你好", "l"}, Pair{"人们", "n"}, Pair{"审美", "vn"}, Pair{"的", "uj"}, Pair{"观点", "n"}, Pair{"是", "v"}, Pair{"不同", "a"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"买", "v"}, Pair{"水果", "n"}, Pair{"然后", "c"}, Pair{"来", "v"}, Pair{"世博园", "nr"}},
-		[]Pair{Pair{"买", "v"}, Pair{"水果", "n"}, Pair{"然后", "c"}, Pair{"去", "v"}, Pair{"世博园", "nr"}},
-		[]Pair{Pair{"但是", "c"}, Pair{"后来", "t"}, Pair{"我", "r"}, Pair{"才", "d"}, Pair{"知道", "v"}, Pair{"你", "r"}, Pair{"是", "v"}, Pair{"对", "p"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"存在", "v"}, Pair{"即", "v"}, Pair{"合理", "vn"}},
-		[]Pair{Pair{"的的", "u"}, Pair{"的的", "u"}, Pair{"的", "uj"}, Pair{"在的", "u"}, Pair{"的的", "u"}, Pair{"的", "uj"}, Pair{"就", "d"}, Pair{"以", "p"}, Pair{"和和", "nz"}, Pair{"和", "c"}},
-		[]Pair{Pair{"I", "x"}, Pair{" ", "x"}, Pair{"love", "eng"}, Pair{"你", "r"}, Pair{"，", "x"}, Pair{"不以为耻", "i"}, Pair{"，", "x"}, Pair{"反", "zg"}, Pair{"以为", "c"}, Pair{"rong", "eng"}},
-		[]Pair{Pair{"因", "p"}},
-		[]Pair{},
-		[]Pair{Pair{"hello", "eng"}, Pair{"你好", "l"}, Pair{"人们", "n"}, Pair{"审美", "vn"}, Pair{"的", "uj"}, Pair{"观点", "n"}, Pair{"是", "v"}, Pair{"不同", "a"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"很好", "a"}, Pair{"但", "c"}, Pair{"主要", "b"}, Pair{"是", "v"}, Pair{"基于", "p"}, Pair{"网页", "n"}, Pair{"形式", "n"}},
-		[]Pair{Pair{"hello", "eng"}, Pair{"你好", "l"}, Pair{"人们", "n"}, Pair{"审美", "vn"}, Pair{"的", "uj"}, Pair{"观点", "n"}, Pair{"是", "v"}, Pair{"不同", "a"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"为什么", "r"}, Pair{"我", "r"}, Pair{"不能", "v"}, Pair{"拥有", "v"}, Pair{"想要", "v"}, Pair{"的", "uj"}, Pair{"生活", "vn"}},
-		[]Pair{Pair{"后来", "t"}, Pair{"我", "r"}, Pair{"才", "d"}},
-		[]Pair{Pair{"此次", "r"}, Pair{"来", "v"}, Pair{"中国", "ns"}, Pair{"是", "v"}, Pair{"为了", "p"}},
-		[]Pair{Pair{"使用", "v"}, Pair{"了", "ul"}, Pair{"它", "r"}, Pair{"就", "d"}, Pair{"可以", "c"}, Pair{"解决", "v"}, Pair{"一些", "m"}, Pair{"问题", "n"}},
-		[]Pair{Pair{",", "x"}, Pair{"使用", "v"}, Pair{"了", "ul"}, Pair{"它", "r"}, Pair{"就", "d"}, Pair{"可以", "c"}, Pair{"解决", "v"}, Pair{"一些", "m"}, Pair{"问题", "n"}},
-		[]Pair{Pair{"其实", "d"}, Pair{"使用", "v"}, Pair{"了", "ul"}, Pair{"它", "r"}, Pair{"就", "d"}, Pair{"可以", "c"}, Pair{"解决", "v"}, Pair{"一些", "m"}, Pair{"问题", "n"}},
-		[]Pair{Pair{"好人", "n"}, Pair{"使用", "v"}, Pair{"了", "ul"}, Pair{"它", "r"}, Pair{"就", "d"}, Pair{"可以", "c"}, Pair{"解决", "v"}, Pair{"一些", "m"}, Pair{"问题", "n"}},
-		[]Pair{Pair{"是因为", "c"}, Pair{"和", "c"}, Pair{"国家", "n"}},
-		[]Pair{Pair{"老年", "t"}, Pair{"搜索", "v"}, Pair{"还", "d"}, Pair{"支持", "v"}},
-		[]Pair{Pair{"干脆", "d"}, Pair{"就", "d"}, Pair{"把", "p"}, Pair{"那部", "r"}, Pair{"蒙人", "n"}, Pair{"的", "uj"}, Pair{"闲法", "n"}, Pair{"给", "p"}, Pair{"废", "v"}, Pair{"了", "ul"}, Pair{"拉倒", "v"}, Pair{"！", "x"}, Pair{"RT", "eng"}, Pair{" ", "x"}, Pair{"@", "x"}, Pair{"laoshipukong", "eng"}, Pair{" ", "x"}, Pair{":", "x"}, Pair{" ", "x"}, Pair{"27", "m"}, Pair{"日", "m"}, Pair{"，", "x"}, Pair{"全国人大常委会", "nt"}, Pair{"第三次", "m"}, Pair{"审议", "v"}, Pair{"侵权", "v"}, Pair{"责任法", "n"}, Pair{"草案", "n"}, Pair{"，", "x"}, Pair{"删除", "v"}, Pair{"了", "ul"}, Pair{"有关", "vn"}, Pair{"医疗", "n"}, Pair{"损害", "v"}, Pair{"责任", "n"}, Pair{"“", "x"}, Pair{"举证", "v"}, Pair{"倒置", "v"}, Pair{"”", "x"}, Pair{"的", "uj"}, Pair{"规定", "n"}, Pair{"。", "x"}, Pair{"在", "p"}, Pair{"医患", "n"}, Pair{"纠纷", "n"}, Pair{"中本", "ns"}, Pair{"已", "d"}, Pair{"处于", "v"}, Pair{"弱势", "n"}, Pair{"地位", "n"}, Pair{"的", "uj"}, Pair{"消费者", "n"}, Pair{"由此", "c"}, Pair{"将", "d"}, Pair{"陷入", "v"}, Pair{"万劫不复", "i"}, Pair{"的", "uj"}, Pair{"境地", "s"}, Pair{"。", "x"}, Pair{" ", "x"}},
-		[]Pair{Pair{"大", "a"}},
-		[]Pair{},
-		[]Pair{Pair{"他", "r"}, Pair{"说", "v"}, Pair{"的", "uj"}, Pair{"确实", "ad"}, Pair{"在", "p"}, Pair{"理", "n"}},
-		[]Pair{Pair{"长春", "ns"}, Pair{"市长", "n"}, Pair{"春节", "t"}, Pair{"讲话", "n"}},
-		[]Pair{Pair{"结婚", "v"}, Pair{"的", "uj"}, Pair{"和", "c"}, Pair{"尚未", "d"}, Pair{"结婚", "v"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"结合", "v"}, Pair{"成", "n"}, Pair{"分子", "n"}, Pair{"时", "n"}},
-		[]Pair{Pair{"旅游", "vn"}, Pair{"和", "c"}, Pair{"服务", "vn"}, Pair{"是", "v"}, Pair{"最好", "a"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"这件", "mq"}, Pair{"事情", "n"}, Pair{"的确", "d"}, Pair{"是", "v"}, Pair{"我", "r"}, Pair{"的", "uj"}, Pair{"错", "n"}},
-		[]Pair{Pair{"供", "v"}, Pair{"大家", "n"}, Pair{"参考", "v"}, Pair{"指正", "v"}},
-		[]Pair{Pair{"哈尔滨", "ns"}, Pair{"政府", "n"}, Pair{"公布", "v"}, Pair{"塌", "v"}, Pair{"桥", "n"}, Pair{"原因", "n"}},
-		[]Pair{Pair{"我", "r"}, Pair{"在", "p"}, Pair{"机场", "n"}, Pair{"入口处", "i"}},
-		[]Pair{Pair{"邢永臣", "nr"}, Pair{"摄影", "n"}, Pair{"报道", "v"}},
-		[]Pair{Pair{"BP", "eng"}, Pair{"神经网络", "n"}, Pair{"如何", "r"}, Pair{"训练", "vn"}, Pair{"才能", "v"}, Pair{"在", "p"}, Pair{"分类", "n"}, Pair{"时", "n"}, Pair{"增加", "v"}, Pair{"区分度", "n"}, Pair{"？", "x"}},
-		[]Pair{Pair{"南京市", "ns"}, Pair{"长江大桥", "ns"}},
-		[]Pair{Pair{"应", "v"}, Pair{"一些", "m"}, Pair{"使用者", "n"}, Pair{"的", "uj"}, Pair{"建议", "n"}, Pair{"，", "x"}, Pair{"也", "d"}, Pair{"为了", "p"}, Pair{"便于", "v"}, Pair{"利用", "n"}, Pair{"NiuTrans", "eng"}, Pair{"用于", "v"}, Pair{"SMT", "eng"}, Pair{"研究", "vn"}},
-		[]Pair{Pair{"长春市", "ns"}, Pair{"长春", "ns"}, Pair{"药店", "n"}},
-		[]Pair{Pair{"邓颖超", "nr"}, Pair{"生前", "t"}, Pair{"最", "d"}, Pair{"喜欢", "v"}, Pair{"的", "uj"}, Pair{"衣服", "n"}},
-		[]Pair{Pair{"胡锦涛", "nr"}, Pair{"是", "v"}, Pair{"热爱", "a"}, Pair{"世界", "n"}, Pair{"和平", "nz"}, Pair{"的", "uj"}, Pair{"政治局", "n"}, Pair{"常委", "j"}},
-		[]Pair{Pair{"程序员", "n"}, Pair{"祝", "v"}, Pair{"海林", "nz"}, Pair{"和", "c"}, Pair{"朱会震", "nr"}, Pair{"是", "v"}, Pair{"在", "p"}, Pair{"孙健", "nr"}, Pair{"的", "uj"}, Pair{"左面", "f"}, Pair{"和", "c"}, Pair{"右面", "f"}, Pair{",", "x"}, Pair{" ", "x"}, Pair{"范凯", "nr"}, Pair{"在", "p"}, Pair{"最", "a"}, Pair{"右面", "f"}, Pair{".", "m"}, Pair{"再往", "d"}, Pair{"左", "f"}, Pair{"是", "v"}, Pair{"李松洪", "nr"}},
-		[]Pair{Pair{"一次性", "d"}, Pair{"交", "v"}, Pair{"多少", "m"}, Pair{"钱", "n"}},
-		[]Pair{Pair{"两块", "m"}, Pair{"五", "m"}, Pair{"一套", "m"}, Pair{"，", "x"}, Pair{"三块", "m"}, Pair{"八", "m"}, Pair{"一斤", "m"}, Pair{"，", "x"}, Pair{"四块", "m"}, Pair{"七", "m"}, Pair{"一本", "m"}, Pair{"，", "x"}, Pair{"五块", "m"}, Pair{"六", "m"}, Pair{"一条", "m"}},
-		[]Pair{Pair{"小", "a"}, Pair{"和尚", "nr"}, Pair{"留", "v"}, Pair{"了", "ul"}, Pair{"一个", "m"}, Pair{"像", "v"}, Pair{"大", "a"}, Pair{"和尚", "nr"}, Pair{"一样", "r"}, Pair{"的", "uj"}, Pair{"和尚头", "nr"}},
-		[]Pair{Pair{"我", "r"}, Pair{"是", "v"}, Pair{"中华人民共和国", "ns"}, Pair{"公民", "n"}, Pair{";", "x"}, Pair{"我", "r"}, Pair{"爸爸", "n"}, Pair{"是", "v"}, Pair{"共和党", "nt"}, Pair{"党员", "n"}, Pair{";", "x"}, Pair{" ", "x"}, Pair{"地铁", "n"}, Pair{"和平门", "ns"}, Pair{"站", "v"}},
-		[]Pair{Pair{"张晓梅", "nr"}, Pair{"去", "v"}, Pair{"人民", "n"}, Pair{"医院", "n"}, Pair{"做", "v"}, Pair{"了", "ul"}, Pair{"个", "q"}, Pair{"B超", "n"}, Pair{"然后", "c"}, Pair{"去", "v"}, Pair{"买", "v"}, Pair{"了", "ul"}, Pair{"件", "q"}, Pair{"T恤", "n"}},
-		[]Pair{Pair{"AT&T", "nz"}, Pair{"是", "v"}, Pair{"一件", "m"}, Pair{"不错", "a"}, Pair{"的", "uj"}, Pair{"公司", "n"}, Pair{"，", "x"}, Pair{"给", "p"}, Pair{"你", "r"}, Pair{"发", "v"}, Pair{"offer", "eng"}, Pair{"了", "ul"}, Pair{"吗", "y"}, Pair{"？", "x"}},
-		[]Pair{Pair{"C++", "nz"}, Pair{"和", "c"}, Pair{"c#", "nz"}, Pair{"是", "v"}, Pair{"什么", "r"}, Pair{"关系", "n"}, Pair{"？", "x"}, Pair{"11", "m"}, Pair{"+", "x"}, Pair{"122", "m"}, Pair{"=", "x"}, Pair{"133", "m"}, Pair{"，", "x"}, Pair{"是", "v"}, Pair{"吗", "y"}, Pair{"？", "x"}, Pair{"PI", "eng"}, Pair{"=", "x"}, Pair{"3.14159", "m"}},
-		[]Pair{Pair{"你", "r"}, Pair{"认识", "v"}, Pair{"那个", "r"}, Pair{"和", "c"}, Pair{"主席", "n"}, Pair{"握手", "v"}, Pair{"的", "uj"}, Pair{"的哥", "n"}, Pair{"吗", "y"}, Pair{"？", "x"}, Pair{"他", "r"}, Pair{"开", "v"}, Pair{"一辆", "m"}, Pair{"黑色", "n"}, Pair{"的士", "n"}, Pair{"。", "x"}},
-		[]Pair{Pair{"枪杆子", "n"}, Pair{"中", "f"}, Pair{"出", "v"}, Pair{"政权", "n"}},
+	defaultCutResult = [][]Segment{[]Segment{Segment{"这", "r"}, Segment{"是", "v"}, Segment{"一个", "m"}, Segment{"伸手不见五指", "i"}, Segment{"的", "uj"}, Segment{"黑夜", "n"}, Segment{"。", "x"}, Segment{"我", "r"}, Segment{"叫", "v"}, Segment{"孙悟空", "nr"}, Segment{"，", "x"}, Segment{"我", "r"}, Segment{"爱", "v"}, Segment{"北京", "ns"}, Segment{"，", "x"}, Segment{"我", "r"}, Segment{"爱", "v"}, Segment{"Python", "eng"}, Segment{"和", "c"}, Segment{"C++", "nz"}, Segment{"。", "x"}},
+		[]Segment{Segment{"我", "r"}, Segment{"不", "d"}, Segment{"喜欢", "v"}, Segment{"日本", "ns"}, Segment{"和服", "nz"}, Segment{"。", "x"}},
+		[]Segment{Segment{"雷猴", "n"}, Segment{"回归", "v"}, Segment{"人间", "n"}, Segment{"。", "x"}},
+		[]Segment{Segment{"工信处", "n"}, Segment{"女干事", "n"}, Segment{"每月", "r"}, Segment{"经过", "p"}, Segment{"下属", "v"}, Segment{"科室", "n"}, Segment{"都", "d"}, Segment{"要", "v"}, Segment{"亲口", "n"}, Segment{"交代", "n"}, Segment{"24", "m"}, Segment{"口", "n"}, Segment{"交换机", "n"}, Segment{"等", "u"}, Segment{"技术性", "n"}, Segment{"器件", "n"}, Segment{"的", "uj"}, Segment{"安装", "v"}, Segment{"工作", "vn"}},
+		[]Segment{Segment{"我", "r"}, Segment{"需要", "v"}, Segment{"廉租房", "n"}},
+		[]Segment{Segment{"永和", "nz"}, Segment{"服装", "vn"}, Segment{"饰品", "n"}, Segment{"有限公司", "n"}},
+		[]Segment{Segment{"我", "r"}, Segment{"爱", "v"}, Segment{"北京", "ns"}, Segment{"天安门", "ns"}},
+		[]Segment{Segment{"abc", "eng"}},
+		[]Segment{Segment{"隐", "n"}, Segment{"马尔可夫", "nr"}},
+		[]Segment{Segment{"雷猴", "n"}, Segment{"是", "v"}, Segment{"个", "q"}, Segment{"好", "a"}, Segment{"网站", "n"}},
+		[]Segment{Segment{"“", "x"}, Segment{"Microsoft", "eng"}, Segment{"”", "x"}, Segment{"一", "m"}, Segment{"词", "n"}, Segment{"由", "p"}, Segment{"“", "x"}, Segment{"MICROcomputer", "eng"}, Segment{"（", "x"}, Segment{"微型", "b"}, Segment{"计算机", "n"}, Segment{"）", "x"}, Segment{"”", "x"}, Segment{"和", "c"}, Segment{"“", "x"}, Segment{"SOFTware", "eng"}, Segment{"（", "x"}, Segment{"软件", "n"}, Segment{"）", "x"}, Segment{"”", "x"}, Segment{"两", "m"}, Segment{"部分", "n"}, Segment{"组成", "v"}},
+		[]Segment{Segment{"草泥马", "n"}, Segment{"和", "c"}, Segment{"欺实", "v"}, Segment{"马", "n"}, Segment{"是", "v"}, Segment{"今年", "t"}, Segment{"的", "uj"}, Segment{"流行", "v"}, Segment{"词汇", "n"}},
+		[]Segment{Segment{"伊藤", "nr"}, Segment{"洋华堂", "n"}, Segment{"总府", "n"}, Segment{"店", "n"}},
+		[]Segment{Segment{"中国科学院计算技术研究所", "nt"}},
+		[]Segment{Segment{"罗密欧", "nr"}, Segment{"与", "p"}, Segment{"朱丽叶", "nr"}},
+		[]Segment{Segment{"我", "r"}, Segment{"购买", "v"}, Segment{"了", "ul"}, Segment{"道具", "n"}, Segment{"和", "c"}, Segment{"服装", "vn"}},
+		[]Segment{Segment{"PS", "eng"}, Segment{":", "x"}, Segment{" ", "x"}, Segment{"我", "r"}, Segment{"觉得", "v"}, Segment{"开源", "n"}, Segment{"有", "v"}, Segment{"一个", "m"}, Segment{"好处", "d"}, Segment{"，", "x"}, Segment{"就是", "d"}, Segment{"能够", "v"}, Segment{"敦促", "v"}, Segment{"自己", "r"}, Segment{"不断改进", "l"}, Segment{"，", "x"}, Segment{"避免", "v"}, Segment{"敞", "v"}, Segment{"帚", "ng"}, Segment{"自珍", "b"}},
+		[]Segment{Segment{"湖北省", "ns"}, Segment{"石首市", "ns"}},
+		[]Segment{Segment{"湖北省", "ns"}, Segment{"十堰市", "ns"}},
+		[]Segment{Segment{"总经理", "n"}, Segment{"完成", "v"}, Segment{"了", "ul"}, Segment{"这件", "mq"}, Segment{"事情", "n"}},
+		[]Segment{Segment{"电脑", "n"}, Segment{"修好", "v"}, Segment{"了", "ul"}},
+		[]Segment{Segment{"做好", "v"}, Segment{"了", "ul"}, Segment{"这件", "mq"}, Segment{"事情", "n"}, Segment{"就", "d"}, Segment{"一了百了", "l"}, Segment{"了", "ul"}},
+		[]Segment{Segment{"人们", "n"}, Segment{"审美", "vn"}, Segment{"的", "uj"}, Segment{"观点", "n"}, Segment{"是", "v"}, Segment{"不同", "a"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"我们", "r"}, Segment{"买", "v"}, Segment{"了", "ul"}, Segment{"一个", "m"}, Segment{"美的", "nr"}, Segment{"空调", "n"}},
+		[]Segment{Segment{"线程", "n"}, Segment{"初始化", "l"}, Segment{"时", "n"}, Segment{"我们", "r"}, Segment{"要", "v"}, Segment{"注意", "v"}},
+		[]Segment{Segment{"一个", "m"}, Segment{"分子", "n"}, Segment{"是", "v"}, Segment{"由", "p"}, Segment{"好多", "m"}, Segment{"原子", "n"}, Segment{"组织", "v"}, Segment{"成", "v"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"祝", "v"}, Segment{"你", "r"}, Segment{"马到功成", "i"}},
+		[]Segment{Segment{"他", "r"}, Segment{"掉", "v"}, Segment{"进", "v"}, Segment{"了", "ul"}, Segment{"无底洞", "ns"}, Segment{"里", "f"}},
+		[]Segment{Segment{"中国", "ns"}, Segment{"的", "uj"}, Segment{"首都", "d"}, Segment{"是", "v"}, Segment{"北京", "ns"}},
+		[]Segment{Segment{"孙君意", "nr"}},
+		[]Segment{Segment{"外交部", "nt"}, Segment{"发言人", "l"}, Segment{"马朝旭", "nr"}},
+		[]Segment{Segment{"领导人", "n"}, Segment{"会议", "n"}, Segment{"和", "c"}, Segment{"第四届", "m"}, Segment{"东亚", "ns"}, Segment{"峰会", "n"}},
+		[]Segment{Segment{"在", "p"}, Segment{"过去", "t"}, Segment{"的", "uj"}, Segment{"这", "r"}, Segment{"五年", "t"}},
+		[]Segment{Segment{"还", "d"}, Segment{"需要", "v"}, Segment{"很", "d"}, Segment{"长", "a"}, Segment{"的", "uj"}, Segment{"路", "n"}, Segment{"要", "v"}, Segment{"走", "v"}},
+		[]Segment{Segment{"60", "m"}, Segment{"周年", "t"}, Segment{"首都", "d"}, Segment{"阅兵", "v"}},
+		[]Segment{Segment{"你好", "l"}, Segment{"人们", "n"}, Segment{"审美", "vn"}, Segment{"的", "uj"}, Segment{"观点", "n"}, Segment{"是", "v"}, Segment{"不同", "a"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"买", "v"}, Segment{"水果", "n"}, Segment{"然后", "c"}, Segment{"来", "v"}, Segment{"世博园", "nr"}},
+		[]Segment{Segment{"买", "v"}, Segment{"水果", "n"}, Segment{"然后", "c"}, Segment{"去", "v"}, Segment{"世博园", "nr"}},
+		[]Segment{Segment{"但是", "c"}, Segment{"后来", "t"}, Segment{"我", "r"}, Segment{"才", "d"}, Segment{"知道", "v"}, Segment{"你", "r"}, Segment{"是", "v"}, Segment{"对", "p"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"存在", "v"}, Segment{"即", "v"}, Segment{"合理", "vn"}},
+		[]Segment{Segment{"的的", "u"}, Segment{"的的", "u"}, Segment{"的", "uj"}, Segment{"在的", "u"}, Segment{"的的", "u"}, Segment{"的", "uj"}, Segment{"就", "d"}, Segment{"以", "p"}, Segment{"和和", "nz"}, Segment{"和", "c"}},
+		[]Segment{Segment{"I", "x"}, Segment{" ", "x"}, Segment{"love", "eng"}, Segment{"你", "r"}, Segment{"，", "x"}, Segment{"不以为耻", "i"}, Segment{"，", "x"}, Segment{"反", "zg"}, Segment{"以为", "c"}, Segment{"rong", "eng"}},
+		[]Segment{Segment{"因", "p"}},
+		[]Segment{},
+		[]Segment{Segment{"hello", "eng"}, Segment{"你好", "l"}, Segment{"人们", "n"}, Segment{"审美", "vn"}, Segment{"的", "uj"}, Segment{"观点", "n"}, Segment{"是", "v"}, Segment{"不同", "a"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"很好", "a"}, Segment{"但", "c"}, Segment{"主要", "b"}, Segment{"是", "v"}, Segment{"基于", "p"}, Segment{"网页", "n"}, Segment{"形式", "n"}},
+		[]Segment{Segment{"hello", "eng"}, Segment{"你好", "l"}, Segment{"人们", "n"}, Segment{"审美", "vn"}, Segment{"的", "uj"}, Segment{"观点", "n"}, Segment{"是", "v"}, Segment{"不同", "a"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"为什么", "r"}, Segment{"我", "r"}, Segment{"不能", "v"}, Segment{"拥有", "v"}, Segment{"想要", "v"}, Segment{"的", "uj"}, Segment{"生活", "vn"}},
+		[]Segment{Segment{"后来", "t"}, Segment{"我", "r"}, Segment{"才", "d"}},
+		[]Segment{Segment{"此次", "r"}, Segment{"来", "v"}, Segment{"中国", "ns"}, Segment{"是", "v"}, Segment{"为了", "p"}},
+		[]Segment{Segment{"使用", "v"}, Segment{"了", "ul"}, Segment{"它", "r"}, Segment{"就", "d"}, Segment{"可以", "c"}, Segment{"解决", "v"}, Segment{"一些", "m"}, Segment{"问题", "n"}},
+		[]Segment{Segment{",", "x"}, Segment{"使用", "v"}, Segment{"了", "ul"}, Segment{"它", "r"}, Segment{"就", "d"}, Segment{"可以", "c"}, Segment{"解决", "v"}, Segment{"一些", "m"}, Segment{"问题", "n"}},
+		[]Segment{Segment{"其实", "d"}, Segment{"使用", "v"}, Segment{"了", "ul"}, Segment{"它", "r"}, Segment{"就", "d"}, Segment{"可以", "c"}, Segment{"解决", "v"}, Segment{"一些", "m"}, Segment{"问题", "n"}},
+		[]Segment{Segment{"好人", "n"}, Segment{"使用", "v"}, Segment{"了", "ul"}, Segment{"它", "r"}, Segment{"就", "d"}, Segment{"可以", "c"}, Segment{"解决", "v"}, Segment{"一些", "m"}, Segment{"问题", "n"}},
+		[]Segment{Segment{"是因为", "c"}, Segment{"和", "c"}, Segment{"国家", "n"}},
+		[]Segment{Segment{"老年", "t"}, Segment{"搜索", "v"}, Segment{"还", "d"}, Segment{"支持", "v"}},
+		[]Segment{Segment{"干脆", "d"}, Segment{"就", "d"}, Segment{"把", "p"}, Segment{"那部", "r"}, Segment{"蒙人", "n"}, Segment{"的", "uj"}, Segment{"闲法", "n"}, Segment{"给", "p"}, Segment{"废", "v"}, Segment{"了", "ul"}, Segment{"拉倒", "v"}, Segment{"！", "x"}, Segment{"RT", "eng"}, Segment{" ", "x"}, Segment{"@", "x"}, Segment{"laoshipukong", "eng"}, Segment{" ", "x"}, Segment{":", "x"}, Segment{" ", "x"}, Segment{"27", "m"}, Segment{"日", "m"}, Segment{"，", "x"}, Segment{"全国人大常委会", "nt"}, Segment{"第三次", "m"}, Segment{"审议", "v"}, Segment{"侵权", "v"}, Segment{"责任法", "n"}, Segment{"草案", "n"}, Segment{"，", "x"}, Segment{"删除", "v"}, Segment{"了", "ul"}, Segment{"有关", "vn"}, Segment{"医疗", "n"}, Segment{"损害", "v"}, Segment{"责任", "n"}, Segment{"“", "x"}, Segment{"举证", "v"}, Segment{"倒置", "v"}, Segment{"”", "x"}, Segment{"的", "uj"}, Segment{"规定", "n"}, Segment{"。", "x"}, Segment{"在", "p"}, Segment{"医患", "n"}, Segment{"纠纷", "n"}, Segment{"中本", "ns"}, Segment{"已", "d"}, Segment{"处于", "v"}, Segment{"弱势", "n"}, Segment{"地位", "n"}, Segment{"的", "uj"}, Segment{"消费者", "n"}, Segment{"由此", "c"}, Segment{"将", "d"}, Segment{"陷入", "v"}, Segment{"万劫不复", "i"}, Segment{"的", "uj"}, Segment{"境地", "s"}, Segment{"。", "x"}, Segment{" ", "x"}},
+		[]Segment{Segment{"大", "a"}},
+		[]Segment{},
+		[]Segment{Segment{"他", "r"}, Segment{"说", "v"}, Segment{"的", "uj"}, Segment{"确实", "ad"}, Segment{"在", "p"}, Segment{"理", "n"}},
+		[]Segment{Segment{"长春", "ns"}, Segment{"市长", "n"}, Segment{"春节", "t"}, Segment{"讲话", "n"}},
+		[]Segment{Segment{"结婚", "v"}, Segment{"的", "uj"}, Segment{"和", "c"}, Segment{"尚未", "d"}, Segment{"结婚", "v"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"结合", "v"}, Segment{"成", "n"}, Segment{"分子", "n"}, Segment{"时", "n"}},
+		[]Segment{Segment{"旅游", "vn"}, Segment{"和", "c"}, Segment{"服务", "vn"}, Segment{"是", "v"}, Segment{"最好", "a"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"这件", "mq"}, Segment{"事情", "n"}, Segment{"的确", "d"}, Segment{"是", "v"}, Segment{"我", "r"}, Segment{"的", "uj"}, Segment{"错", "n"}},
+		[]Segment{Segment{"供", "v"}, Segment{"大家", "n"}, Segment{"参考", "v"}, Segment{"指正", "v"}},
+		[]Segment{Segment{"哈尔滨", "ns"}, Segment{"政府", "n"}, Segment{"公布", "v"}, Segment{"塌", "v"}, Segment{"桥", "n"}, Segment{"原因", "n"}},
+		[]Segment{Segment{"我", "r"}, Segment{"在", "p"}, Segment{"机场", "n"}, Segment{"入口处", "i"}},
+		[]Segment{Segment{"邢永臣", "nr"}, Segment{"摄影", "n"}, Segment{"报道", "v"}},
+		[]Segment{Segment{"BP", "eng"}, Segment{"神经网络", "n"}, Segment{"如何", "r"}, Segment{"训练", "vn"}, Segment{"才能", "v"}, Segment{"在", "p"}, Segment{"分类", "n"}, Segment{"时", "n"}, Segment{"增加", "v"}, Segment{"区分度", "n"}, Segment{"？", "x"}},
+		[]Segment{Segment{"南京市", "ns"}, Segment{"长江大桥", "ns"}},
+		[]Segment{Segment{"应", "v"}, Segment{"一些", "m"}, Segment{"使用者", "n"}, Segment{"的", "uj"}, Segment{"建议", "n"}, Segment{"，", "x"}, Segment{"也", "d"}, Segment{"为了", "p"}, Segment{"便于", "v"}, Segment{"利用", "n"}, Segment{"NiuTrans", "eng"}, Segment{"用于", "v"}, Segment{"SMT", "eng"}, Segment{"研究", "vn"}},
+		[]Segment{Segment{"长春市", "ns"}, Segment{"长春", "ns"}, Segment{"药店", "n"}},
+		[]Segment{Segment{"邓颖超", "nr"}, Segment{"生前", "t"}, Segment{"最", "d"}, Segment{"喜欢", "v"}, Segment{"的", "uj"}, Segment{"衣服", "n"}},
+		[]Segment{Segment{"胡锦涛", "nr"}, Segment{"是", "v"}, Segment{"热爱", "a"}, Segment{"世界", "n"}, Segment{"和平", "nz"}, Segment{"的", "uj"}, Segment{"政治局", "n"}, Segment{"常委", "j"}},
+		[]Segment{Segment{"程序员", "n"}, Segment{"祝", "v"}, Segment{"海林", "nz"}, Segment{"和", "c"}, Segment{"朱会震", "nr"}, Segment{"是", "v"}, Segment{"在", "p"}, Segment{"孙健", "nr"}, Segment{"的", "uj"}, Segment{"左面", "f"}, Segment{"和", "c"}, Segment{"右面", "f"}, Segment{",", "x"}, Segment{" ", "x"}, Segment{"范凯", "nr"}, Segment{"在", "p"}, Segment{"最", "a"}, Segment{"右面", "f"}, Segment{".", "m"}, Segment{"再往", "d"}, Segment{"左", "f"}, Segment{"是", "v"}, Segment{"李松洪", "nr"}},
+		[]Segment{Segment{"一次性", "d"}, Segment{"交", "v"}, Segment{"多少", "m"}, Segment{"钱", "n"}},
+		[]Segment{Segment{"两块", "m"}, Segment{"五", "m"}, Segment{"一套", "m"}, Segment{"，", "x"}, Segment{"三块", "m"}, Segment{"八", "m"}, Segment{"一斤", "m"}, Segment{"，", "x"}, Segment{"四块", "m"}, Segment{"七", "m"}, Segment{"一本", "m"}, Segment{"，", "x"}, Segment{"五块", "m"}, Segment{"六", "m"}, Segment{"一条", "m"}},
+		[]Segment{Segment{"小", "a"}, Segment{"和尚", "nr"}, Segment{"留", "v"}, Segment{"了", "ul"}, Segment{"一个", "m"}, Segment{"像", "v"}, Segment{"大", "a"}, Segment{"和尚", "nr"}, Segment{"一样", "r"}, Segment{"的", "uj"}, Segment{"和尚头", "nr"}},
+		[]Segment{Segment{"我", "r"}, Segment{"是", "v"}, Segment{"中华人民共和国", "ns"}, Segment{"公民", "n"}, Segment{";", "x"}, Segment{"我", "r"}, Segment{"爸爸", "n"}, Segment{"是", "v"}, Segment{"共和党", "nt"}, Segment{"党员", "n"}, Segment{";", "x"}, Segment{" ", "x"}, Segment{"地铁", "n"}, Segment{"和平门", "ns"}, Segment{"站", "v"}},
+		[]Segment{Segment{"张晓梅", "nr"}, Segment{"去", "v"}, Segment{"人民", "n"}, Segment{"医院", "n"}, Segment{"做", "v"}, Segment{"了", "ul"}, Segment{"个", "q"}, Segment{"B超", "n"}, Segment{"然后", "c"}, Segment{"去", "v"}, Segment{"买", "v"}, Segment{"了", "ul"}, Segment{"件", "q"}, Segment{"T恤", "n"}},
+		[]Segment{Segment{"AT&T", "nz"}, Segment{"是", "v"}, Segment{"一件", "m"}, Segment{"不错", "a"}, Segment{"的", "uj"}, Segment{"公司", "n"}, Segment{"，", "x"}, Segment{"给", "p"}, Segment{"你", "r"}, Segment{"发", "v"}, Segment{"offer", "eng"}, Segment{"了", "ul"}, Segment{"吗", "y"}, Segment{"？", "x"}},
+		[]Segment{Segment{"C++", "nz"}, Segment{"和", "c"}, Segment{"c#", "nz"}, Segment{"是", "v"}, Segment{"什么", "r"}, Segment{"关系", "n"}, Segment{"？", "x"}, Segment{"11", "m"}, Segment{"+", "x"}, Segment{"122", "m"}, Segment{"=", "x"}, Segment{"133", "m"}, Segment{"，", "x"}, Segment{"是", "v"}, Segment{"吗", "y"}, Segment{"？", "x"}, Segment{"PI", "eng"}, Segment{"=", "x"}, Segment{"3.14159", "m"}},
+		[]Segment{Segment{"你", "r"}, Segment{"认识", "v"}, Segment{"那个", "r"}, Segment{"和", "c"}, Segment{"主席", "n"}, Segment{"握手", "v"}, Segment{"的", "uj"}, Segment{"的哥", "n"}, Segment{"吗", "y"}, Segment{"？", "x"}, Segment{"他", "r"}, Segment{"开", "v"}, Segment{"一辆", "m"}, Segment{"黑色", "n"}, Segment{"的士", "n"}, Segment{"。", "x"}},
+		[]Segment{Segment{"枪杆子", "n"}, Segment{"中", "f"}, Segment{"出", "v"}, Segment{"政权", "n"}},
 	}
-	noHMMCutResult = [][]Pair{
-		[]Pair{Pair{"这", "r"}, Pair{"是", "v"}, Pair{"一个", "m"}, Pair{"伸手不见五指", "i"}, Pair{"的", "uj"}, Pair{"黑夜", "n"}, Pair{"。", "x"}, Pair{"我", "r"}, Pair{"叫", "v"}, Pair{"孙悟空", "nr"}, Pair{"，", "x"}, Pair{"我", "r"}, Pair{"爱", "v"}, Pair{"北京", "ns"}, Pair{"，", "x"}, Pair{"我", "r"}, Pair{"爱", "v"}, Pair{"Python", "eng"}, Pair{"和", "c"}, Pair{"C++", "nz"}, Pair{"。", "x"}},
-		[]Pair{Pair{"我", "r"}, Pair{"不", "d"}, Pair{"喜欢", "v"}, Pair{"日本", "ns"}, Pair{"和服", "nz"}, Pair{"。", "x"}},
-		[]Pair{Pair{"雷猴", "n"}, Pair{"回归", "v"}, Pair{"人间", "n"}, Pair{"。", "x"}},
-		[]Pair{Pair{"工信处", "n"}, Pair{"女干事", "n"}, Pair{"每月", "r"}, Pair{"经过", "p"}, Pair{"下属", "v"}, Pair{"科室", "n"}, Pair{"都", "d"}, Pair{"要", "v"}, Pair{"亲口", "n"}, Pair{"交代", "n"}, Pair{"24", "eng"}, Pair{"口", "q"}, Pair{"交换机", "n"}, Pair{"等", "u"}, Pair{"技术性", "n"}, Pair{"器件", "n"}, Pair{"的", "uj"}, Pair{"安装", "v"}, Pair{"工作", "vn"}},
-		[]Pair{Pair{"我", "r"}, Pair{"需要", "v"}, Pair{"廉租房", "n"}},
-		[]Pair{Pair{"永和", "nz"}, Pair{"服装", "vn"}, Pair{"饰品", "n"}, Pair{"有限公司", "n"}},
-		[]Pair{Pair{"我", "r"}, Pair{"爱", "v"}, Pair{"北京", "ns"}, Pair{"天安门", "ns"}},
-		[]Pair{Pair{"abc", "eng"}},
-		[]Pair{Pair{"隐", "n"}, Pair{"马尔可夫", "nr"}},
-		[]Pair{Pair{"雷猴", "n"}, Pair{"是", "v"}, Pair{"个", "q"}, Pair{"好", "a"}, Pair{"网站", "n"}},
-		[]Pair{Pair{"“", "x"}, Pair{"Microsoft", "eng"}, Pair{"”", "x"}, Pair{"一", "m"}, Pair{"词", "n"}, Pair{"由", "p"}, Pair{"“", "x"}, Pair{"MICROcomputer", "eng"}, Pair{"（", "x"}, Pair{"微型", "b"}, Pair{"计算机", "n"}, Pair{"）", "x"}, Pair{"”", "x"}, Pair{"和", "c"}, Pair{"“", "x"}, Pair{"SOFTware", "eng"}, Pair{"（", "x"}, Pair{"软件", "n"}, Pair{"）", "x"}, Pair{"”", "x"}, Pair{"两", "m"}, Pair{"部分", "n"}, Pair{"组成", "v"}},
-		[]Pair{Pair{"草泥马", "n"}, Pair{"和", "c"}, Pair{"欺", "vn"}, Pair{"实", "n"}, Pair{"马", "n"}, Pair{"是", "v"}, Pair{"今年", "t"}, Pair{"的", "uj"}, Pair{"流行", "v"}, Pair{"词汇", "n"}},
-		[]Pair{Pair{"伊", "ns"}, Pair{"藤", "nr"}, Pair{"洋华堂", "n"}, Pair{"总府", "n"}, Pair{"店", "n"}},
-		[]Pair{Pair{"中国科学院计算技术研究所", "nt"}},
-		[]Pair{Pair{"罗密欧", "nr"}, Pair{"与", "p"}, Pair{"朱丽叶", "nr"}},
-		[]Pair{Pair{"我", "r"}, Pair{"购买", "v"}, Pair{"了", "ul"}, Pair{"道具", "n"}, Pair{"和", "c"}, Pair{"服装", "vn"}},
-		[]Pair{Pair{"PS", "eng"}, Pair{":", "x"}, Pair{" ", "x"}, Pair{"我", "r"}, Pair{"觉得", "v"}, Pair{"开源", "n"}, Pair{"有", "v"}, Pair{"一个", "m"}, Pair{"好处", "d"}, Pair{"，", "x"}, Pair{"就是", "d"}, Pair{"能够", "v"}, Pair{"敦促", "v"}, Pair{"自己", "r"}, Pair{"不断改进", "l"}, Pair{"，", "x"}, Pair{"避免", "v"}, Pair{"敞", "v"}, Pair{"帚", "ng"}, Pair{"自珍", "b"}},
-		[]Pair{Pair{"湖北省", "ns"}, Pair{"石首市", "ns"}},
-		[]Pair{Pair{"湖北省", "ns"}, Pair{"十堰市", "ns"}},
-		[]Pair{Pair{"总经理", "n"}, Pair{"完成", "v"}, Pair{"了", "ul"}, Pair{"这件", "mq"}, Pair{"事情", "n"}},
-		[]Pair{Pair{"电脑", "n"}, Pair{"修好", "v"}, Pair{"了", "ul"}},
-		[]Pair{Pair{"做好", "v"}, Pair{"了", "ul"}, Pair{"这件", "mq"}, Pair{"事情", "n"}, Pair{"就", "d"}, Pair{"一了百了", "l"}, Pair{"了", "ul"}},
-		[]Pair{Pair{"人们", "n"}, Pair{"审美", "vn"}, Pair{"的", "uj"}, Pair{"观点", "n"}, Pair{"是", "v"}, Pair{"不同", "a"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"我们", "r"}, Pair{"买", "v"}, Pair{"了", "ul"}, Pair{"一个", "m"}, Pair{"美的", "nr"}, Pair{"空调", "n"}},
-		[]Pair{Pair{"线程", "n"}, Pair{"初始化", "l"}, Pair{"时", "n"}, Pair{"我们", "r"}, Pair{"要", "v"}, Pair{"注意", "v"}},
-		[]Pair{Pair{"一个", "m"}, Pair{"分子", "n"}, Pair{"是", "v"}, Pair{"由", "p"}, Pair{"好多", "m"}, Pair{"原子", "n"}, Pair{"组织", "v"}, Pair{"成", "n"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"祝", "v"}, Pair{"你", "r"}, Pair{"马到功成", "i"}},
-		[]Pair{Pair{"他", "r"}, Pair{"掉", "zg"}, Pair{"进", "v"}, Pair{"了", "ul"}, Pair{"无底洞", "ns"}, Pair{"里", "f"}},
-		[]Pair{Pair{"中国", "ns"}, Pair{"的", "uj"}, Pair{"首都", "d"}, Pair{"是", "v"}, Pair{"北京", "ns"}},
-		[]Pair{Pair{"孙", "zg"}, Pair{"君", "nz"}, Pair{"意", "n"}},
-		[]Pair{Pair{"外交部", "nt"}, Pair{"发言人", "l"}, Pair{"马朝旭", "nr"}},
-		[]Pair{Pair{"领导人", "n"}, Pair{"会议", "n"}, Pair{"和", "c"}, Pair{"第四届", "m"}, Pair{"东亚", "ns"}, Pair{"峰会", "n"}},
-		[]Pair{Pair{"在", "p"}, Pair{"过去", "t"}, Pair{"的", "uj"}, Pair{"这", "r"}, Pair{"五年", "t"}},
-		[]Pair{Pair{"还", "d"}, Pair{"需要", "v"}, Pair{"很", "zg"}, Pair{"长", "a"}, Pair{"的", "uj"}, Pair{"路", "n"}, Pair{"要", "v"}, Pair{"走", "v"}},
-		[]Pair{Pair{"60", "eng"}, Pair{"周年", "t"}, Pair{"首都", "d"}, Pair{"阅兵", "v"}},
-		[]Pair{Pair{"你好", "l"}, Pair{"人们", "n"}, Pair{"审美", "vn"}, Pair{"的", "uj"}, Pair{"观点", "n"}, Pair{"是", "v"}, Pair{"不同", "a"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"买", "v"}, Pair{"水果", "n"}, Pair{"然后", "c"}, Pair{"来", "v"}, Pair{"世博园", "nr"}},
-		[]Pair{Pair{"买", "v"}, Pair{"水果", "n"}, Pair{"然后", "c"}, Pair{"去", "v"}, Pair{"世博园", "nr"}},
-		[]Pair{Pair{"但是", "c"}, Pair{"后来", "t"}, Pair{"我", "r"}, Pair{"才", "d"}, Pair{"知道", "v"}, Pair{"你", "r"}, Pair{"是", "v"}, Pair{"对", "p"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"存在", "v"}, Pair{"即", "v"}, Pair{"合理", "vn"}},
-		[]Pair{Pair{"的", "uj"}, Pair{"的", "uj"}, Pair{"的", "uj"}, Pair{"的", "uj"}, Pair{"的", "uj"}, Pair{"在", "p"}, Pair{"的", "uj"}, Pair{"的", "uj"}, Pair{"的", "uj"}, Pair{"的", "uj"}, Pair{"就", "d"}, Pair{"以", "p"}, Pair{"和", "c"}, Pair{"和", "c"}, Pair{"和", "c"}},
-		[]Pair{Pair{"I", "eng"}, Pair{" ", "x"}, Pair{"love", "eng"}, Pair{"你", "r"}, Pair{"，", "x"}, Pair{"不以为耻", "i"}, Pair{"，", "x"}, Pair{"反", "zg"}, Pair{"以为", "c"}, Pair{"rong", "eng"}},
-		[]Pair{Pair{"因", "p"}},
-		[]Pair{},
-		[]Pair{Pair{"hello", "eng"}, Pair{"你好", "l"}, Pair{"人们", "n"}, Pair{"审美", "vn"}, Pair{"的", "uj"}, Pair{"观点", "n"}, Pair{"是", "v"}, Pair{"不同", "a"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"很", "zg"}, Pair{"好", "a"}, Pair{"但", "c"}, Pair{"主要", "b"}, Pair{"是", "v"}, Pair{"基于", "p"}, Pair{"网页", "n"}, Pair{"形式", "n"}},
-		[]Pair{Pair{"hello", "eng"}, Pair{"你好", "l"}, Pair{"人们", "n"}, Pair{"审美", "vn"}, Pair{"的", "uj"}, Pair{"观点", "n"}, Pair{"是", "v"}, Pair{"不同", "a"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"为什么", "r"}, Pair{"我", "r"}, Pair{"不能", "v"}, Pair{"拥有", "v"}, Pair{"想要", "v"}, Pair{"的", "uj"}, Pair{"生活", "vn"}},
-		[]Pair{Pair{"后来", "t"}, Pair{"我", "r"}, Pair{"才", "d"}},
-		[]Pair{Pair{"此次", "r"}, Pair{"来", "v"}, Pair{"中国", "ns"}, Pair{"是", "v"}, Pair{"为了", "p"}},
-		[]Pair{Pair{"使用", "v"}, Pair{"了", "ul"}, Pair{"它", "r"}, Pair{"就", "d"}, Pair{"可以", "c"}, Pair{"解决", "v"}, Pair{"一些", "m"}, Pair{"问题", "n"}},
-		[]Pair{Pair{",", "x"}, Pair{"使用", "v"}, Pair{"了", "ul"}, Pair{"它", "r"}, Pair{"就", "d"}, Pair{"可以", "c"}, Pair{"解决", "v"}, Pair{"一些", "m"}, Pair{"问题", "n"}},
-		[]Pair{Pair{"其实", "d"}, Pair{"使用", "v"}, Pair{"了", "ul"}, Pair{"它", "r"}, Pair{"就", "d"}, Pair{"可以", "c"}, Pair{"解决", "v"}, Pair{"一些", "m"}, Pair{"问题", "n"}},
-		[]Pair{Pair{"好人", "n"}, Pair{"使用", "v"}, Pair{"了", "ul"}, Pair{"它", "r"}, Pair{"就", "d"}, Pair{"可以", "c"}, Pair{"解决", "v"}, Pair{"一些", "m"}, Pair{"问题", "n"}},
-		[]Pair{Pair{"是因为", "c"}, Pair{"和", "c"}, Pair{"国家", "n"}},
-		[]Pair{Pair{"老年", "t"}, Pair{"搜索", "v"}, Pair{"还", "d"}, Pair{"支持", "v"}},
-		[]Pair{Pair{"干脆", "d"}, Pair{"就", "d"}, Pair{"把", "p"}, Pair{"那", "r"}, Pair{"部", "n"}, Pair{"蒙", "v"}, Pair{"人", "n"}, Pair{"的", "uj"}, Pair{"闲", "n"}, Pair{"法", "j"}, Pair{"给", "p"}, Pair{"废", "v"}, Pair{"了", "ul"}, Pair{"拉倒", "v"}, Pair{"！", "x"}, Pair{"RT", "eng"}, Pair{" ", "x"}, Pair{"@", "x"}, Pair{"laoshipukong", "eng"}, Pair{" ", "x"}, Pair{":", "x"}, Pair{" ", "x"}, Pair{"27", "eng"}, Pair{"日", "m"}, Pair{"，", "x"}, Pair{"全国人大常委会", "nt"}, Pair{"第三次", "m"}, Pair{"审议", "v"}, Pair{"侵权", "v"}, Pair{"责任法", "n"}, Pair{"草案", "n"}, Pair{"，", "x"}, Pair{"删除", "v"}, Pair{"了", "ul"}, Pair{"有关", "vn"}, Pair{"医疗", "n"}, Pair{"损害", "v"}, Pair{"责任", "n"}, Pair{"“", "x"}, Pair{"举证", "v"}, Pair{"倒置", "v"}, Pair{"”", "x"}, Pair{"的", "uj"}, Pair{"规定", "n"}, Pair{"。", "x"}, Pair{"在", "p"}, Pair{"医患", "n"}, Pair{"纠纷", "n"}, Pair{"中", "f"}, Pair{"本", "r"}, Pair{"已", "d"}, Pair{"处于", "v"}, Pair{"弱势", "n"}, Pair{"地位", "n"}, Pair{"的", "uj"}, Pair{"消费者", "n"}, Pair{"由此", "c"}, Pair{"将", "d"}, Pair{"陷入", "v"}, Pair{"万劫不复", "i"}, Pair{"的", "uj"}, Pair{"境地", "s"}, Pair{"。", "x"}, Pair{" ", "x"}},
-		[]Pair{Pair{"大", "a"}},
-		[]Pair{},
-		[]Pair{Pair{"他", "r"}, Pair{"说", "v"}, Pair{"的", "uj"}, Pair{"确实", "ad"}, Pair{"在", "p"}, Pair{"理", "n"}},
-		[]Pair{Pair{"长春", "ns"}, Pair{"市长", "n"}, Pair{"春节", "t"}, Pair{"讲话", "n"}},
-		[]Pair{Pair{"结婚", "v"}, Pair{"的", "uj"}, Pair{"和", "c"}, Pair{"尚未", "d"}, Pair{"结婚", "v"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"结合", "v"}, Pair{"成", "n"}, Pair{"分子", "n"}, Pair{"时", "n"}},
-		[]Pair{Pair{"旅游", "vn"}, Pair{"和", "c"}, Pair{"服务", "vn"}, Pair{"是", "v"}, Pair{"最好", "a"}, Pair{"的", "uj"}},
-		[]Pair{Pair{"这件", "mq"}, Pair{"事情", "n"}, Pair{"的确", "d"}, Pair{"是", "v"}, Pair{"我", "r"}, Pair{"的", "uj"}, Pair{"错", "v"}},
-		[]Pair{Pair{"供", "v"}, Pair{"大家", "n"}, Pair{"参考", "v"}, Pair{"指正", "v"}},
-		[]Pair{Pair{"哈尔滨", "ns"}, Pair{"政府", "n"}, Pair{"公布", "v"}, Pair{"塌", "v"}, Pair{"桥", "n"}, Pair{"原因", "n"}},
-		[]Pair{Pair{"我", "r"}, Pair{"在", "p"}, Pair{"机场", "n"}, Pair{"入口处", "i"}},
-		[]Pair{Pair{"邢", "nr"}, Pair{"永", "ns"}, Pair{"臣", "n"}, Pair{"摄影", "n"}, Pair{"报道", "v"}},
-		[]Pair{Pair{"BP", "eng"}, Pair{"神经网络", "n"}, Pair{"如何", "r"}, Pair{"训练", "vn"}, Pair{"才能", "v"}, Pair{"在", "p"}, Pair{"分类", "n"}, Pair{"时", "n"}, Pair{"增加", "v"}, Pair{"区分度", "n"}, Pair{"？", "x"}},
-		[]Pair{Pair{"南京市", "ns"}, Pair{"长江大桥", "ns"}},
-		[]Pair{Pair{"应", "v"}, Pair{"一些", "m"}, Pair{"使用者", "n"}, Pair{"的", "uj"}, Pair{"建议", "n"}, Pair{"，", "x"}, Pair{"也", "d"}, Pair{"为了", "p"}, Pair{"便于", "v"}, Pair{"利用", "n"}, Pair{"NiuTrans", "eng"}, Pair{"用于", "v"}, Pair{"SMT", "eng"}, Pair{"研究", "vn"}},
-		[]Pair{Pair{"长春市", "ns"}, Pair{"长春", "ns"}, Pair{"药店", "n"}},
-		[]Pair{Pair{"邓颖超", "nr"}, Pair{"生前", "t"}, Pair{"最", "d"}, Pair{"喜欢", "v"}, Pair{"的", "uj"}, Pair{"衣服", "n"}},
-		[]Pair{Pair{"胡锦涛", "nr"}, Pair{"是", "v"}, Pair{"热爱", "a"}, Pair{"世界", "n"}, Pair{"和平", "nz"}, Pair{"的", "uj"}, Pair{"政治局", "n"}, Pair{"常委", "j"}},
-		[]Pair{Pair{"程序员", "n"}, Pair{"祝", "v"}, Pair{"海林", "nz"}, Pair{"和", "c"}, Pair{"朱", "nr"}, Pair{"会", "v"}, Pair{"震", "v"}, Pair{"是", "v"}, Pair{"在", "p"}, Pair{"孙", "zg"}, Pair{"健", "a"}, Pair{"的", "uj"}, Pair{"左面", "f"}, Pair{"和", "c"}, Pair{"右面", "f"}, Pair{",", "x"}, Pair{" ", "x"}, Pair{"范", "nr"}, Pair{"凯", "nr"}, Pair{"在", "p"}, Pair{"最", "d"}, Pair{"右面", "f"}, Pair{".", "x"}, Pair{"再", "d"}, Pair{"往", "zg"}, Pair{"左", "m"}, Pair{"是", "v"}, Pair{"李", "nr"}, Pair{"松", "v"}, Pair{"洪", "nr"}},
-		[]Pair{Pair{"一次性", "d"}, Pair{"交", "v"}, Pair{"多少", "m"}, Pair{"钱", "n"}},
-		[]Pair{Pair{"两块", "m"}, Pair{"五", "m"}, Pair{"一套", "m"}, Pair{"，", "x"}, Pair{"三块", "m"}, Pair{"八", "m"}, Pair{"一斤", "m"}, Pair{"，", "x"}, Pair{"四块", "m"}, Pair{"七", "m"}, Pair{"一本", "m"}, Pair{"，", "x"}, Pair{"五块", "m"}, Pair{"六", "m"}, Pair{"一条", "m"}},
-		[]Pair{Pair{"小", "a"}, Pair{"和尚", "nr"}, Pair{"留", "v"}, Pair{"了", "ul"}, Pair{"一个", "m"}, Pair{"像", "v"}, Pair{"大", "a"}, Pair{"和尚", "nr"}, Pair{"一样", "r"}, Pair{"的", "uj"}, Pair{"和尚头", "nr"}},
-		[]Pair{Pair{"我", "r"}, Pair{"是", "v"}, Pair{"中华人民共和国", "ns"}, Pair{"公民", "n"}, Pair{";", "x"}, Pair{"我", "r"}, Pair{"爸爸", "n"}, Pair{"是", "v"}, Pair{"共和党", "nt"}, Pair{"党员", "n"}, Pair{";", "x"}, Pair{" ", "x"}, Pair{"地铁", "n"}, Pair{"和平门", "ns"}, Pair{"站", "v"}},
-		[]Pair{Pair{"张晓梅", "nr"}, Pair{"去", "v"}, Pair{"人民", "n"}, Pair{"医院", "n"}, Pair{"做", "v"}, Pair{"了", "ul"}, Pair{"个", "q"}, Pair{"B超", "n"}, Pair{"然后", "c"}, Pair{"去", "v"}, Pair{"买", "v"}, Pair{"了", "ul"}, Pair{"件", "zg"}, Pair{"T恤", "n"}},
-		[]Pair{Pair{"AT&T", "nz"}, Pair{"是", "v"}, Pair{"一件", "m"}, Pair{"不错", "a"}, Pair{"的", "uj"}, Pair{"公司", "n"}, Pair{"，", "x"}, Pair{"给", "p"}, Pair{"你", "r"}, Pair{"发", "v"}, Pair{"offer", "eng"}, Pair{"了", "ul"}, Pair{"吗", "y"}, Pair{"？", "x"}},
-		[]Pair{Pair{"C++", "nz"}, Pair{"和", "c"}, Pair{"c#", "nz"}, Pair{"是", "v"}, Pair{"什么", "r"}, Pair{"关系", "n"}, Pair{"？", "x"}, Pair{"11", "eng"}, Pair{"+", "x"}, Pair{"122", "eng"}, Pair{"=", "x"}, Pair{"133", "eng"}, Pair{"，", "x"}, Pair{"是", "v"}, Pair{"吗", "y"}, Pair{"？", "x"}, Pair{"PI", "eng"}, Pair{"=", "x"}, Pair{"3", "eng"}, Pair{".", "x"}, Pair{"14159", "eng"}},
-		[]Pair{Pair{"你", "r"}, Pair{"认识", "v"}, Pair{"那个", "r"}, Pair{"和", "c"}, Pair{"主席", "n"}, Pair{"握手", "v"}, Pair{"的", "uj"}, Pair{"的哥", "n"}, Pair{"吗", "y"}, Pair{"？", "x"}, Pair{"他", "r"}, Pair{"开", "v"}, Pair{"一辆", "m"}, Pair{"黑色", "n"}, Pair{"的士", "n"}, Pair{"。", "x"}},
-		[]Pair{Pair{"枪杆子", "n"}, Pair{"中", "f"}, Pair{"出", "v"}, Pair{"政权", "n"}},
+	noHMMCutResult = [][]Segment{
+		[]Segment{Segment{"这", "r"}, Segment{"是", "v"}, Segment{"一个", "m"}, Segment{"伸手不见五指", "i"}, Segment{"的", "uj"}, Segment{"黑夜", "n"}, Segment{"。", "x"}, Segment{"我", "r"}, Segment{"叫", "v"}, Segment{"孙悟空", "nr"}, Segment{"，", "x"}, Segment{"我", "r"}, Segment{"爱", "v"}, Segment{"北京", "ns"}, Segment{"，", "x"}, Segment{"我", "r"}, Segment{"爱", "v"}, Segment{"Python", "eng"}, Segment{"和", "c"}, Segment{"C++", "nz"}, Segment{"。", "x"}},
+		[]Segment{Segment{"我", "r"}, Segment{"不", "d"}, Segment{"喜欢", "v"}, Segment{"日本", "ns"}, Segment{"和服", "nz"}, Segment{"。", "x"}},
+		[]Segment{Segment{"雷猴", "n"}, Segment{"回归", "v"}, Segment{"人间", "n"}, Segment{"。", "x"}},
+		[]Segment{Segment{"工信处", "n"}, Segment{"女干事", "n"}, Segment{"每月", "r"}, Segment{"经过", "p"}, Segment{"下属", "v"}, Segment{"科室", "n"}, Segment{"都", "d"}, Segment{"要", "v"}, Segment{"亲口", "n"}, Segment{"交代", "n"}, Segment{"24", "eng"}, Segment{"口", "q"}, Segment{"交换机", "n"}, Segment{"等", "u"}, Segment{"技术性", "n"}, Segment{"器件", "n"}, Segment{"的", "uj"}, Segment{"安装", "v"}, Segment{"工作", "vn"}},
+		[]Segment{Segment{"我", "r"}, Segment{"需要", "v"}, Segment{"廉租房", "n"}},
+		[]Segment{Segment{"永和", "nz"}, Segment{"服装", "vn"}, Segment{"饰品", "n"}, Segment{"有限公司", "n"}},
+		[]Segment{Segment{"我", "r"}, Segment{"爱", "v"}, Segment{"北京", "ns"}, Segment{"天安门", "ns"}},
+		[]Segment{Segment{"abc", "eng"}},
+		[]Segment{Segment{"隐", "n"}, Segment{"马尔可夫", "nr"}},
+		[]Segment{Segment{"雷猴", "n"}, Segment{"是", "v"}, Segment{"个", "q"}, Segment{"好", "a"}, Segment{"网站", "n"}},
+		[]Segment{Segment{"“", "x"}, Segment{"Microsoft", "eng"}, Segment{"”", "x"}, Segment{"一", "m"}, Segment{"词", "n"}, Segment{"由", "p"}, Segment{"“", "x"}, Segment{"MICROcomputer", "eng"}, Segment{"（", "x"}, Segment{"微型", "b"}, Segment{"计算机", "n"}, Segment{"）", "x"}, Segment{"”", "x"}, Segment{"和", "c"}, Segment{"“", "x"}, Segment{"SOFTware", "eng"}, Segment{"（", "x"}, Segment{"软件", "n"}, Segment{"）", "x"}, Segment{"”", "x"}, Segment{"两", "m"}, Segment{"部分", "n"}, Segment{"组成", "v"}},
+		[]Segment{Segment{"草泥马", "n"}, Segment{"和", "c"}, Segment{"欺", "vn"}, Segment{"实", "n"}, Segment{"马", "n"}, Segment{"是", "v"}, Segment{"今年", "t"}, Segment{"的", "uj"}, Segment{"流行", "v"}, Segment{"词汇", "n"}},
+		[]Segment{Segment{"伊", "ns"}, Segment{"藤", "nr"}, Segment{"洋华堂", "n"}, Segment{"总府", "n"}, Segment{"店", "n"}},
+		[]Segment{Segment{"中国科学院计算技术研究所", "nt"}},
+		[]Segment{Segment{"罗密欧", "nr"}, Segment{"与", "p"}, Segment{"朱丽叶", "nr"}},
+		[]Segment{Segment{"我", "r"}, Segment{"购买", "v"}, Segment{"了", "ul"}, Segment{"道具", "n"}, Segment{"和", "c"}, Segment{"服装", "vn"}},
+		[]Segment{Segment{"PS", "eng"}, Segment{":", "x"}, Segment{" ", "x"}, Segment{"我", "r"}, Segment{"觉得", "v"}, Segment{"开源", "n"}, Segment{"有", "v"}, Segment{"一个", "m"}, Segment{"好处", "d"}, Segment{"，", "x"}, Segment{"就是", "d"}, Segment{"能够", "v"}, Segment{"敦促", "v"}, Segment{"自己", "r"}, Segment{"不断改进", "l"}, Segment{"，", "x"}, Segment{"避免", "v"}, Segment{"敞", "v"}, Segment{"帚", "ng"}, Segment{"自珍", "b"}},
+		[]Segment{Segment{"湖北省", "ns"}, Segment{"石首市", "ns"}},
+		[]Segment{Segment{"湖北省", "ns"}, Segment{"十堰市", "ns"}},
+		[]Segment{Segment{"总经理", "n"}, Segment{"完成", "v"}, Segment{"了", "ul"}, Segment{"这件", "mq"}, Segment{"事情", "n"}},
+		[]Segment{Segment{"电脑", "n"}, Segment{"修好", "v"}, Segment{"了", "ul"}},
+		[]Segment{Segment{"做好", "v"}, Segment{"了", "ul"}, Segment{"这件", "mq"}, Segment{"事情", "n"}, Segment{"就", "d"}, Segment{"一了百了", "l"}, Segment{"了", "ul"}},
+		[]Segment{Segment{"人们", "n"}, Segment{"审美", "vn"}, Segment{"的", "uj"}, Segment{"观点", "n"}, Segment{"是", "v"}, Segment{"不同", "a"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"我们", "r"}, Segment{"买", "v"}, Segment{"了", "ul"}, Segment{"一个", "m"}, Segment{"美的", "nr"}, Segment{"空调", "n"}},
+		[]Segment{Segment{"线程", "n"}, Segment{"初始化", "l"}, Segment{"时", "n"}, Segment{"我们", "r"}, Segment{"要", "v"}, Segment{"注意", "v"}},
+		[]Segment{Segment{"一个", "m"}, Segment{"分子", "n"}, Segment{"是", "v"}, Segment{"由", "p"}, Segment{"好多", "m"}, Segment{"原子", "n"}, Segment{"组织", "v"}, Segment{"成", "n"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"祝", "v"}, Segment{"你", "r"}, Segment{"马到功成", "i"}},
+		[]Segment{Segment{"他", "r"}, Segment{"掉", "zg"}, Segment{"进", "v"}, Segment{"了", "ul"}, Segment{"无底洞", "ns"}, Segment{"里", "f"}},
+		[]Segment{Segment{"中国", "ns"}, Segment{"的", "uj"}, Segment{"首都", "d"}, Segment{"是", "v"}, Segment{"北京", "ns"}},
+		[]Segment{Segment{"孙", "zg"}, Segment{"君", "nz"}, Segment{"意", "n"}},
+		[]Segment{Segment{"外交部", "nt"}, Segment{"发言人", "l"}, Segment{"马朝旭", "nr"}},
+		[]Segment{Segment{"领导人", "n"}, Segment{"会议", "n"}, Segment{"和", "c"}, Segment{"第四届", "m"}, Segment{"东亚", "ns"}, Segment{"峰会", "n"}},
+		[]Segment{Segment{"在", "p"}, Segment{"过去", "t"}, Segment{"的", "uj"}, Segment{"这", "r"}, Segment{"五年", "t"}},
+		[]Segment{Segment{"还", "d"}, Segment{"需要", "v"}, Segment{"很", "zg"}, Segment{"长", "a"}, Segment{"的", "uj"}, Segment{"路", "n"}, Segment{"要", "v"}, Segment{"走", "v"}},
+		[]Segment{Segment{"60", "eng"}, Segment{"周年", "t"}, Segment{"首都", "d"}, Segment{"阅兵", "v"}},
+		[]Segment{Segment{"你好", "l"}, Segment{"人们", "n"}, Segment{"审美", "vn"}, Segment{"的", "uj"}, Segment{"观点", "n"}, Segment{"是", "v"}, Segment{"不同", "a"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"买", "v"}, Segment{"水果", "n"}, Segment{"然后", "c"}, Segment{"来", "v"}, Segment{"世博园", "nr"}},
+		[]Segment{Segment{"买", "v"}, Segment{"水果", "n"}, Segment{"然后", "c"}, Segment{"去", "v"}, Segment{"世博园", "nr"}},
+		[]Segment{Segment{"但是", "c"}, Segment{"后来", "t"}, Segment{"我", "r"}, Segment{"才", "d"}, Segment{"知道", "v"}, Segment{"你", "r"}, Segment{"是", "v"}, Segment{"对", "p"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"存在", "v"}, Segment{"即", "v"}, Segment{"合理", "vn"}},
+		[]Segment{Segment{"的", "uj"}, Segment{"的", "uj"}, Segment{"的", "uj"}, Segment{"的", "uj"}, Segment{"的", "uj"}, Segment{"在", "p"}, Segment{"的", "uj"}, Segment{"的", "uj"}, Segment{"的", "uj"}, Segment{"的", "uj"}, Segment{"就", "d"}, Segment{"以", "p"}, Segment{"和", "c"}, Segment{"和", "c"}, Segment{"和", "c"}},
+		[]Segment{Segment{"I", "eng"}, Segment{" ", "x"}, Segment{"love", "eng"}, Segment{"你", "r"}, Segment{"，", "x"}, Segment{"不以为耻", "i"}, Segment{"，", "x"}, Segment{"反", "zg"}, Segment{"以为", "c"}, Segment{"rong", "eng"}},
+		[]Segment{Segment{"因", "p"}},
+		[]Segment{},
+		[]Segment{Segment{"hello", "eng"}, Segment{"你好", "l"}, Segment{"人们", "n"}, Segment{"审美", "vn"}, Segment{"的", "uj"}, Segment{"观点", "n"}, Segment{"是", "v"}, Segment{"不同", "a"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"很", "zg"}, Segment{"好", "a"}, Segment{"但", "c"}, Segment{"主要", "b"}, Segment{"是", "v"}, Segment{"基于", "p"}, Segment{"网页", "n"}, Segment{"形式", "n"}},
+		[]Segment{Segment{"hello", "eng"}, Segment{"你好", "l"}, Segment{"人们", "n"}, Segment{"审美", "vn"}, Segment{"的", "uj"}, Segment{"观点", "n"}, Segment{"是", "v"}, Segment{"不同", "a"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"为什么", "r"}, Segment{"我", "r"}, Segment{"不能", "v"}, Segment{"拥有", "v"}, Segment{"想要", "v"}, Segment{"的", "uj"}, Segment{"生活", "vn"}},
+		[]Segment{Segment{"后来", "t"}, Segment{"我", "r"}, Segment{"才", "d"}},
+		[]Segment{Segment{"此次", "r"}, Segment{"来", "v"}, Segment{"中国", "ns"}, Segment{"是", "v"}, Segment{"为了", "p"}},
+		[]Segment{Segment{"使用", "v"}, Segment{"了", "ul"}, Segment{"它", "r"}, Segment{"就", "d"}, Segment{"可以", "c"}, Segment{"解决", "v"}, Segment{"一些", "m"}, Segment{"问题", "n"}},
+		[]Segment{Segment{",", "x"}, Segment{"使用", "v"}, Segment{"了", "ul"}, Segment{"它", "r"}, Segment{"就", "d"}, Segment{"可以", "c"}, Segment{"解决", "v"}, Segment{"一些", "m"}, Segment{"问题", "n"}},
+		[]Segment{Segment{"其实", "d"}, Segment{"使用", "v"}, Segment{"了", "ul"}, Segment{"它", "r"}, Segment{"就", "d"}, Segment{"可以", "c"}, Segment{"解决", "v"}, Segment{"一些", "m"}, Segment{"问题", "n"}},
+		[]Segment{Segment{"好人", "n"}, Segment{"使用", "v"}, Segment{"了", "ul"}, Segment{"它", "r"}, Segment{"就", "d"}, Segment{"可以", "c"}, Segment{"解决", "v"}, Segment{"一些", "m"}, Segment{"问题", "n"}},
+		[]Segment{Segment{"是因为", "c"}, Segment{"和", "c"}, Segment{"国家", "n"}},
+		[]Segment{Segment{"老年", "t"}, Segment{"搜索", "v"}, Segment{"还", "d"}, Segment{"支持", "v"}},
+		[]Segment{Segment{"干脆", "d"}, Segment{"就", "d"}, Segment{"把", "p"}, Segment{"那", "r"}, Segment{"部", "n"}, Segment{"蒙", "v"}, Segment{"人", "n"}, Segment{"的", "uj"}, Segment{"闲", "n"}, Segment{"法", "j"}, Segment{"给", "p"}, Segment{"废", "v"}, Segment{"了", "ul"}, Segment{"拉倒", "v"}, Segment{"！", "x"}, Segment{"RT", "eng"}, Segment{" ", "x"}, Segment{"@", "x"}, Segment{"laoshipukong", "eng"}, Segment{" ", "x"}, Segment{":", "x"}, Segment{" ", "x"}, Segment{"27", "eng"}, Segment{"日", "m"}, Segment{"，", "x"}, Segment{"全国人大常委会", "nt"}, Segment{"第三次", "m"}, Segment{"审议", "v"}, Segment{"侵权", "v"}, Segment{"责任法", "n"}, Segment{"草案", "n"}, Segment{"，", "x"}, Segment{"删除", "v"}, Segment{"了", "ul"}, Segment{"有关", "vn"}, Segment{"医疗", "n"}, Segment{"损害", "v"}, Segment{"责任", "n"}, Segment{"“", "x"}, Segment{"举证", "v"}, Segment{"倒置", "v"}, Segment{"”", "x"}, Segment{"的", "uj"}, Segment{"规定", "n"}, Segment{"。", "x"}, Segment{"在", "p"}, Segment{"医患", "n"}, Segment{"纠纷", "n"}, Segment{"中", "f"}, Segment{"本", "r"}, Segment{"已", "d"}, Segment{"处于", "v"}, Segment{"弱势", "n"}, Segment{"地位", "n"}, Segment{"的", "uj"}, Segment{"消费者", "n"}, Segment{"由此", "c"}, Segment{"将", "d"}, Segment{"陷入", "v"}, Segment{"万劫不复", "i"}, Segment{"的", "uj"}, Segment{"境地", "s"}, Segment{"。", "x"}, Segment{" ", "x"}},
+		[]Segment{Segment{"大", "a"}},
+		[]Segment{},
+		[]Segment{Segment{"他", "r"}, Segment{"说", "v"}, Segment{"的", "uj"}, Segment{"确实", "ad"}, Segment{"在", "p"}, Segment{"理", "n"}},
+		[]Segment{Segment{"长春", "ns"}, Segment{"市长", "n"}, Segment{"春节", "t"}, Segment{"讲话", "n"}},
+		[]Segment{Segment{"结婚", "v"}, Segment{"的", "uj"}, Segment{"和", "c"}, Segment{"尚未", "d"}, Segment{"结婚", "v"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"结合", "v"}, Segment{"成", "n"}, Segment{"分子", "n"}, Segment{"时", "n"}},
+		[]Segment{Segment{"旅游", "vn"}, Segment{"和", "c"}, Segment{"服务", "vn"}, Segment{"是", "v"}, Segment{"最好", "a"}, Segment{"的", "uj"}},
+		[]Segment{Segment{"这件", "mq"}, Segment{"事情", "n"}, Segment{"的确", "d"}, Segment{"是", "v"}, Segment{"我", "r"}, Segment{"的", "uj"}, Segment{"错", "v"}},
+		[]Segment{Segment{"供", "v"}, Segment{"大家", "n"}, Segment{"参考", "v"}, Segment{"指正", "v"}},
+		[]Segment{Segment{"哈尔滨", "ns"}, Segment{"政府", "n"}, Segment{"公布", "v"}, Segment{"塌", "v"}, Segment{"桥", "n"}, Segment{"原因", "n"}},
+		[]Segment{Segment{"我", "r"}, Segment{"在", "p"}, Segment{"机场", "n"}, Segment{"入口处", "i"}},
+		[]Segment{Segment{"邢", "nr"}, Segment{"永", "ns"}, Segment{"臣", "n"}, Segment{"摄影", "n"}, Segment{"报道", "v"}},
+		[]Segment{Segment{"BP", "eng"}, Segment{"神经网络", "n"}, Segment{"如何", "r"}, Segment{"训练", "vn"}, Segment{"才能", "v"}, Segment{"在", "p"}, Segment{"分类", "n"}, Segment{"时", "n"}, Segment{"增加", "v"}, Segment{"区分度", "n"}, Segment{"？", "x"}},
+		[]Segment{Segment{"南京市", "ns"}, Segment{"长江大桥", "ns"}},
+		[]Segment{Segment{"应", "v"}, Segment{"一些", "m"}, Segment{"使用者", "n"}, Segment{"的", "uj"}, Segment{"建议", "n"}, Segment{"，", "x"}, Segment{"也", "d"}, Segment{"为了", "p"}, Segment{"便于", "v"}, Segment{"利用", "n"}, Segment{"NiuTrans", "eng"}, Segment{"用于", "v"}, Segment{"SMT", "eng"}, Segment{"研究", "vn"}},
+		[]Segment{Segment{"长春市", "ns"}, Segment{"长春", "ns"}, Segment{"药店", "n"}},
+		[]Segment{Segment{"邓颖超", "nr"}, Segment{"生前", "t"}, Segment{"最", "d"}, Segment{"喜欢", "v"}, Segment{"的", "uj"}, Segment{"衣服", "n"}},
+		[]Segment{Segment{"胡锦涛", "nr"}, Segment{"是", "v"}, Segment{"热爱", "a"}, Segment{"世界", "n"}, Segment{"和平", "nz"}, Segment{"的", "uj"}, Segment{"政治局", "n"}, Segment{"常委", "j"}},
+		[]Segment{Segment{"程序员", "n"}, Segment{"祝", "v"}, Segment{"海林", "nz"}, Segment{"和", "c"}, Segment{"朱", "nr"}, Segment{"会", "v"}, Segment{"震", "v"}, Segment{"是", "v"}, Segment{"在", "p"}, Segment{"孙", "zg"}, Segment{"健", "a"}, Segment{"的", "uj"}, Segment{"左面", "f"}, Segment{"和", "c"}, Segment{"右面", "f"}, Segment{",", "x"}, Segment{" ", "x"}, Segment{"范", "nr"}, Segment{"凯", "nr"}, Segment{"在", "p"}, Segment{"最", "d"}, Segment{"右面", "f"}, Segment{".", "x"}, Segment{"再", "d"}, Segment{"往", "zg"}, Segment{"左", "m"}, Segment{"是", "v"}, Segment{"李", "nr"}, Segment{"松", "v"}, Segment{"洪", "nr"}},
+		[]Segment{Segment{"一次性", "d"}, Segment{"交", "v"}, Segment{"多少", "m"}, Segment{"钱", "n"}},
+		[]Segment{Segment{"两块", "m"}, Segment{"五", "m"}, Segment{"一套", "m"}, Segment{"，", "x"}, Segment{"三块", "m"}, Segment{"八", "m"}, Segment{"一斤", "m"}, Segment{"，", "x"}, Segment{"四块", "m"}, Segment{"七", "m"}, Segment{"一本", "m"}, Segment{"，", "x"}, Segment{"五块", "m"}, Segment{"六", "m"}, Segment{"一条", "m"}},
+		[]Segment{Segment{"小", "a"}, Segment{"和尚", "nr"}, Segment{"留", "v"}, Segment{"了", "ul"}, Segment{"一个", "m"}, Segment{"像", "v"}, Segment{"大", "a"}, Segment{"和尚", "nr"}, Segment{"一样", "r"}, Segment{"的", "uj"}, Segment{"和尚头", "nr"}},
+		[]Segment{Segment{"我", "r"}, Segment{"是", "v"}, Segment{"中华人民共和国", "ns"}, Segment{"公民", "n"}, Segment{";", "x"}, Segment{"我", "r"}, Segment{"爸爸", "n"}, Segment{"是", "v"}, Segment{"共和党", "nt"}, Segment{"党员", "n"}, Segment{";", "x"}, Segment{" ", "x"}, Segment{"地铁", "n"}, Segment{"和平门", "ns"}, Segment{"站", "v"}},
+		[]Segment{Segment{"张晓梅", "nr"}, Segment{"去", "v"}, Segment{"人民", "n"}, Segment{"医院", "n"}, Segment{"做", "v"}, Segment{"了", "ul"}, Segment{"个", "q"}, Segment{"B超", "n"}, Segment{"然后", "c"}, Segment{"去", "v"}, Segment{"买", "v"}, Segment{"了", "ul"}, Segment{"件", "zg"}, Segment{"T恤", "n"}},
+		[]Segment{Segment{"AT&T", "nz"}, Segment{"是", "v"}, Segment{"一件", "m"}, Segment{"不错", "a"}, Segment{"的", "uj"}, Segment{"公司", "n"}, Segment{"，", "x"}, Segment{"给", "p"}, Segment{"你", "r"}, Segment{"发", "v"}, Segment{"offer", "eng"}, Segment{"了", "ul"}, Segment{"吗", "y"}, Segment{"？", "x"}},
+		[]Segment{Segment{"C++", "nz"}, Segment{"和", "c"}, Segment{"c#", "nz"}, Segment{"是", "v"}, Segment{"什么", "r"}, Segment{"关系", "n"}, Segment{"？", "x"}, Segment{"11", "eng"}, Segment{"+", "x"}, Segment{"122", "eng"}, Segment{"=", "x"}, Segment{"133", "eng"}, Segment{"，", "x"}, Segment{"是", "v"}, Segment{"吗", "y"}, Segment{"？", "x"}, Segment{"PI", "eng"}, Segment{"=", "x"}, Segment{"3", "eng"}, Segment{".", "x"}, Segment{"14159", "eng"}},
+		[]Segment{Segment{"你", "r"}, Segment{"认识", "v"}, Segment{"那个", "r"}, Segment{"和", "c"}, Segment{"主席", "n"}, Segment{"握手", "v"}, Segment{"的", "uj"}, Segment{"的哥", "n"}, Segment{"吗", "y"}, Segment{"？", "x"}, Segment{"他", "r"}, Segment{"开", "v"}, Segment{"一辆", "m"}, Segment{"黑色", "n"}, Segment{"的士", "n"}, Segment{"。", "x"}},
+		[]Segment{Segment{"枪杆子", "n"}, Segment{"中", "f"}, Segment{"出", "v"}, Segment{"政权", "n"}},
 	}
 )
 
-func chanToArray(ch chan Pair) []Pair {
-	result := make([]Pair, 0)
+func init() {
+	seg = New()
+	seg.LoadDictionary("../dict.txt")
+}
+
+func chanToArray(ch <-chan Segment) []Segment {
+	result := make([]Segment, 0)
 	for word := range ch {
 		result = append(result, word)
 	}
@@ -276,12 +282,8 @@ func chanToArray(ch chan Pair) []Pair {
 }
 
 func TestCut(t *testing.T) {
-	p, err := Open("../dict.txt")
-	if err != nil {
-		t.Fatal(err)
-	}
 	for index, content := range test_contents {
-		result := chanToArray(p.Cut(content, true))
+		result := chanToArray(seg.Cut(content, true))
 		if len(defaultCutResult[index]) != len(result) {
 			t.Errorf("default cut for %s length should be %d not %d\n",
 				content, len(defaultCutResult[index]), len(result))
@@ -293,7 +295,7 @@ func TestCut(t *testing.T) {
 				t.Fatalf("expect %s, got %s", defaultCutResult[index][i], result[i])
 			}
 		}
-		result = chanToArray(p.Cut(content, false))
+		result = chanToArray(seg.Cut(content, false))
 		if len(noHMMCutResult[index]) != len(result) {
 			t.Fatal(content)
 		}
@@ -306,19 +308,16 @@ func TestCut(t *testing.T) {
 	}
 }
 
+// https://github.com/fxsjy/jieba/issues/132
 func TestBug132(t *testing.T) {
-	/*
-		https://github.com/fxsjy/jieba/issues/132
-	*/
-	p, _ := Open("../dict.txt")
 	sentence := "又跛又啞"
-	cutResult := []Pair{
-		Pair{"又", "d"},
-		Pair{"跛", "a"},
-		Pair{"又", "d"},
-		Pair{"啞", "v"},
+	cutResult := []Segment{
+		Segment{"又", "d"},
+		Segment{"跛", "a"},
+		Segment{"又", "d"},
+		Segment{"啞", "v"},
 	}
-	result := chanToArray(p.Cut(sentence, true))
+	result := chanToArray(seg.Cut(sentence, true))
 	if len(cutResult) != len(result) {
 		t.Fatal(result)
 	}
@@ -329,28 +328,25 @@ func TestBug132(t *testing.T) {
 	}
 }
 
+// https://github.com/fxsjy/jieba/issues/137
 func TestBug137(t *testing.T) {
-	/*
-		https://github.com/fxsjy/jieba/issues/137
-	*/
-	p, _ := Open("../dict.txt")
 	sentence := "前港督衛奕信在八八年十月宣布成立中央政策研究組"
-	cutResult := []Pair{
-		Pair{"前", "f"},
-		Pair{"港督", "n"},
-		Pair{"衛奕", "z"},
-		Pair{"信", "n"},
-		Pair{"在", "p"},
-		Pair{"八八年", "m"},
-		Pair{"十月", "t"},
-		Pair{"宣布", "v"},
-		Pair{"成立", "v"},
-		Pair{"中央", "n"},
-		Pair{"政策", "n"},
-		Pair{"研究", "vn"},
-		Pair{"組", "x"},
+	cutResult := []Segment{
+		Segment{"前", "f"},
+		Segment{"港督", "n"},
+		Segment{"衛奕", "z"},
+		Segment{"信", "n"},
+		Segment{"在", "p"},
+		Segment{"八八年", "m"},
+		Segment{"十月", "t"},
+		Segment{"宣布", "v"},
+		Segment{"成立", "v"},
+		Segment{"中央", "n"},
+		Segment{"政策", "n"},
+		Segment{"研究", "vn"},
+		Segment{"組", "x"},
 	}
-	result := chanToArray(p.Cut(sentence, true))
+	result := chanToArray(seg.Cut(sentence, true))
 	if len(cutResult) != len(result) {
 		t.Fatal(result)
 	}
@@ -362,50 +358,50 @@ func TestBug137(t *testing.T) {
 }
 
 func TestUserDict(t *testing.T) {
-	p, _ := Open("../dict.txt")
-	p.LoadUserDict("../userdict.txt")
+	seg.LoadUserDictionary("../userdict.txt")
+	defer seg.LoadDictionary("../dict.txt")
 	sentence := "李小福是创新办主任也是云计算方面的专家; 什么是八一双鹿例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
 
-	cutResult := []Pair{
-		Pair{"李小福", "nr"},
-		Pair{"是", "v"},
-		Pair{"创新办", "i"},
-		Pair{"主任", "b"},
-		Pair{"也", "d"},
-		Pair{"是", "v"},
-		Pair{"云计算", "x"},
-		Pair{"方面", "n"},
-		Pair{"的", "uj"},
-		Pair{"专家", "n"},
-		Pair{";", "x"},
-		Pair{" ", "x"},
-		Pair{"什么", "r"},
-		Pair{"是", "v"},
-		Pair{"八一双鹿", "nz"},
-		Pair{"例如", "v"},
-		Pair{"我", "r"},
-		Pair{"输入", "v"},
-		Pair{"一个", "m"},
-		Pair{"带", "v"},
-		Pair{"“", "x"},
-		Pair{"韩玉赏鉴", "nz"},
-		Pair{"”", "x"},
-		Pair{"的", "uj"},
-		Pair{"标题", "n"},
-		Pair{"，", "x"},
-		Pair{"在", "p"},
-		Pair{"自定义词", "n"},
-		Pair{"库中", "nrt"},
-		Pair{"也", "d"},
-		Pair{"增加", "v"},
-		Pair{"了", "ul"},
-		Pair{"此", "r"},
-		Pair{"词", "n"},
-		Pair{"为", "p"},
-		Pair{"N", "eng"},
-		Pair{"类型", "n"}}
+	cutResult := []Segment{
+		Segment{"李小福", "nr"},
+		Segment{"是", "v"},
+		Segment{"创新办", "i"},
+		Segment{"主任", "b"},
+		Segment{"也", "d"},
+		Segment{"是", "v"},
+		Segment{"云计算", "x"},
+		Segment{"方面", "n"},
+		Segment{"的", "uj"},
+		Segment{"专家", "n"},
+		Segment{";", "x"},
+		Segment{" ", "x"},
+		Segment{"什么", "r"},
+		Segment{"是", "v"},
+		Segment{"八一双鹿", "nz"},
+		Segment{"例如", "v"},
+		Segment{"我", "r"},
+		Segment{"输入", "v"},
+		Segment{"一个", "m"},
+		Segment{"带", "v"},
+		Segment{"“", "x"},
+		Segment{"韩玉赏鉴", "nz"},
+		Segment{"”", "x"},
+		Segment{"的", "uj"},
+		Segment{"标题", "n"},
+		Segment{"，", "x"},
+		Segment{"在", "p"},
+		Segment{"自定义词", "n"},
+		Segment{"库中", "nrt"},
+		Segment{"也", "d"},
+		Segment{"增加", "v"},
+		Segment{"了", "ul"},
+		Segment{"此", "r"},
+		Segment{"词", "n"},
+		Segment{"为", "p"},
+		Segment{"N", "eng"},
+		Segment{"类型", "n"}}
 
-	result := chanToArray(p.Cut(sentence, true))
+	result := chanToArray(seg.Cut(sentence, true))
 	if len(cutResult) != len(result) {
 		t.Fatal(result)
 	}
@@ -417,19 +413,17 @@ func TestUserDict(t *testing.T) {
 }
 
 func BenchmarkCutNoHMM(b *testing.B) {
-	p, _ := Open("dict.txt")
 	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		chanToArray(p.Cut(sentence, false))
+		chanToArray(seg.Cut(sentence, false))
 	}
 }
 
 func BenchmarkCut(b *testing.B) {
-	p, _ := Open("dict.txt")
 	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		chanToArray(p.Cut(sentence, true))
+		chanToArray(seg.Cut(sentence, true))
 	}
 }

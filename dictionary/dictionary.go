@@ -13,17 +13,23 @@ import (
 type Dictionary struct {
 	total, logTotal float64
 	freqMap         map[string]float64
+	posMap          map[string]string
 	sync.RWMutex
 }
 
 func New() *Dictionary {
-	return &Dictionary{freqMap: make(map[string]float64)}
+	return &Dictionary{
+		freqMap: make(map[string]float64),
+		posMap:  make(map[string]string)}
 }
 
 func (d *Dictionary) addToken(token Token) {
 	d.freqMap[token.text] = token.frequency
 	d.total += token.frequency
 	runes := []rune(token.text)
+	if len(token.pos) > 0 {
+		d.posMap[token.text] = token.pos
+	}
 	n := len(runes)
 	for i := 0; i < n; i++ {
 		frag := string(runes[:i+1])
@@ -59,6 +65,13 @@ func (d Dictionary) Frequency(key string) (float64, bool) {
 	return freq, ok
 }
 
+func (d Dictionary) Pos(key string) (string, bool) {
+	d.RLock()
+	pos, ok := d.posMap[key]
+	d.RUnlock()
+	return pos, ok
+}
+
 func (d *Dictionary) LoadDictionary(fileName string) error {
 	return d.loadDictionary(fileName, false)
 }
@@ -88,20 +101,21 @@ func (d *Dictionary) loadDictionary(fileName string, isUserDictionary bool) erro
 
 	if !isUserDictionary && len(d.freqMap) > 0 {
 		d.freqMap = make(map[string]float64)
+		d.posMap = make(map[string]string)
 		d.total = 0.0
 		d.logTotal = 0.0
 	}
 	for scanner.Scan() {
 		line = scanner.Text()
 		fields = strings.Split(line, " ")
-		token.text = strings.Replace(fields[0], "\ufeff", "", 1)
+		token.text = strings.TrimSpace(strings.Replace(fields[0], "\ufeff", "", 1))
 		if length := len(fields); length > 1 {
 			token.frequency, err = strconv.ParseFloat(fields[1], 64)
 			if err != nil {
 				return err
 			}
 			if length > 2 {
-				token.pos = fields[2]
+				token.pos = strings.TrimSpace(fields[2])
 			}
 		}
 		d.addToken(token)
