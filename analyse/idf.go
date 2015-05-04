@@ -5,9 +5,9 @@ import (
 	"sort"
 )
 
-type IDFLoader struct {
-	IDFFreq map[string]float64
-	Median  float64
+type idf struct {
+	freqMap map[string]float64
+	median  float64
 	freqs   []float64
 }
 

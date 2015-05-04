@@ -4,7 +4,6 @@ import (
 	"math"
 	"regexp"
 
-	"github.com/wangbin/jiebago/dictionary"
 	"github.com/wangbin/jiebago/util"
 )
 
@@ -31,11 +30,16 @@ func (s Segment) Pos() string {
 }
 
 type Segmenter struct {
-	*dictionary.Dictionary
+	dict *Dictionary
 }
 
-func New() *Segmenter {
-	return &Segmenter{dictionary.New()}
+func (seg *Segmenter) LoadDictionary(fileName string) error {
+	seg.dict = &Dictionary{freqMap: make(map[string]float64), posMap: make(map[string]string)}
+	return seg.dict.loadDictionary(fileName)
+}
+
+func (seg *Segmenter) LoadUserDictionary(fileName string) error {
+	return seg.dict.loadDictionary(fileName)
 }
 
 func (seg *Segmenter) cutDetailInternal(sentence string) <-chan Segment {
@@ -106,7 +110,7 @@ func (seg *Segmenter) dag(runes []rune) map[int][]int {
 		i = k
 		frag = runes[k : k+1]
 		for {
-			freq, ok := seg.Frequency(string(frag))
+			freq, ok := seg.dict.Frequency(string(frag))
 			if !ok {
 				break
 			}
@@ -136,14 +140,13 @@ func (seg *Segmenter) calc(runes []rune) map[int]route {
 	n := len(runes)
 	rs := make(map[int]route)
 	rs[n] = route{frequency: 0.0, index: 0}
-	logTotal := seg.LogTotal()
 	var r route
 	for idx := n - 1; idx >= 0; idx-- {
 		for _, i := range dag[idx] {
-			if freq, ok := seg.Frequency(string(runes[idx : i+1])); ok {
-				r = route{frequency: math.Log(freq) - logTotal + rs[i+1].frequency, index: i}
+			if freq, ok := seg.dict.Frequency(string(runes[idx : i+1])); ok {
+				r = route{frequency: math.Log(freq) - seg.dict.logTotal + rs[i+1].frequency, index: i}
 			} else {
-				r = route{frequency: math.Log(1.0) - logTotal + rs[i+1].frequency, index: i}
+				r = route{frequency: math.Log(1.0) - seg.dict.logTotal + rs[i+1].frequency, index: i}
 			}
 			if v, ok := rs[idx]; !ok {
 				rs[idx] = r
@@ -177,21 +180,21 @@ func (seg *Segmenter) cutDAG(sentence string) <-chan Segment {
 				if len(buf) > 0 {
 					bufString := string(buf)
 					if len(buf) == 1 {
-						if tag, ok := seg.Pos(bufString); ok {
+						if tag, ok := seg.dict.Pos(bufString); ok {
 							result <- Segment{bufString, tag}
 						} else {
 							result <- Segment{bufString, "x"}
 						}
 						buf = make([]rune, 0)
 					} else {
-						if v, ok := seg.Frequency(bufString); !ok || v == 0.0 {
+						if v, ok := seg.dict.Frequency(bufString); !ok || v == 0.0 {
 							for t := range seg.cutDetail(bufString) {
 								result <- t
 							}
 						} else {
 							for _, elem := range buf {
 								selem := string(elem)
-								if tag, ok := seg.Pos(selem); ok {
+								if tag, ok := seg.dict.Pos(selem); ok {
 									result <- Segment{selem, tag}
 								} else {
 									result <- Segment{selem, "x"}
@@ -203,7 +206,7 @@ func (seg *Segmenter) cutDAG(sentence string) <-chan Segment {
 					}
 				}
 				word := string(frag)
-				if tag, ok := seg.Pos(word); ok {
+				if tag, ok := seg.dict.Pos(word); ok {
 					result <- Segment{word, tag}
 				} else {
 					result <- Segment{word, "x"}
@@ -215,20 +218,20 @@ func (seg *Segmenter) cutDAG(sentence string) <-chan Segment {
 		if len(buf) > 0 {
 			bufString := string(buf)
 			if len(buf) == 1 {
-				if tag, ok := seg.Pos(bufString); ok {
+				if tag, ok := seg.dict.Pos(bufString); ok {
 					result <- Segment{bufString, tag}
 				} else {
 					result <- Segment{bufString, "x"}
 				}
 			} else {
-				if v, ok := seg.Frequency(bufString); !ok || v == 0.0 {
+				if v, ok := seg.dict.Frequency(bufString); !ok || v == 0.0 {
 					for t := range seg.cutDetail(bufString) {
 						result <- t
 					}
 				} else {
 					for _, elem := range buf {
 						selem := string(elem)
-						if tag, ok := seg.Pos(selem); ok {
+						if tag, ok := seg.dict.Pos(selem); ok {
 							result <- Segment{selem, tag}
 						} else {
 							result <- Segment{selem, "x"}
@@ -263,7 +266,7 @@ func (seg *Segmenter) cutDAGNoHMM(sentence string) <-chan Segment {
 					buf = make([]rune, 0)
 				}
 				word := string(frag)
-				if tag, ok := seg.Pos(word); ok {
+				if tag, ok := seg.dict.Pos(word); ok {
 					result <- Segment{word, tag}
 				} else {
 					result <- Segment{word, "x"}

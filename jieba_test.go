@@ -1,11 +1,9 @@
 package jiebago
 
-import (
-	"regexp"
-	"testing"
-)
+import "testing"
 
 var (
+	seg           Segmenter
 	test_contents = []string{
 		"这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。",
 		"我不喜欢日本和服。",
@@ -617,7 +615,11 @@ var (
 	}
 )
 
-func chanToArray(ch chan string) []string {
+func init() {
+	seg.LoadDictionary("dict.txt")
+}
+
+func chanToArray(ch <-chan string) []string {
 	result := make([]string, 0)
 	for word := range ch {
 		result = append(result, word)
@@ -626,29 +628,23 @@ func chanToArray(ch chan string) []string {
 }
 
 func TestCutDAG(t *testing.T) {
-	j, _ := Open("dict.txt")
-
-	result := chanToArray(j.cutDAG("BP神经网络如何训练才能在分类时增加区分度？"))
+	result := chanToArray(seg.cutDAG("BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 11 {
 		t.Fatal(result)
 	}
 }
 
 func TestCutDAGNoHmm(t *testing.T) {
-	j, _ := Open("dict.txt")
-
-	result := chanToArray(j.cutDAGNoHMM("BP神经网络如何训练才能在分类时增加区分度？"))
+	result := chanToArray(seg.cutDAGNoHMM("BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 11 {
 		t.Fatal(result)
 	}
 }
 
 func TestDefaultCut(t *testing.T) {
-	j, _ := Open("dict.txt")
-
 	var result []string
 	for index, content := range test_contents {
-		result = chanToArray(j.Cut(content, true))
+		result = chanToArray(seg.Cut(content, true))
 		if len(result) != len(defaultCutResult[index]) {
 			t.Errorf("default cut for %s length should be %d not %d\n",
 				content, len(defaultCutResult[index]), len(result))
@@ -664,11 +660,9 @@ func TestDefaultCut(t *testing.T) {
 }
 
 func TestCutAll(t *testing.T) {
-	j, _ := Open("dict.txt")
-
 	var result []string
 	for index, content := range test_contents {
-		result = chanToArray(j.CutAll(content))
+		result = chanToArray(seg.CutAll(content))
 		if len(result) != len(cutAllResult[index]) {
 			t.Errorf("cut all for %s length should be %d not %d\n",
 				content, len(cutAllResult[index]), len(result))
@@ -684,11 +678,9 @@ func TestCutAll(t *testing.T) {
 }
 
 func TestDefaultCutNoHMM(t *testing.T) {
-	j, _ := Open("dict.txt")
-
 	var result []string
 	for index, content := range test_contents {
-		result = chanToArray(j.Cut(content, false))
+		result = chanToArray(seg.Cut(content, false))
 		if len(result) != len(defaultCutNoHMMResult[index]) {
 			t.Fatalf("default cut no hmm for %s length should be %d not %d\n",
 				content, len(defaultCutNoHMMResult[index]), len(result))
@@ -702,11 +694,9 @@ func TestDefaultCutNoHMM(t *testing.T) {
 }
 
 func TestCutForSearch(t *testing.T) {
-	j, _ := Open("dict.txt")
-
 	var result []string
 	for index, content := range test_contents {
-		result = chanToArray(j.CutForSearch(content, true))
+		result = chanToArray(seg.CutForSearch(content, true))
 		if len(result) != len(cutForSearchResult[index]) {
 			t.Fatalf("cut for search for %s length should be %d not %d\n",
 				content, len(cutForSearchResult[index]), len(result))
@@ -718,7 +708,7 @@ func TestCutForSearch(t *testing.T) {
 		}
 	}
 	for index, content := range test_contents {
-		result = chanToArray(j.CutForSearch(content, false))
+		result = chanToArray(seg.CutForSearch(content, false))
 		if len(result) != len(cutForSearchNoHMMResult[index]) {
 			t.Fatalf("cut for search no hmm for %s length should be %d not %d\n",
 				content, len(cutForSearchNoHMMResult[index]), len(result))
@@ -731,11 +721,11 @@ func TestCutForSearch(t *testing.T) {
 	}
 }
 
-func TestSetdictionary(t *testing.T) {
+func TestLoadDictionary(t *testing.T) {
 	var result []string
-	j, _ := Open("foobar.txt")
+	seg.LoadDictionary("foobar.txt")
 	for index, content := range test_contents {
-		result = chanToArray(j.Cut(content, true))
+		result = chanToArray(seg.Cut(content, true))
 		if len(result) != len(userDictCutResult[index]) {
 			t.Fatalf("default cut with user dictionary for %s length should be %d not %d\n",
 				content, len(userDictCutResult[index]), len(result))
@@ -746,16 +736,16 @@ func TestSetdictionary(t *testing.T) {
 			}
 		}
 	}
+	seg.LoadDictionary("dict.txt")
 }
 
-func TestLoadUserDict(t *testing.T) {
-	j, _ := Open("dict.txt")
-	j.LoadUserDict("userdict.txt")
+func TestLoadUserDictionary(t *testing.T) {
+	seg.LoadUserDictionary("userdict.txt")
 
 	sentence := "李小福是创新办主任也是云计算方面的专家; 什么是八一双鹿例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
 	result := []string{"李小福", "是", "创新办", "主任", "也", "是", "云计算", "方面", "的", "专家", ";", " ", "什么", "是", "八一双鹿", "例如", "我", "输入", "一个", "带", "“", "韩玉赏鉴", "”", "的", "标题", "，", "在", "自定义词", "库中", "也", "增加", "了", "此", "词为", "N", "类型"}
 
-	words := chanToArray(j.Cut(sentence, true))
+	words := chanToArray(seg.Cut(sentence, true))
 	if len(words) != len(result) {
 		t.Fatal(len(words))
 	}
@@ -767,7 +757,7 @@ func TestLoadUserDict(t *testing.T) {
 
 	sentence = "easy_install is great"
 	result = []string{"easy_install", " ", "is", " ", "great"}
-	words = chanToArray(j.Cut(sentence, true))
+	words = chanToArray(seg.Cut(sentence, true))
 	if len(words) != len(result) {
 		t.Fatal(len(words))
 	}
@@ -779,7 +769,7 @@ func TestLoadUserDict(t *testing.T) {
 
 	sentence = "python 的正则表达式是好用的"
 	result = []string{"python", " ", "的", "正则表达式", "是", "好用", "的"}
-	words = chanToArray(j.Cut(sentence, true))
+	words = chanToArray(seg.Cut(sentence, true))
 	if len(words) != len(result) {
 		t.Fatal(words)
 		t.Fatal(result)
@@ -789,49 +779,45 @@ func TestLoadUserDict(t *testing.T) {
 			t.Fatal(word)
 		}
 	}
+	seg.LoadDictionary("dict.txt")
 }
 
 func BenchmarkCutNoHMM(b *testing.B) {
-	j, _ := Open("dict.txt")
 	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		chanToArray(j.Cut(sentence, false))
+		chanToArray(seg.Cut(sentence, false))
 	}
 }
 
 func BenchmarkCut(b *testing.B) {
-	j, _ := Open("dict.txt")
 	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		chanToArray(j.Cut(sentence, true))
+		chanToArray(seg.Cut(sentence, true))
 	}
 }
 
 func BenchmarkCutAll(b *testing.B) {
-	j, _ := Open("dict.txt")
 	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		chanToArray(j.CutAll(sentence))
+		chanToArray(seg.CutAll(sentence))
 	}
 }
 
 func BenchmarkCutForSearchNoHMM(b *testing.B) {
-	j, _ := Open("dict.txt")
 	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		chanToArray(j.CutForSearch(sentence, false))
+		chanToArray(seg.CutForSearch(sentence, false))
 	}
 }
 
 func BenchmarkCutForSearch(b *testing.B) {
-	j, _ := Open("dict.txt")
 	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		chanToArray(j.CutForSearch(sentence, true))
+		chanToArray(seg.CutForSearch(sentence, true))
 	}
 }
