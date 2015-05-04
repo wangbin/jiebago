@@ -2,9 +2,10 @@ package analyse
 
 import (
 	"fmt"
-	"github.com/wangbin/jiebago/posseg"
 	"math"
 	"sort"
+
+	"github.com/wangbin/jiebago/posseg"
 )
 
 const dampingFactor = 0.85
@@ -65,7 +66,7 @@ func (u *undirectWeightedGraph) addEdge(start, end string, weight float64) {
 	}
 }
 
-func (u *undirectWeightedGraph) rank() wordWeights {
+func (u *undirectWeightedGraph) rank() Segments {
 	if !sort.IsSorted(u.keys) {
 		sort.Sort(u.keys)
 	}
@@ -105,9 +106,9 @@ func (u *undirectWeightedGraph) rank() wordWeights {
 			maxRank = w
 		}
 	}
-	result := make(wordWeights, 0)
+	result := make(Segments, 0)
 	for n, w := range ws {
-		result = append(result, wordWeight{Word: n, Weight: (w - minRank/10.0) / (maxRank - minRank/10.0)})
+		result = append(result, Segment{text: n, weight: (w - minRank/10.0) / (maxRank - minRank/10.0)})
 	}
 	sort.Sort(sort.Reverse(result))
 	return result
@@ -115,7 +116,7 @@ func (u *undirectWeightedGraph) rank() wordWeights {
 
 // Extract keywords from sentence using TextRank algorithm. the allowed POS list
 // could be manually speificed.
-func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
+func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []string) Segments {
 	posFilt := make(map[string]int)
 	for _, pos := range allowPOS {
 		posFilt[pos] = 1
@@ -123,20 +124,20 @@ func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []strin
 	g := newUndirectWeightedGraph()
 	cm := make(map[[2]string]float64)
 	span := 5
-	pairs := make([]posseg.Pair, 0)
-	for pair := range t.Cut(sentence, true) {
+	pairs := make([]posseg.Segment, 0)
+	for pair := range t.seg.Cut(sentence, true) {
 		pairs = append(pairs, pair)
 	}
-	for i, _ := range pairs {
-		if _, ok := posFilt[pairs[i].Flag]; ok {
+	for i := range pairs {
+		if _, ok := posFilt[pairs[i].Pos()]; ok {
 			for j := i + 1; j < i+span && j <= len(pairs); j++ {
-				if _, ok := posFilt[pairs[j].Flag]; !ok {
+				if _, ok := posFilt[pairs[j].Pos()]; !ok {
 					continue
 				}
-				if _, ok := cm[[2]string{pairs[i].Word, pairs[j].Word}]; !ok {
-					cm[[2]string{pairs[i].Word, pairs[j].Word}] = 1.0
+				if _, ok := cm[[2]string{pairs[i].Text(), pairs[j].Text()}]; !ok {
+					cm[[2]string{pairs[i].Text(), pairs[j].Text()}] = 1.0
 				} else {
-					cm[[2]string{pairs[i].Word, pairs[j].Word}] += 1.0
+					cm[[2]string{pairs[i].Text(), pairs[j].Text()}] += 1.0
 				}
 			}
 		}
@@ -153,21 +154,15 @@ func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []strin
 
 // Extract keywords from sentence using TextRank algorithm.
 // topK specify how many top keywords to be returned at most.
-func (t *TextRanker) TextRank(sentence string, topK int) wordWeights {
+func (t *TextRanker) TextRank(sentence string, topK int) Segments {
 	return t.TextRankWithPOS(sentence, topK, defaultAllowPOS)
 }
 
-// Set the dictionary, could be absolute path of dictionary file, or dictionary
-// name in current directory. This function must be called before cut any
-// sentence.
-func NewTextRanker(dictFileName string) (*TextRanker, error) {
-	p, err := posseg.Open(dictFileName)
-	if err != nil {
-		return nil, err
-	}
-	return &TextRanker{p}, nil
+type TextRanker struct {
+	seg *posseg.Segmenter
 }
 
-type TextRanker struct {
-	*posseg.Posseg
+func (t *TextRanker) LoadDictionary(fileName string) error {
+	t.seg = new(posseg.Segmenter)
+	return t.seg.LoadDictionary(fileName)
 }

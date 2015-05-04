@@ -227,43 +227,45 @@ var (
 只是逼不得已
 雖然沒有藉口
 `
-	LyciWeight = []wordWeight{
-		wordWeight{Word: "所謂", Weight: 1.010262},
-		wordWeight{Word: "是否", Weight: 0.738650},
-		wordWeight{Word: "一般", Weight: 0.607600},
-		wordWeight{Word: "雖然", Weight: 0.336754},
-		wordWeight{Word: "退縮", Weight: 0.336754},
-		wordWeight{Word: "肌迫", Weight: 0.336754},
-		wordWeight{Word: "矯作", Weight: 0.336754},
-		wordWeight{Word: "沒有", Weight: 0.336754},
-		wordWeight{Word: "怯懦", Weight: 0.271099},
-		wordWeight{Word: "隨便", Weight: 0.168377},
+	LyciWeight = Segments{
+		Segment{text: "所謂", weight: 1.010262},
+		Segment{text: "是否", weight: 0.738650},
+		Segment{text: "一般", weight: 0.607600},
+		Segment{text: "雖然", weight: 0.336754},
+		Segment{text: "退縮", weight: 0.336754},
+		Segment{text: "肌迫", weight: 0.336754},
+		Segment{text: "矯作", weight: 0.336754},
+		Segment{text: "沒有", weight: 0.336754},
+		Segment{text: "怯懦", weight: 0.271099},
+		Segment{text: "隨便", weight: 0.168377},
 	}
 
-	LyciWeight2 = []wordWeight{
-		wordWeight{Word: "所謂", Weight: 1.215739},
-		wordWeight{Word: "一般", Weight: 0.731179},
-		wordWeight{Word: "雖然", Weight: 0.405246},
-		wordWeight{Word: "退縮", Weight: 0.405246},
-		wordWeight{Word: "肌迫", Weight: 0.405246},
-		wordWeight{Word: "矯作", Weight: 0.405246},
-		wordWeight{Word: "怯懦", Weight: 0.326238},
-		wordWeight{Word: "逼不得已", Weight: 0.202623},
-		wordWeight{Word: "右銘", Weight: 0.202623},
-		wordWeight{Word: "寬闊", Weight: 0.202623},
+	LyciWeight2 = Segments{
+		Segment{text: "所謂", weight: 1.215739},
+		Segment{text: "一般", weight: 0.731179},
+		Segment{text: "雖然", weight: 0.405246},
+		Segment{text: "退縮", weight: 0.405246},
+		Segment{text: "肌迫", weight: 0.405246},
+		Segment{text: "矯作", weight: 0.405246},
+		Segment{text: "怯懦", weight: 0.326238},
+		Segment{text: "逼不得已", weight: 0.202623},
+		Segment{text: "右銘", weight: 0.202623},
+		Segment{text: "寬闊", weight: 0.202623},
 	}
 )
 
 func TestExtractTags(t *testing.T) {
-	et, _ := NewTagExtracter("../dict.txt", "idf.txt")
+	var te TagExtracter
+	te.LoadDictionary("../dict.txt")
+	te.LoadIdf("idf.txt")
 
 	for index, sentence := range test_contents {
-		result := et.ExtractTags(sentence, 20)
+		result := te.ExtractTags(sentence, 20)
 		if len(result) != len(Tags[index]) {
 			t.Fatalf("%s = %v", sentence, result)
 		}
 		for i, tag := range result {
-			if tag.Word != Tags[index][i] {
+			if tag.text != Tags[index][i] {
 				t.Fatalf("%s != %s", tag, Tags[index][i])
 			}
 		}
@@ -271,23 +273,27 @@ func TestExtractTags(t *testing.T) {
 }
 
 func TestExtratTagsWithWeight(t *testing.T) {
-	et, _ := NewTagExtracter("../dict.txt", "idf.txt")
-	result := et.ExtractTags(Lyric, 10)
+	var te TagExtracter
+	te.LoadDictionary("../dict.txt")
+	te.LoadIdf("idf.txt")
+	result := te.ExtractTags(Lyric, 10)
 	for index, tag := range result {
-		if LyciWeight[index].Word != tag.Word ||
-			math.Abs(LyciWeight[index].Weight-tag.Weight) > 1e-6 {
+		if LyciWeight[index].text != tag.text ||
+			math.Abs(LyciWeight[index].weight-tag.weight) > 1e-6 {
 			t.Fatalf("%v != %v", tag, LyciWeight[index])
 		}
 	}
 }
 
 func TestExtractTagsWithStopWordsFile(t *testing.T) {
-	et, _ := NewTagExtracter("../dict.txt", "idf.txt")
-	et.SetStopWords("stop_words.txt")
-	result := et.ExtractTags(Lyric, 7)
+	var te TagExtracter
+	te.LoadDictionary("../dict.txt")
+	te.LoadIdf("idf.txt")
+	te.LoadStopWords("stop_words.txt")
+	result := te.ExtractTags(Lyric, 7)
 	for index, tag := range result {
-		if LyciWeight2[index].Word != tag.Word ||
-			math.Abs(LyciWeight2[index].Weight-tag.Weight) > 1e-6 {
+		if LyciWeight2[index].text != tag.text ||
+			math.Abs(LyciWeight2[index].weight-tag.weight) > 1e-6 {
 			t.Fatalf("%v != %v", tag, LyciWeight2[index])
 		}
 	}

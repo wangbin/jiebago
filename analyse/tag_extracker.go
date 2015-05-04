@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/wangbin/jiebago/dictionary"
+	"github.com/wangbin/jiebago"
 )
 
 type Segment struct {
@@ -14,11 +14,19 @@ type Segment struct {
 	weight float64
 }
 
+func (s Segment) Text() string {
+	return s.text
+}
+
+func (s Segment) Weight() float64 {
+	return s.weight
+}
+
 func (s Segment) String() string {
 	return fmt.Sprintf("{%s: %f}", s.text, s.weight)
 }
 
-type Segments []Segments
+type Segments []Segment
 
 func (ss Segments) Len() int {
 	return len(ss)
@@ -26,7 +34,7 @@ func (ss Segments) Len() int {
 
 func (ss Segments) Less(i, j int) bool {
 	if ss[i].weight == ss[j].weight {
-		return ss[i].text < ws[j].text
+		return ss[i].text < ss[j].text
 	}
 
 	return ss[i].weight < ss[j].weight
@@ -37,57 +45,61 @@ func (ss Segments) Swap(i, j int) {
 }
 
 type TagExtracter struct {
-	seg *jieba.Segmenter
-	i   *idf
-	*StopWordLoader
+	seg      *jiebago.Segmenter
+	idf      *Idf
+	stopWord *StopWord
 }
 
-func NewTagExtracter(dictFileName, IDFFileName string) (*TagExtracter, error) {
-	j, err := jiebago.Open(dictFileName)
-	if err != nil {
-		return nil, err
-	}
-	i, err := NewIDFLoader(IDFFileName)
-	if err != nil {
-		return nil, err
-	}
-	return &TagExtracter{j, i, NewStopWordLoader()}, nil
+func (t *TagExtracter) LoadDictionary(fileName string) error {
+	t.stopWord = NewStopWord()
+	t.seg = new(jiebago.Segmenter)
+	return t.seg.LoadDictionary(fileName)
+}
+
+func (t *TagExtracter) LoadIdf(fileName string) error {
+	t.idf = NewIdf()
+	return t.idf.loadDictionary(fileName)
+}
+
+func (t *TagExtracter) LoadStopWords(fileName string) error {
+	t.stopWord = NewStopWord()
+	return t.stopWord.loadDictionary(fileName)
 }
 
 // Keyword extraction.
-func (t *TagExtracter) ExtractTags(sentence string, topK int) (tags wordWeights) {
-	freq := make(map[string]float64)
+func (t *TagExtracter) ExtractTags(sentence string, topK int) (tags Segments) {
+	freqMap := make(map[string]float64)
 
-	for w := range t.Cut(sentence, true) {
+	for w := range t.seg.Cut(sentence, true) {
 		w = strings.TrimSpace(w)
 		if utf8.RuneCountInString(w) < 2 {
 			continue
 		}
-		if t.IsStopWord(w) {
+		if t.stopWord.IsStopWord(w) {
 			continue
 		}
-		if f, ok := freq[w]; ok {
-			freq[w] = f + 1.0
+		if f, ok := freqMap[w]; ok {
+			freqMap[w] = f + 1.0
 		} else {
-			freq[w] = 1.0
+			freqMap[w] = 1.0
 		}
 	}
 	total := 0.0
-	for _, f := range freq {
-		total += f
+	for _, freq := range freqMap {
+		total += freq
 	}
-	for k, v := range freq {
-		freq[k] = v / total
+	for k, v := range freqMap {
+		freqMap[k] = v / total
 	}
-	ws := make(wordWeights, 0)
-	for k, v := range freq {
-		var ti wordWeight
-		if freq_, ok := t.IDFFreq[k]; ok {
-			ti = wordWeight{Word: k, Weight: freq_ * v}
+	ws := make(Segments, 0)
+	var s Segment
+	for k, v := range freqMap {
+		if freq, ok := t.idf.Frequency(k); ok {
+			s = Segment{text: k, weight: freq * v}
 		} else {
-			ti = wordWeight{Word: k, Weight: t.Median * v}
+			s = Segment{text: k, weight: t.idf.median * v}
 		}
-		ws = append(ws, ti)
+		ws = append(ws, s)
 	}
 	sort.Sort(sort.Reverse(ws))
 	if len(ws) > topK {

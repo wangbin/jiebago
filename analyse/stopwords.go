@@ -1,8 +1,12 @@
 package analyse
 
-import "github.com/wangbin/jiebago"
+import (
+	"sync"
 
-var defaultStopWords = map[string]int{
+	"github.com/wangbin/jiebago/dictionary"
+)
+
+var DefaultStopWordMap = map[string]int{
 	"the":   1,
 	"of":    1,
 	"is":    1,
@@ -36,27 +40,38 @@ var defaultStopWords = map[string]int{
 	"or":    1,
 }
 
-type StopWordLoader struct {
-	stopWords map[string]int
+type StopWord struct {
+	stopWordMap map[string]int
+	sync.RWMutex
 }
 
-func (s *StopWordLoader) AddEntry(entry jiebago.Entry) {
-	s.stopWords[entry.Word] = 1
+func (s *StopWord) AddToken(token dictionary.Token) {
+	s.Lock()
+	s.stopWordMap[token.Text()] = 1
+	s.Unlock()
 }
 
-func NewStopWordLoader() *StopWordLoader {
-	s := new(StopWordLoader)
-	s.stopWords = defaultStopWords
+func NewStopWord() *StopWord {
+	s := new(StopWord)
+	s.stopWordMap = DefaultStopWordMap
 	return s
 }
 
-// Set the stop words file path, could be absolute path of stop words file, or
-// file name in current directory.
-func (s *StopWordLoader) SetStopWords(stopWordsFileName string) error {
-	return jiebago.LoadDict(s, stopWordsFileName, false)
+func (s StopWord) IsStopWord(word string) bool {
+	s.RLock()
+	_, ok := s.stopWordMap[word]
+	s.RUnlock()
+	return ok
 }
 
-func (s StopWordLoader) IsStopWord(word string) bool {
-	_, ok := s.stopWords[word]
-	return ok
+func (s *StopWord) Load(ch <-chan dictionary.Token) {
+	s.Lock()
+	for token := range ch {
+		s.stopWordMap[token.Text()] = 1
+	}
+	s.Unlock()
+}
+
+func (s *StopWord) loadDictionary(fileName string) error {
+	return dictionary.LoadDictionary(s, fileName)
 }
