@@ -57,7 +57,7 @@ func NewStopWord() *StopWord {
 	return s
 }
 
-func (s StopWord) IsStopWord(word string) bool {
+func (s *StopWord) IsStopWord(word string) bool {
 	s.RLock()
 	_, ok := s.stopWordMap[word]
 	s.RUnlock()

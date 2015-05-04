@@ -7,12 +7,14 @@ import (
 	"github.com/wangbin/jiebago/dictionary"
 )
 
+// A Dictionary represents a thread-safe dictionary used for word segmentation.
 type Dictionary struct {
 	total, logTotal float64
 	freqMap         map[string]float64
 	sync.RWMutex
 }
 
+// Load loads all tokens from channel
 func (d *Dictionary) Load(ch <-chan dictionary.Token) {
 	d.Lock()
 	for token := range ch {
@@ -22,6 +24,7 @@ func (d *Dictionary) Load(ch <-chan dictionary.Token) {
 	d.updateLogTotal()
 }
 
+// AddToken adds one token
 func (d *Dictionary) AddToken(token dictionary.Token) {
 	d.Lock()
 	d.addToken(token)
@@ -46,7 +49,8 @@ func (d *Dictionary) updateLogTotal() {
 	d.logTotal = math.Log(d.total)
 }
 
-func (d Dictionary) Frequency(key string) (float64, bool) {
+// Frequency returns the frequency of give word, if not found, the second result is false
+func (d *Dictionary) Frequency(key string) (float64, bool) {
 	d.RLock()
 	freq, ok := d.freqMap[key]
 	d.RUnlock()

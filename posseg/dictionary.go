@@ -50,14 +50,14 @@ func (d *Dictionary) updateLogTotal() {
 	d.logTotal = math.Log(d.total)
 }
 
-func (d Dictionary) Frequency(key string) (float64, bool) {
+func (d *Dictionary) Frequency(key string) (float64, bool) {
 	d.RLock()
 	freq, ok := d.freqMap[key]
 	d.RUnlock()
 	return freq, ok
 }
 
-func (d Dictionary) Pos(key string) (string, bool) {
+func (d *Dictionary) Pos(key string) (string, bool) {
 	d.RLock()
 	pos, ok := d.posMap[key]
 	d.RUnlock()

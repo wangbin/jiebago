@@ -38,7 +38,7 @@ func (i *Idf) loadDictionary(fileName string) error {
 	return dictionary.LoadDictionary(i, fileName)
 }
 
-func (i Idf) Frequency(key string) (float64, bool) {
+func (i *Idf) Frequency(key string) (float64, bool) {
 	i.RLock()
 	freq, ok := i.freqMap[key]
 	i.RUnlock()
