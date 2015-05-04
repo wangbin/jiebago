@@ -1,12 +1,12 @@
-package tokenizers
+package jiebago
 
 import (
 	"fmt"
-	"github.com/blevesearch/bleve/analysis"
-	"github.com/blevesearch/bleve/registry"
-	"github.com/wangbin/jiebago"
 	"regexp"
 	"strconv"
+
+	"github.com/blevesearch/bleve/analysis"
+	"github.com/blevesearch/bleve/registry"
 )
 
 const Name = "jieba"
@@ -14,14 +14,15 @@ const Name = "jieba"
 var IdeographRegexp = regexp.MustCompile(`\p{Han}+`)
 
 type JiebaTokenizer struct {
-	j               *jiebago.Jieba
+	seg             Segmenter
 	hmm, searchMode bool
 }
 
 func NewJiebaTokenizer(dictFileName string, hmm, searchMode bool) (analysis.Tokenizer, error) {
-	j, err := jiebago.Open(dictFileName)
+	var seg Segmenter
+	err := seg.LoadDictionary(dictFileName)
 	return &JiebaTokenizer{
-		j:          j,
+		seg:        seg,
 		hmm:        hmm,
 		searchMode: searchMode,
 	}, err
@@ -35,7 +36,7 @@ func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 	pos := 1
 	var width int
 	var gram string
-	for word := range jt.j.Cut(string(input), jt.hmm) {
+	for word := range jt.seg.Cut(string(input), jt.hmm) {
 		if jt.searchMode {
 			runes := []rune(word)
 			width = len(runes)
@@ -44,7 +45,7 @@ func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 					for i := 0; i < width-step+1; i++ {
 						gram = string(runes[i : i+step])
 						gramLen := len(gram)
-						if value, ok := jt.j.Freq(gram); ok && value > 0 {
+						if value, ok := jt.seg.dict.Frequency(gram); ok && value > 0 {
 							gramStart := start + len(string(runes[:i]))
 							token := analysis.Token{
 								Term:     []byte(gram),

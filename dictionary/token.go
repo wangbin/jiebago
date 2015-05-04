@@ -17,3 +17,7 @@ func (t Token) Frequency() float64 {
 func (t Token) Pos() string {
 	return t.pos
 }
+
+func NewToken(text string, frequency float64, pos string) Token {
+	return Token{text: text, frequency: frequency, pos: pos}
+}
