@@ -1,3 +1,5 @@
+// Package dictionary contains a interface and wraps all io related work.
+// It is used by jiebago module to read/write files.
 package dictionary
 
 import (
@@ -8,7 +10,7 @@ import (
 	"strings"
 )
 
-// DictLoader represents a interface that could add one token or load bunch of
+// DictLoader is the interface that could add one token or load
 // tokens from channel.
 type DictLoader interface {
 	Load(<-chan Token)

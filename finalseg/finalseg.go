@@ -1,3 +1,4 @@
+// Package finalseg is the Golang implementation of Jieba's finalseg module.
 package finalseg
 
 import (
