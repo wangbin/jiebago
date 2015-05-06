@@ -2,9 +2,9 @@ package posseg
 
 import "fmt"
 
-type Tag uint16
+type tag uint16
 
-func (t Tag) Tag() string {
+func (t tag) position() string {
 	switch t / 100 {
 	case 4:
 		return "S"
@@ -19,31 +19,29 @@ func (t Tag) Tag() string {
 	}
 }
 
-func (t Tag) POS() string {
+func (t tag) pos() string {
 	return poss[t%100]
 }
 
-func (t Tag) String() string {
-	return fmt.Sprintf("(%s, %s)", t.Tag(), t.POS())
-}
-
-func NewTag(tag, pos string) (Tag, error) {
-	tagIndex := -1
+func newTag(position, pos string) (tag, error) {
+	positionIndex := -1
 	posIndex := -1
-	for i, t := range tags {
-		if tag == t {
-			tagIndex = (i + 1) * 100
+	for i, p := range positions {
+		if position == p {
+			positionIndex = (i + 1) * 100
+			break
 		}
 	}
 	for i, p := range poss {
 		if pos == p {
 			posIndex = i
+			break
 		}
 	}
-	if tagIndex < 0 || posIndex < 0 {
-		return 0, fmt.Errorf("Failed to convert %s %s to Tag", tag, pos)
+	if positionIndex < 0 || posIndex < 0 {
+		return 0, fmt.Errorf("Failed to convert %s %s to Tag", position, pos)
 	}
-	return Tag(tagIndex + posIndex), nil
+	return tag(positionIndex + posIndex), nil
 }
 
 type charStateTabMap map[rune][]uint16
@@ -51,9 +49,8 @@ type charStateTabMap map[rune][]uint16
 func (m charStateTabMap) get(key rune) []uint16 {
 	if value, ok := m[key]; ok {
 		return value
-	} else {
-		return probTransKeys
 	}
+	return probTransKeys
 }
 
 var (
@@ -6708,6 +6705,6 @@ var (
 		'\u9fa0': []uint16{413},
 	}
 
-	tags = []string{"B", "E", "M", "S"}
-	poss = []string{"a", "ad", "ag", "an", "b", "bg", "c", "d", "df", "dg", "e", "en", "f", "g", "h", "i", "in", "j", "jn", "k", "l", "ln", "m", "mg", "mq", "n", "ng", "nr", "nrfg", "nrt", "ns", "nt", "nz", "o", "p", "q", "qe", "qg", "r", "rg", "rr", "rz", "s", "t", "tg", "u", "ud", "ug", "uj", "ul", "uv", "uz", "v", "vd", "vg", "vi", "vn", "vq", "w", "x", "y", "yg", "z", "zg"}
+	positions = []string{"B", "E", "M", "S"}
+	poss      = []string{"a", "ad", "ag", "an", "b", "bg", "c", "d", "df", "dg", "e", "en", "f", "g", "h", "i", "in", "j", "jn", "k", "l", "ln", "m", "mg", "mq", "n", "ng", "nr", "nrfg", "nrt", "ns", "nt", "nz", "o", "p", "q", "qe", "qg", "r", "rg", "rr", "rz", "s", "t", "tg", "u", "ud", "ug", "uj", "ul", "uv", "uz", "v", "vd", "vg", "vi", "vn", "vq", "w", "x", "y", "yg", "z", "zg"}
 )

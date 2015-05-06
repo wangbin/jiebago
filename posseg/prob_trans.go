@@ -11,9 +11,8 @@ type probTransMap map[uint16]float64
 func (m probTransMap) Get(key uint16) float64 {
 	if value, ok := m[key]; ok {
 		return value
-	} else {
-		return inf
 	}
+	return inf
 }
 
 var (

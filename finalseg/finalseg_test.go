@@ -6,7 +6,7 @@ import (
 )
 
 func chanToArray(ch chan string) []string {
-	result := make([]string, 0)
+	var result []string
 	for word := range ch {
 		result = append(result, word)
 	}

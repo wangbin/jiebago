@@ -9,18 +9,40 @@ import (
 	"github.com/blevesearch/bleve/registry"
 )
 
+// Name is the jieba tokenizer name.
 const Name = "jieba"
 
-var IdeographRegexp = regexp.MustCompile(`\p{Han}+`)
+var ideographRegexp = regexp.MustCompile(`\p{Han}+`)
 
+// JiebaTokenizer is the beleve tokenizer for jiebago.
 type JiebaTokenizer struct {
 	seg             Segmenter
 	hmm, searchMode bool
 }
 
-func NewJiebaTokenizer(dictFileName string, hmm, searchMode bool) (analysis.Tokenizer, error) {
+/*
+NewJiebaTokenizer creates a new JiebaTokenizer.
+
+Parameters:
+
+    dictFilePath: path of the dictioanry file.
+
+    hmm: whether to use Hidden Markov Model to cut unknown words,
+    i.e. not found in dictionary. For example word "安卓" (means "Android" in
+    English) not in the dictionary file. If hmm is set to false, it will be
+    cutted into two single words "安" and "卓", if hmm is set to true, it will
+    be traded as one single word because Jieba using Hidden Markov Model with
+    Viterbi algorithm to guess the best possibility.
+
+    searchMode: whether to further cut long words into serveral short words.
+    In Chinese, some long words may contains other words, for example "交换机"
+    is a Chinese word for "Switcher", if sechMode is false, it will trade
+    "交换机" as a single word. If searchMode is true, it will further split
+    this word into "交换", "换机", which are valid Chinese words.
+*/
+func NewJiebaTokenizer(dictFilePath string, hmm, searchMode bool) (analysis.Tokenizer, error) {
 	var seg Segmenter
-	err := seg.LoadDictionary(dictFileName)
+	err := seg.LoadDictionary(dictFilePath)
 	return &JiebaTokenizer{
 		seg:        seg,
 		hmm:        hmm,
@@ -28,6 +50,7 @@ func NewJiebaTokenizer(dictFileName string, hmm, searchMode bool) (analysis.Toke
 	}, err
 }
 
+// Tokenize cuts input into bleve token stream.
 func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 	rv := make(analysis.TokenStream, 0)
 	runeStart := 0
@@ -77,9 +100,20 @@ func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 	return rv
 }
 
+/*
+JiebaTokenizerConstructor creates a JiebaTokenizer.
+
+Parameter config should contains at least one parameter:
+
+    file: the path of the dictionary file.
+
+    hmm: optional, specify whether to use Hidden Markov Model, see NewJiebaTokenizer for details.
+
+    search: optional, speficy whether to use search mode, see NewJiebaTokenizer for details.
+*/
 func JiebaTokenizerConstructor(config map[string]interface{}, cache *registry.Cache) (
 	analysis.Tokenizer, error) {
-	dictFileName, ok := config["file"].(string)
+	dictFilePath, ok := config["file"].(string)
 	if !ok {
 		return nil, fmt.Errorf("must specify dictionary file path")
 	}
@@ -92,11 +126,11 @@ func JiebaTokenizerConstructor(config map[string]interface{}, cache *registry.Ca
 		searchMode = true
 	}
 
-	return NewJiebaTokenizer(dictFileName, hmm, searchMode)
+	return NewJiebaTokenizer(dictFilePath, hmm, searchMode)
 }
 
 func detectTokenType(term string) analysis.TokenType {
-	if IdeographRegexp.MatchString(term) {
+	if ideographRegexp.MatchString(term) {
 		return analysis.Ideographic
 	}
 	_, err := strconv.ParseFloat(term, 64)

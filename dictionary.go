@@ -14,7 +14,7 @@ type Dictionary struct {
 	sync.RWMutex
 }
 
-// Load loads all tokens from channel
+// Load loads all tokens from given channel
 func (d *Dictionary) Load(ch <-chan dictionary.Token) {
 	d.Lock()
 	for token := range ch {
@@ -49,7 +49,7 @@ func (d *Dictionary) updateLogTotal() {
 	d.logTotal = math.Log(d.total)
 }
 
-// Frequency returns the frequency of give word, if not found, the second result is false
+// Frequency returns the frequency and existence of give word
 func (d *Dictionary) Frequency(key string) (float64, bool) {
 	d.RLock()
 	freq, ok := d.freqMap[key]

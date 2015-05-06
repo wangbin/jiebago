@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+// DictLoader represents a interface that could add one token or load bunch of
+// tokens from channel.
 type DictLoader interface {
 	Load(<-chan Token)
 	AddToken(Token)
@@ -49,6 +51,7 @@ func loadDictionary(file *os.File) (<-chan Token, <-chan error) {
 
 }
 
+// LoadDictionary reads the given file and passes all tokens to a DictLoader.
 func LoadDictionary(dl DictLoader, fileName string) error {
 	filePath, err := dictPath(fileName)
 	if err != nil {

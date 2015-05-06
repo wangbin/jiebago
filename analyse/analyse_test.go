@@ -6,7 +6,7 @@ import (
 )
 
 var (
-	test_contents = []string{
+	testContents = []string{
 		"这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。",
 		"我不喜欢日本和服。",
 		"雷猴回归人间。",
@@ -259,7 +259,7 @@ func TestExtractTags(t *testing.T) {
 	te.LoadDictionary("../dict.txt")
 	te.LoadIdf("idf.txt")
 
-	for index, sentence := range test_contents {
+	for index, sentence := range testContents {
 		result := te.ExtractTags(sentence, 20)
 		if len(result) != len(Tags[index]) {
 			t.Fatalf("%s = %v", sentence, result)

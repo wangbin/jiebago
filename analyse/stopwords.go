@@ -6,6 +6,7 @@ import (
 	"github.com/wangbin/jiebago/dictionary"
 )
 
+// DefaultStopWordMap contains some stop words.
 var DefaultStopWordMap = map[string]int{
 	"the":   1,
 	"of":    1,
@@ -40,23 +41,27 @@ var DefaultStopWordMap = map[string]int{
 	"or":    1,
 }
 
+// StopWord is a thread-safe dictionary for all stop words.
 type StopWord struct {
 	stopWordMap map[string]int
 	sync.RWMutex
 }
 
+// AddToken adds a token into StopWord dictionary.
 func (s *StopWord) AddToken(token dictionary.Token) {
 	s.Lock()
 	s.stopWordMap[token.Text()] = 1
 	s.Unlock()
 }
 
+// NewStopWord create a new StopWord with default stop words.
 func NewStopWord() *StopWord {
 	s := new(StopWord)
 	s.stopWordMap = DefaultStopWordMap
 	return s
 }
 
+// IsStopWord checks if a given word is stop word.
 func (s *StopWord) IsStopWord(word string) bool {
 	s.RLock()
 	_, ok := s.stopWordMap[word]
@@ -64,6 +69,7 @@ func (s *StopWord) IsStopWord(word string) bool {
 	return ok
 }
 
+// Load loads all tokens from given channel into StopWord dictionary.
 func (s *StopWord) Load(ch <-chan dictionary.Token) {
 	s.Lock()
 	for token := range ch {

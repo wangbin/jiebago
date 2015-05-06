@@ -1,7 +1,6 @@
 package analyse
 
 import (
-	"fmt"
 	"sort"
 	"strings"
 	"unicode/utf8"
@@ -9,23 +8,23 @@ import (
 	"github.com/wangbin/jiebago"
 )
 
+// Segment represents a word with weight.
 type Segment struct {
 	text   string
 	weight float64
 }
 
+// Text returns the segment's text.
 func (s Segment) Text() string {
 	return s.text
 }
 
+// Weight returns the segment's weight.
 func (s Segment) Weight() float64 {
 	return s.weight
 }
 
-func (s Segment) String() string {
-	return fmt.Sprintf("{%s: %f}", s.text, s.weight)
-}
-
+// Segments represents a slice of Segment.
 type Segments []Segment
 
 func (ss Segments) Len() int {
@@ -44,29 +43,33 @@ func (ss Segments) Swap(i, j int) {
 	ss[i], ss[j] = ss[j], ss[i]
 }
 
+// TagExtracter is used to extract tags from sentence.
 type TagExtracter struct {
 	seg      *jiebago.Segmenter
 	idf      *Idf
 	stopWord *StopWord
 }
 
+// LoadDictionary reads the given filename and create a new dictionary.
 func (t *TagExtracter) LoadDictionary(fileName string) error {
 	t.stopWord = NewStopWord()
 	t.seg = new(jiebago.Segmenter)
 	return t.seg.LoadDictionary(fileName)
 }
 
+// LoadIdf reads the given file and create a new Idf dictionary.
 func (t *TagExtracter) LoadIdf(fileName string) error {
 	t.idf = NewIdf()
 	return t.idf.loadDictionary(fileName)
 }
 
+// LoadStopWords reads the given file and create a new StopWord dictionary.
 func (t *TagExtracter) LoadStopWords(fileName string) error {
 	t.stopWord = NewStopWord()
 	return t.stopWord.loadDictionary(fileName)
 }
 
-// Keyword extraction.
+// ExtractTags extracts the topK key words from sentence.
 func (t *TagExtracter) ExtractTags(sentence string, topK int) (tags Segments) {
 	freqMap := make(map[string]float64)
 

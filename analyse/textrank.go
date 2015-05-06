@@ -1,7 +1,6 @@
 package analyse
 
 import (
-	"fmt"
 	"math"
 	"sort"
 
@@ -18,10 +17,6 @@ type edge struct {
 	start  string
 	end    string
 	weight float64
-}
-
-func (e edge) String() string {
-	return fmt.Sprintf("(%s %s): %f", e.start, e.end, e.weight)
 }
 
 type edges []edge
@@ -114,8 +109,8 @@ func (u *undirectWeightedGraph) rank() Segments {
 	return result
 }
 
-// Extract keywords from sentence using TextRank algorithm. the allowed POS list
-// could be manually speificed.
+// TextRankWithPOS extracts keywords from sentence using TextRank algorithm.
+// Parameter allowPOS allows a customized pos list.
 func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []string) Segments {
 	posFilt := make(map[string]int)
 	for _, pos := range allowPOS {
@@ -124,7 +119,7 @@ func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []strin
 	g := newUndirectWeightedGraph()
 	cm := make(map[[2]string]float64)
 	span := 5
-	pairs := make([]posseg.Segment, 0)
+	var pairs []posseg.Segment
 	for pair := range t.seg.Cut(sentence, true) {
 		pairs = append(pairs, pair)
 	}
@@ -152,16 +147,18 @@ func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []strin
 	return tags
 }
 
-// Extract keywords from sentence using TextRank algorithm.
-// topK specify how many top keywords to be returned at most.
+// TextRank extract keywords from sentence using TextRank algorithm.
+// Parameter topK specify how many top keywords to be returned at most.
 func (t *TextRanker) TextRank(sentence string, topK int) Segments {
 	return t.TextRankWithPOS(sentence, topK, defaultAllowPOS)
 }
 
+// TextRanker is used to extract tags from sentence.
 type TextRanker struct {
 	seg *posseg.Segmenter
 }
 
+// LoadDictionary reads a given file and create a new dictionary file for Textranker.
 func (t *TextRanker) LoadDictionary(fileName string) error {
 	t.seg = new(posseg.Segmenter)
 	return t.seg.LoadDictionary(fileName)

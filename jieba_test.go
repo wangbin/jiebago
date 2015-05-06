@@ -3,8 +3,8 @@ package jiebago
 import "testing"
 
 var (
-	seg           Segmenter
-	test_contents = []string{
+	seg          Segmenter
+	testContents = []string{
 		"这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。",
 		"我不喜欢日本和服。",
 		"雷猴回归人间。",
@@ -620,7 +620,7 @@ func init() {
 }
 
 func chanToArray(ch <-chan string) []string {
-	result := make([]string, 0)
+	var result []string
 	for word := range ch {
 		result = append(result, word)
 	}
@@ -643,7 +643,7 @@ func TestCutDAGNoHmm(t *testing.T) {
 
 func TestDefaultCut(t *testing.T) {
 	var result []string
-	for index, content := range test_contents {
+	for index, content := range testContents {
 		result = chanToArray(seg.Cut(content, true))
 		if len(result) != len(defaultCutResult[index]) {
 			t.Errorf("default cut for %s length should be %d not %d\n",
@@ -661,7 +661,7 @@ func TestDefaultCut(t *testing.T) {
 
 func TestCutAll(t *testing.T) {
 	var result []string
-	for index, content := range test_contents {
+	for index, content := range testContents {
 		result = chanToArray(seg.CutAll(content))
 		if len(result) != len(cutAllResult[index]) {
 			t.Errorf("cut all for %s length should be %d not %d\n",
@@ -679,7 +679,7 @@ func TestCutAll(t *testing.T) {
 
 func TestDefaultCutNoHMM(t *testing.T) {
 	var result []string
-	for index, content := range test_contents {
+	for index, content := range testContents {
 		result = chanToArray(seg.Cut(content, false))
 		if len(result) != len(defaultCutNoHMMResult[index]) {
 			t.Fatalf("default cut no hmm for %s length should be %d not %d\n",
@@ -695,7 +695,7 @@ func TestDefaultCutNoHMM(t *testing.T) {
 
 func TestCutForSearch(t *testing.T) {
 	var result []string
-	for index, content := range test_contents {
+	for index, content := range testContents {
 		result = chanToArray(seg.CutForSearch(content, true))
 		if len(result) != len(cutForSearchResult[index]) {
 			t.Fatalf("cut for search for %s length should be %d not %d\n",
@@ -707,7 +707,7 @@ func TestCutForSearch(t *testing.T) {
 			}
 		}
 	}
-	for index, content := range test_contents {
+	for index, content := range testContents {
 		result = chanToArray(seg.CutForSearch(content, false))
 		if len(result) != len(cutForSearchNoHMMResult[index]) {
 			t.Fatalf("cut for search no hmm for %s length should be %d not %d\n",
@@ -724,7 +724,7 @@ func TestCutForSearch(t *testing.T) {
 func TestLoadDictionary(t *testing.T) {
 	var result []string
 	seg.LoadDictionary("foobar.txt")
-	for index, content := range test_contents {
+	for index, content := range testContents {
 		result = chanToArray(seg.Cut(content, true))
 		if len(result) != len(userDictCutResult[index]) {
 			t.Fatalf("default cut with user dictionary for %s length should be %d not %d\n",

@@ -16,15 +16,21 @@ var (
 	reSkipDefault = regexp.MustCompile(`(\r\n|\s)`)
 )
 
+// Segmenter is a Chinese words segmentation struct.
 type Segmenter struct {
 	dict *Dictionary
 }
 
+// LoadDictionary loads dictionary from given file name. Everytime
+// LoadDictionary is called, previously loaded dictionary will be cleard.
 func (seg *Segmenter) LoadDictionary(fileName string) error {
 	seg.dict = &Dictionary{freqMap: make(map[string]float64)}
 	return seg.dict.loadDictionary(fileName)
 }
 
+// LoadUserDictionary loads a user specified dictionary, it must be called
+// after LoadDictionary, and it will not clear any previous loaded dictionary,
+// instead it will override exist entries.
 func (seg *Segmenter) LoadUserDictionary(fileName string) error {
 	return seg.dict.loadDictionary(fileName)
 }
@@ -46,7 +52,7 @@ func (seg *Segmenter) dag(runes []rune) map[int][]int {
 			if freq > 0.0 {
 				dag[k] = append(dag[k], i)
 			}
-			i += 1
+			i++
 			if i >= n {
 				break
 			}
@@ -98,7 +104,7 @@ func (seg *Segmenter) cutDAG(sentence string) <-chan string {
 		routes := seg.calc(runes)
 		var y int
 		length := len(runes)
-		buf := make([]rune, 0)
+		var buf []rune
 		for x := 0; x < length; {
 			y = routes[x].index + 1
 			frag := runes[x:y]
@@ -156,7 +162,7 @@ func (seg *Segmenter) cutDAGNoHMM(sentence string) <-chan string {
 		routes := seg.calc(runes)
 		var y int
 		length := len(runes)
-		buf := make([]rune, 0)
+		var buf []rune
 		for x := 0; x < length; {
 			y = routes[x].index + 1
 			frag := runes[x:y]
@@ -181,6 +187,10 @@ func (seg *Segmenter) cutDAGNoHMM(sentence string) <-chan string {
 	return result
 }
 
+// Cut cuts a sentence into words using accurate mode.
+// Parameter hmm controls whether to use the Hidden Markov Model.
+// Accurate mode attempts to cut the sentence into the most accurate
+// segmentations, which is suitable for text analysis.
 func (seg *Segmenter) Cut(sentence string, hmm bool) <-chan string {
 	result := make(chan string)
 	var cut cutFunc
@@ -246,6 +256,9 @@ func (seg *Segmenter) cutAll(sentence string) <-chan string {
 	return result
 }
 
+// CutAll cuts a sentence into words using full mode.
+// Full mode gets all the possible words from the sentence.
+// Fast but not accurate.
 func (seg *Segmenter) CutAll(sentence string) <-chan string {
 	result := make(chan string)
 	go func() {
@@ -268,6 +281,10 @@ func (seg *Segmenter) CutAll(sentence string) <-chan string {
 	return result
 }
 
+// CutForSearch cuts sentence into words using search engine mode.
+// Search engine mode, based on the accurate mode, attempts to cut long words
+// into several short words, which can raise the recall rate.
+// Suitable for search engines.
 func (seg *Segmenter) CutForSearch(sentence string, hmm bool) <-chan string {
 	result := make(chan string)
 	go func() {

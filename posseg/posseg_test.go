@@ -5,8 +5,8 @@ import (
 )
 
 var (
-	seg           Segmenter
-	test_contents = []string{
+	seg          Segmenter
+	testContents = []string{
 		"这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。",
 		"我不喜欢日本和服。",
 		"雷猴回归人间。",
@@ -273,7 +273,7 @@ func init() {
 }
 
 func chanToArray(ch <-chan Segment) []Segment {
-	result := make([]Segment, 0)
+	var result []Segment
 	for word := range ch {
 		result = append(result, word)
 	}
@@ -281,7 +281,7 @@ func chanToArray(ch <-chan Segment) []Segment {
 }
 
 func TestCut(t *testing.T) {
-	for index, content := range test_contents {
+	for index, content := range testContents {
 		result := chanToArray(seg.Cut(content, true))
 		if len(defaultCutResult[index]) != len(result) {
 			t.Errorf("default cut for %s length should be %d not %d\n",
@@ -289,7 +289,7 @@ func TestCut(t *testing.T) {
 			t.Errorf("expect: %v\n", defaultCutResult[index])
 			t.Fatalf("got: %v\n", result)
 		}
-		for i, _ := range result {
+		for i := range result {
 			if result[i] != defaultCutResult[index][i] {
 				t.Fatalf("expect %s, got %s", defaultCutResult[index][i], result[i])
 			}
@@ -298,7 +298,7 @@ func TestCut(t *testing.T) {
 		if len(noHMMCutResult[index]) != len(result) {
 			t.Fatal(content)
 		}
-		for i, _ := range result {
+		for i := range result {
 			if result[i] != noHMMCutResult[index][i] {
 				t.Fatal(content)
 			}
@@ -320,7 +320,7 @@ func TestBug132(t *testing.T) {
 	if len(cutResult) != len(result) {
 		t.Fatal(result)
 	}
-	for i, _ := range result {
+	for i := range result {
 		if result[i] != cutResult[i] {
 			t.Fatal(result[i])
 		}
@@ -349,7 +349,7 @@ func TestBug137(t *testing.T) {
 	if len(cutResult) != len(result) {
 		t.Fatal(result)
 	}
-	for i, _ := range result {
+	for i := range result {
 		if result[i] != cutResult[i] {
 			t.Fatal(result[i])
 		}
@@ -404,7 +404,7 @@ func TestUserDict(t *testing.T) {
 	if len(cutResult) != len(result) {
 		t.Fatal(result)
 	}
-	for i, _ := range result {
+	for i := range result {
 		if result[i] != cutResult[i] {
 			t.Fatal(result[i])
 		}

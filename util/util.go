@@ -2,12 +2,14 @@ package util
 
 import "regexp"
 
-// RegexpSplit split slices s into substrings separated by the expression and
-// returns a slice of the substrings between those expression matches.
-// If capturing parentheses are used in expression, then the text of all groups
-// in the expression are also returned as part of the resulting slice.
-//
-// This function acts consistent with Python's re.split function.
+/*
+RegexpSplit split slices s into substrings separated by the expression and
+returns a slice of the substrings between those expression matches.
+If capturing parentheses are used in expression, then the text of all groups
+in the expression are also returned as part of the resulting slice.
+
+This function acts consistent with Python's re.split function.
+*/
 func RegexpSplit(re *regexp.Regexp, s string, n int) []string {
 	if n == 0 {
 		return nil
