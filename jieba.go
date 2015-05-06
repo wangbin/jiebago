@@ -1,3 +1,4 @@
+// Package jiebago is the Golang implemention of [Jieba](https://github.com/fxsjy/jieba), Python Chinese text segmentation module.
 package jiebago
 
 import (
