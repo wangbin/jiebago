@@ -1,3 +1,4 @@
+// Package posseg is the Golang implementation of Jieba's posseg module.
 package posseg
 
 import (

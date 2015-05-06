@@ -1,3 +1,4 @@
+// Package analyse is the Golang implementation of Jieba's analyse module.
 package analyse
 
 import (
