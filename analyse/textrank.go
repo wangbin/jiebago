@@ -1,10 +1,10 @@
 package analyse
 
 import (
-	"fmt"
-	"github.com/wangbin/jiebago/posseg"
 	"math"
 	"sort"
+
+	"github.com/wangbin/jiebago/posseg"
 )
 
 const dampingFactor = 0.85
@@ -17,10 +17,6 @@ type edge struct {
 	start  string
 	end    string
 	weight float64
-}
-
-func (e edge) String() string {
-	return fmt.Sprintf("(%s %s): %f", e.start, e.end, e.weight)
 }
 
 type edges []edge
@@ -65,7 +61,7 @@ func (u *undirectWeightedGraph) addEdge(start, end string, weight float64) {
 	}
 }
 
-func (u *undirectWeightedGraph) rank() wordWeights {
+func (u *undirectWeightedGraph) rank() Segments {
 	if !sort.IsSorted(u.keys) {
 		sort.Sort(u.keys)
 	}
@@ -105,17 +101,17 @@ func (u *undirectWeightedGraph) rank() wordWeights {
 			maxRank = w
 		}
 	}
-	result := make(wordWeights, 0)
+	result := make(Segments, 0)
 	for n, w := range ws {
-		result = append(result, wordWeight{Word: n, Weight: (w - minRank/10.0) / (maxRank - minRank/10.0)})
+		result = append(result, Segment{text: n, weight: (w - minRank/10.0) / (maxRank - minRank/10.0)})
 	}
 	sort.Sort(sort.Reverse(result))
 	return result
 }
 
-// Extract keywords from sentence using TextRank algorithm. the allowed POS list
-// could be manually speificed.
-func TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
+// TextRankWithPOS extracts keywords from sentence using TextRank algorithm.
+// Parameter allowPOS allows a customized pos list.
+func (t *TextRanker) TextRankWithPOS(sentence string, topK int, allowPOS []string) Segments {
 	posFilt := make(map[string]int)
 	for _, pos := range allowPOS {
 		posFilt[pos] = 1
@@ -123,23 +119,20 @@ func TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
 	g := newUndirectWeightedGraph()
 	cm := make(map[[2]string]float64)
 	span := 5
-	wordTags := make([]posseg.WordTag, 0)
-	for wordTag := range posseg.Cut(sentence, true) {
-		wordTags = append(wordTags, wordTag)
+	var pairs []posseg.Segment
+	for pair := range t.seg.Cut(sentence, true) {
+		pairs = append(pairs, pair)
 	}
-	for i, _ := range wordTags {
-		if _, ok := posFilt[wordTags[i].Tag]; ok {
-			for j := i + 1; j < i+span; j++ {
-				if j > len(wordTags) {
-					break
-				}
-				if _, ok := posFilt[wordTags[j].Tag]; !ok {
+	for i := range pairs {
+		if _, ok := posFilt[pairs[i].Pos()]; ok {
+			for j := i + 1; j < i+span && j <= len(pairs); j++ {
+				if _, ok := posFilt[pairs[j].Pos()]; !ok {
 					continue
 				}
-				if _, ok := cm[[2]string{wordTags[i].Word, wordTags[j].Word}]; !ok {
-					cm[[2]string{wordTags[i].Word, wordTags[j].Word}] = 1.0
+				if _, ok := cm[[2]string{pairs[i].Text(), pairs[j].Text()}]; !ok {
+					cm[[2]string{pairs[i].Text(), pairs[j].Text()}] = 1.0
 				} else {
-					cm[[2]string{wordTags[i].Word, wordTags[j].Word}] += 1.0
+					cm[[2]string{pairs[i].Text(), pairs[j].Text()}] += 1.0
 				}
 			}
 		}
@@ -154,15 +147,19 @@ func TextRankWithPOS(sentence string, topK int, allowPOS []string) wordWeights {
 	return tags
 }
 
-// Extract keywords from sentence using TextRank algorithm.
-// topK specify how many top keywords to be returned at most.
-func TextRank(sentence string, topK int) wordWeights {
-	return TextRankWithPOS(sentence, topK, defaultAllowPOS)
+// TextRank extract keywords from sentence using TextRank algorithm.
+// Parameter topK specify how many top keywords to be returned at most.
+func (t *TextRanker) TextRank(sentence string, topK int) Segments {
+	return t.TextRankWithPOS(sentence, topK, defaultAllowPOS)
 }
 
-// Set the dictionary, could be absolute path of dictionary file, or dictionary
-// name in current directory. This function must be called before cut any
-// sentence.
-func SetDictionary(dictFileName string) error {
-	return posseg.SetDictionary(dictFileName)
+// TextRanker is used to extract tags from sentence.
+type TextRanker struct {
+	seg *posseg.Segmenter
+}
+
+// LoadDictionary reads a given file and create a new dictionary file for Textranker.
+func (t *TextRanker) LoadDictionary(fileName string) error {
+	t.seg = new(posseg.Segmenter)
+	return t.seg.LoadDictionary(fileName)
 }

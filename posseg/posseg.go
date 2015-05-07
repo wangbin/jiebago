@@ -1,14 +1,16 @@
+// Package posseg is the Golang implementation of Jieba's posseg module.
 package posseg
 
 import (
-	"github.com/wangbin/jiebago"
+	"math"
 	"regexp"
+
+	"github.com/wangbin/jiebago/util"
 )
 
 var (
-	wordTagMap     = make(map[string]string)
-	reHanDetail    = regexp.MustCompile(`\p{Han}+`)
-	reSkipDetail   = regexp.MustCompile(`[[\.[:digit:]]+|[:alnum:]]+`)
+	reHanDetail    = regexp.MustCompile(`(\p{Han}+)`)
+	reSkipDetail   = regexp.MustCompile(`([[\.[:digit:]]+|[:alnum:]]+)`)
 	reEng          = regexp.MustCompile(`[[:alnum:]]`)
 	reNum          = regexp.MustCompile(`[\.[:digit:]]+`)
 	reEng1         = regexp.MustCompile(`[[:alnum:]]$`)
@@ -16,81 +18,90 @@ var (
 	reSkipInternal = regexp.MustCompile(`(\r\n|\s)`)
 )
 
-type WordTag struct {
-	Word, Tag string
+// Segment represents a word with it's POS
+type Segment struct {
+	text, pos string
 }
 
-// Set dictionary, it could be absolute path of dictionary file, or dictionary
-// name in current diectory.
-func SetDictionary(dictFileName string) error {
-	err := jiebago.SetDictionary(dictFileName)
-	if err != nil {
-		return err
-	}
-	dictFilePath, err := jiebago.DictPath(dictFileName)
-	if err != nil {
-		return err
-	}
-	wtfs, err := jiebago.ParseDictFile(dictFilePath)
-
-	for _, wtf := range wtfs {
-		wordTagMap[wtf.Word] = wtf.Tag
-	}
-	return nil
+// Text returns the Segment's text.
+func (s Segment) Text() string {
+	return s.text
 }
 
-func cutDetailInternal(sentence string) chan WordTag {
-	result := make(chan WordTag)
+// Pos returns the Segment's POS.
+func (s Segment) Pos() string {
+	return s.pos
+}
+
+// Segmenter is a Chinese words segmentation struct.
+type Segmenter struct {
+	dict *Dictionary
+}
+
+// LoadDictionary loads dictionary from given file name.
+// Everytime LoadDictionary is called, previously loaded dictionary will be cleard.
+func (seg *Segmenter) LoadDictionary(fileName string) error {
+	seg.dict = &Dictionary{freqMap: make(map[string]float64), posMap: make(map[string]string)}
+	return seg.dict.loadDictionary(fileName)
+}
+
+// LoadUserDictionary loads a user specified dictionary, it must be called
+// after LoadDictionary, and it will not clear any previous loaded dictionary,
+// instead it will override exist entries.
+func (seg *Segmenter) LoadUserDictionary(fileName string) error {
+	return seg.dict.loadDictionary(fileName)
+}
+
+func (seg *Segmenter) cutDetailInternal(sentence string) <-chan Segment {
+	result := make(chan Segment)
 
 	go func() {
 		runes := []rune(sentence)
-		_, posList := viterbi(runes)
+		posList := viterbi(runes)
 		begin := 0
 		next := 0
 		for i, char := range runes {
-			pos := posList[i].State
-			switch pos {
-			case 'B':
+			pos := posList[i]
+			switch pos.position() {
+			case "B":
 				begin = i
-			case 'E':
-				result <- WordTag{string(runes[begin : i+1]), posList[i].Tag}
+			case "E":
+				result <- Segment{string(runes[begin : i+1]), pos.pos()}
 				next = i + 1
-			case 'S':
-				result <- WordTag{string(char), posList[i].Tag}
+			case "S":
+				result <- Segment{string(char), pos.pos()}
 				next = i + 1
 			}
 		}
 		if next < len(runes) {
-			result <- WordTag{string(runes[next:]), posList[next].Tag}
+			result <- Segment{string(runes[next:]), posList[next].pos()}
 		}
 		close(result)
 	}()
 	return result
 }
 
-func cutDetail(sentence string) chan WordTag {
-	result := make(chan WordTag)
-
+func (seg *Segmenter) cutDetail(sentence string) <-chan Segment {
+	result := make(chan Segment)
 	go func() {
-		blocks := jiebago.RegexpSplit(reHanDetail, sentence)
-		for _, blk := range blocks {
+		for _, blk := range util.RegexpSplit(reHanDetail, sentence, -1) {
 			if reHanDetail.MatchString(blk) {
-				for wordTag := range cutDetailInternal(blk) {
-					result <- wordTag
+				for segment := range seg.cutDetailInternal(blk) {
+					result <- segment
 				}
-			} else {
-				for _, x := range jiebago.RegexpSplit(reSkipDetail, blk) {
-					if len(x) == 0 {
-						continue
-					}
-					switch {
-					case reNum.MatchString(x):
-						result <- WordTag{x, "m"}
-					case reEng.MatchString(x):
-						result <- WordTag{x, "eng"}
-					default:
-						result <- WordTag{x, "x"}
-					}
+				continue
+			}
+			for _, x := range util.RegexpSplit(reSkipDetail, blk, -1) {
+				if len(x) == 0 {
+					continue
+				}
+				switch {
+				case reNum.MatchString(x):
+					result <- Segment{x, "m"}
+				case reEng.MatchString(x):
+					result <- Segment{x, "eng"}
+				default:
+					result <- Segment{x, "x"}
 				}
 			}
 		}
@@ -99,88 +110,142 @@ func cutDetail(sentence string) chan WordTag {
 	return result
 }
 
-type cutFunc func(sentence string) chan WordTag
-
-func cutDAG(sentence string) chan WordTag {
-	result := make(chan WordTag)
-
-	go func() {
-		dag := jiebago.DAG(sentence)
-		routes := jiebago.Calc(sentence, dag)
-		x := 0
-		var y int
-		runes := []rune(sentence)
-		length := len(runes)
-		buf := make([]rune, 0)
+func (seg *Segmenter) dag(runes []rune) map[int][]int {
+	dag := make(map[int][]int)
+	n := len(runes)
+	var frag []rune
+	var i int
+	for k := 0; k < n; k++ {
+		dag[k] = make([]int, 0)
+		i = k
+		frag = runes[k : k+1]
 		for {
-			if x >= length {
+			freq, ok := seg.dict.Frequency(string(frag))
+			if !ok {
 				break
 			}
-			y = routes[x].Index + 1
-			l_word := runes[x:y]
-			if y-x == 1 {
-				buf = append(buf, l_word...)
-			} else {
-				if len(buf) > 0 {
-					if len(buf) == 1 {
-						sbuf := string(buf)
-						if tag, ok := wordTagMap[sbuf]; ok {
-							result <- WordTag{sbuf, tag}
-						} else {
-							result <- WordTag{sbuf, "x"}
-						}
-						buf = make([]rune, 0)
-					} else {
-						bufString := string(buf)
-						if v, ok := jiebago.Trie.Freq[bufString]; !ok || v == 0.0 {
-							for t := range cutDetail(bufString) {
-								result <- t
-							}
-						} else {
-							for _, elem := range buf {
-								selem := string(elem)
-								if tag, ok := wordTagMap[selem]; ok {
-									result <- WordTag{string(elem), tag}
-								} else {
-									result <- WordTag{string(elem), "x"}
-								}
+			if freq > 0.0 {
+				dag[k] = append(dag[k], i)
+			}
+			i++
+			if i >= n {
+				break
+			}
+			frag = runes[k : i+1]
+		}
+		if len(dag[k]) == 0 {
+			dag[k] = append(dag[k], k)
+		}
+	}
+	return dag
+}
 
-							}
-						}
-						buf = make([]rune, 0)
-					}
-				}
-				sl_word := string(l_word)
-				if tag, ok := wordTagMap[sl_word]; ok {
-					result <- WordTag{sl_word, tag}
-				} else {
-					result <- WordTag{sl_word, "x"}
+type route struct {
+	frequency float64
+	index     int
+}
+
+func (seg *Segmenter) calc(runes []rune) map[int]route {
+	dag := seg.dag(runes)
+	n := len(runes)
+	rs := make(map[int]route)
+	rs[n] = route{frequency: 0.0, index: 0}
+	var r route
+	for idx := n - 1; idx >= 0; idx-- {
+		for _, i := range dag[idx] {
+			if freq, ok := seg.dict.Frequency(string(runes[idx : i+1])); ok {
+				r = route{frequency: math.Log(freq) - seg.dict.logTotal + rs[i+1].frequency, index: i}
+			} else {
+				r = route{frequency: math.Log(1.0) - seg.dict.logTotal + rs[i+1].frequency, index: i}
+			}
+			if v, ok := rs[idx]; !ok {
+				rs[idx] = r
+			} else {
+				if v.frequency < r.frequency || (v.frequency == r.frequency && v.index < r.index) {
+					rs[idx] = r
 				}
 			}
-			x = y
 		}
+	}
+	return rs
+}
 
-		if len(buf) > 0 {
-			if len(buf) == 1 {
-				sbuf := string(buf)
-				if tag, ok := wordTagMap[sbuf]; ok {
-					result <- WordTag{sbuf, tag}
-				} else {
-					result <- WordTag{sbuf, "x"}
-				}
-			} else {
+type cutFunc func(sentence string) <-chan Segment
+
+func (seg *Segmenter) cutDAG(sentence string) <-chan Segment {
+	result := make(chan Segment)
+
+	go func() {
+		runes := []rune(sentence)
+		routes := seg.calc(runes)
+		var y int
+		length := len(runes)
+		var buf []rune
+		for x := 0; x < length; {
+			y = routes[x].index + 1
+			frag := runes[x:y]
+			if y-x == 1 {
+				buf = append(buf, frag...)
+				x = y
+				continue
+			}
+			if len(buf) > 0 {
 				bufString := string(buf)
-				if v, ok := jiebago.Trie.Freq[bufString]; !ok || v == 0.0 {
-					for t := range cutDetail(bufString) {
+				if len(buf) == 1 {
+					if tag, ok := seg.dict.Pos(bufString); ok {
+						result <- Segment{bufString, tag}
+					} else {
+						result <- Segment{bufString, "x"}
+					}
+					buf = make([]rune, 0)
+					continue
+				}
+				if v, ok := seg.dict.Frequency(bufString); !ok || v == 0.0 {
+					for t := range seg.cutDetail(bufString) {
 						result <- t
 					}
 				} else {
 					for _, elem := range buf {
 						selem := string(elem)
-						if tag, ok := wordTagMap[selem]; ok {
-							result <- WordTag{selem, tag}
+						if tag, ok := seg.dict.Pos(selem); ok {
+							result <- Segment{selem, tag}
 						} else {
-							result <- WordTag{selem, "x"}
+							result <- Segment{selem, "x"}
+						}
+
+					}
+				}
+				buf = make([]rune, 0)
+			}
+			word := string(frag)
+			if tag, ok := seg.dict.Pos(word); ok {
+				result <- Segment{word, tag}
+			} else {
+				result <- Segment{word, "x"}
+			}
+			x = y
+		}
+
+		if len(buf) > 0 {
+			bufString := string(buf)
+			if len(buf) == 1 {
+				if tag, ok := seg.dict.Pos(bufString); ok {
+					result <- Segment{bufString, tag}
+				} else {
+					result <- Segment{bufString, "x"}
+				}
+			} else {
+				if v, ok := seg.dict.Frequency(bufString); !ok || v == 0.0 {
+					for t := range seg.cutDetail(bufString) {
+						result <- t
+					}
+				} else {
+					for _, elem := range buf {
+						selem := string(elem)
+						if tag, ok := seg.dict.Pos(selem); ok {
+							result <- Segment{selem, tag}
+						} else {
+							result <- Segment{selem, "x"}
 						}
 					}
 				}
@@ -191,42 +256,38 @@ func cutDAG(sentence string) chan WordTag {
 	return result
 }
 
-func cutDAGNoHMM(sentence string) chan WordTag {
-	result := make(chan WordTag)
+func (seg *Segmenter) cutDAGNoHMM(sentence string) <-chan Segment {
+	result := make(chan Segment)
 
 	go func() {
-		dag := jiebago.DAG(sentence)
-		routes := jiebago.Calc(sentence, dag)
-		x := 0
-		var y int
 		runes := []rune(sentence)
+		routes := seg.calc(runes)
+		var y int
 		length := len(runes)
-		buf := make([]rune, 0)
-		for {
-			if x >= length {
-				break
-			}
-			y = routes[x].Index + 1
-			l_word := runes[x:y]
-			if reEng1.MatchString(string(l_word)) && len(l_word) == 1 {
-				buf = append(buf, l_word...)
+		var buf []rune
+		for x := 0; x < length; {
+			y = routes[x].index + 1
+			frag := runes[x:y]
+			if reEng1.MatchString(string(frag)) && len(frag) == 1 {
+				buf = append(buf, frag...)
 				x = y
+				continue
+			}
+			if len(buf) > 0 {
+				result <- Segment{string(buf), "eng"}
+				buf = make([]rune, 0)
+			}
+			word := string(frag)
+			if tag, ok := seg.dict.Pos(word); ok {
+				result <- Segment{word, tag}
 			} else {
-				if len(buf) > 0 {
-					result <- WordTag{string(buf), "eng"}
-					buf = make([]rune, 0)
-				}
-				sl_word := string(l_word)
-				if tag, ok := wordTagMap[sl_word]; ok {
-					result <- WordTag{sl_word, tag}
-				} else {
-					result <- WordTag{sl_word, "x"}
-				}
-				x = y
+				result <- Segment{word, "x"}
 			}
+			x = y
+
 		}
 		if len(buf) > 0 {
-			result <- WordTag{string(buf), "eng"}
+			result <- Segment{string(buf), "eng"}
 			buf = make([]rune, 0)
 		}
 		close(result)
@@ -234,44 +295,38 @@ func cutDAGNoHMM(sentence string) chan WordTag {
 	return result
 }
 
-// Tags the POS of each word after segmentation, using labels compatible with
-// ictclas.
-func Cut(sentence string, HMM bool) chan WordTag {
-	for key := range jiebago.UserWordTagTab {
-		wordTagMap[key] = jiebago.UserWordTagTab[key]
-		delete(jiebago.UserWordTagTab, key)
-	}
-	result := make(chan WordTag)
-	blocks := jiebago.RegexpSplit(reHanInternal, sentence)
+// Cut cuts a sentence into words.
+// Parameter hmm controls whether to use the Hidden Markov Model.
+func (seg *Segmenter) Cut(sentence string, hmm bool) <-chan Segment {
+	result := make(chan Segment)
 	var cut cutFunc
-	if HMM {
-		cut = cutDAG
+	if hmm {
+		cut = seg.cutDAG
 	} else {
-		cut = cutDAGNoHMM
+		cut = seg.cutDAGNoHMM
 	}
 	go func() {
-		for _, blk := range blocks {
+		for _, blk := range util.RegexpSplit(reHanInternal, sentence, -1) {
 			if reHanInternal.MatchString(blk) {
 				for wordTag := range cut(blk) {
 					result <- wordTag
 				}
-			} else {
-				for _, x := range jiebago.RegexpSplit(reSkipInternal, blk) {
-					if reSkipInternal.MatchString(x) {
-						result <- WordTag{x, "x"}
-					} else {
-						for _, xx := range x {
-							s := string(xx)
-							switch {
-							case reNum.MatchString(s):
-								result <- WordTag{s, "m"}
-							case reEng.MatchString(x):
-								result <- WordTag{x, "eng"}
-								break
-							default:
-								result <- WordTag{s, "x"}
-							}
-						}
+				continue
+			}
+			for _, x := range util.RegexpSplit(reSkipInternal, blk, -1) {
+				if reSkipInternal.MatchString(x) {
+					result <- Segment{x, "x"}
+					continue
+				}
+				for _, xx := range x {
+					s := string(xx)
+					switch {
+					case reNum.MatchString(s):
+						result <- Segment{s, "m"}
+					case reEng.MatchString(x):
+						result <- Segment{x, "eng"}
+					default:
+						result <- Segment{s, "x"}
 					}
 				}
 			}

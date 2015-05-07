@@ -1,12 +1,10 @@
 package jiebago
 
-import (
-	"regexp"
-	"testing"
-)
+import "testing"
 
 var (
-	test_contents = []string{
+	seg          Segmenter
+	testContents = []string{
 		"这是一个伸手不见五指的黑夜。我叫孙悟空，我爱北京，我爱Python和C++。",
 		"我不喜欢日本和服。",
 		"雷猴回归人间。",
@@ -618,11 +616,11 @@ var (
 )
 
 func init() {
-	SetDictionary("dict.txt")
+	seg.LoadDictionary("dict.txt")
 }
 
-func chanToArray(ch chan string) []string {
-	result := make([]string, 0)
+func chanToArray(ch <-chan string) []string {
+	var result []string
 	for word := range ch {
 		result = append(result, word)
 	}
@@ -630,43 +628,32 @@ func chanToArray(ch chan string) []string {
 }
 
 func TestCutDAG(t *testing.T) {
-	result := chanToArray(cutDAG("BP神经网络如何训练才能在分类时增加区分度？"))
+	result := chanToArray(seg.cutDAG("BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 11 {
-		t.Error(result)
+		t.Fatal(result)
 	}
 }
 
 func TestCutDAGNoHmm(t *testing.T) {
-	result := chanToArray(cutDAGNoHMM("BP神经网络如何训练才能在分类时增加区分度？"))
+	result := chanToArray(seg.cutDAGNoHMM("BP神经网络如何训练才能在分类时增加区分度？"))
 	if len(result) != 11 {
-		t.Error(result)
-	}
-}
-
-func TestRegexpSplit(t *testing.T) {
-	result := RegexpSplit(regexp.MustCompile(`\p{Han}+`),
-		"BP神经网络如何训练才能在分类时增加区分度？")
-	if len(result) != 3 {
-		t.Error(result)
-	}
-	result = RegexpSplit(regexp.MustCompile(`([\p{Han}#]+)`),
-		",BP神经网络如何训练才能在分类时#增加区分度？")
-	if len(result) != 3 {
-		t.Error(result)
+		t.Fatal(result)
 	}
 }
 
 func TestDefaultCut(t *testing.T) {
 	var result []string
-	for index, content := range test_contents {
-		result = chanToArray(Cut(content, false, true))
+	for index, content := range testContents {
+		result = chanToArray(seg.Cut(content, true))
 		if len(result) != len(defaultCutResult[index]) {
 			t.Errorf("default cut for %s length should be %d not %d\n",
 				content, len(defaultCutResult[index]), len(result))
+			t.Errorf("expect: %v\n", defaultCutResult[index])
+			t.Fatalf("got: %v\n", result)
 		}
 		for i, r := range result {
 			if r != defaultCutResult[index][i] {
-				t.Error(r)
+				t.Fatal(r)
 			}
 		}
 	}
@@ -674,15 +661,17 @@ func TestDefaultCut(t *testing.T) {
 
 func TestCutAll(t *testing.T) {
 	var result []string
-	for index, content := range test_contents {
-		result = chanToArray(Cut(content, true, true))
+	for index, content := range testContents {
+		result = chanToArray(seg.CutAll(content))
 		if len(result) != len(cutAllResult[index]) {
 			t.Errorf("cut all for %s length should be %d not %d\n",
 				content, len(cutAllResult[index]), len(result))
+			t.Errorf("expect: %v\n", defaultCutResult[index])
+			t.Fatalf("got: %v\n", result)
 		}
 		for i, c := range result {
 			if c != cutAllResult[index][i] {
-				t.Error(c)
+				t.Fatal(c)
 			}
 		}
 	}
@@ -690,15 +679,15 @@ func TestCutAll(t *testing.T) {
 
 func TestDefaultCutNoHMM(t *testing.T) {
 	var result []string
-	for index, content := range test_contents {
-		result = chanToArray(Cut(content, false, false))
+	for index, content := range testContents {
+		result = chanToArray(seg.Cut(content, false))
 		if len(result) != len(defaultCutNoHMMResult[index]) {
-			t.Errorf("default cut no hmm for %s length should be %d not %d\n",
+			t.Fatalf("default cut no hmm for %s length should be %d not %d\n",
 				content, len(defaultCutNoHMMResult[index]), len(result))
 		}
 		for i, c := range result {
 			if c != defaultCutNoHMMResult[index][i] {
-				t.Error(c)
+				t.Fatal(c)
 			}
 		}
 	}
@@ -706,88 +695,129 @@ func TestDefaultCutNoHMM(t *testing.T) {
 
 func TestCutForSearch(t *testing.T) {
 	var result []string
-	for index, content := range test_contents {
-		result = chanToArray(CutForSearch(content, true))
+	for index, content := range testContents {
+		result = chanToArray(seg.CutForSearch(content, true))
 		if len(result) != len(cutForSearchResult[index]) {
-			t.Errorf("cut for search for %s length should be %d not %d\n",
+			t.Fatalf("cut for search for %s length should be %d not %d\n",
 				content, len(cutForSearchResult[index]), len(result))
 		}
 		for i, c := range result {
 			if c != cutForSearchResult[index][i] {
-				t.Error(c)
+				t.Fatal(c)
 			}
 		}
 	}
-	for index, content := range test_contents {
-		result = chanToArray(CutForSearch(content, false))
+	for index, content := range testContents {
+		result = chanToArray(seg.CutForSearch(content, false))
 		if len(result) != len(cutForSearchNoHMMResult[index]) {
-			t.Errorf("cut for search no hmm for %s length should be %d not %d\n",
+			t.Fatalf("cut for search no hmm for %s length should be %d not %d\n",
 				content, len(cutForSearchNoHMMResult[index]), len(result))
 		}
 		for i, c := range result {
 			if c != cutForSearchNoHMMResult[index][i] {
-				t.Error(c)
+				t.Fatal(c)
 			}
 		}
 	}
 }
 
-func TestSetdictionary(t *testing.T) {
+func TestLoadDictionary(t *testing.T) {
 	var result []string
-	SetDictionary("foobar.txt")
-	for index, content := range test_contents {
-		result = chanToArray(Cut(content, false, true))
+	seg.LoadDictionary("foobar.txt")
+	for index, content := range testContents {
+		result = chanToArray(seg.Cut(content, true))
 		if len(result) != len(userDictCutResult[index]) {
-			t.Errorf("default cut with user dictionary for %s length should be %d not %d\n",
+			t.Fatalf("default cut with user dictionary for %s length should be %d not %d\n",
 				content, len(userDictCutResult[index]), len(result))
 		}
 		for i, c := range result {
 			if c != userDictCutResult[index][i] {
-				t.Error(c)
+				t.Fatal(c)
 			}
 		}
 	}
+	seg.LoadDictionary("dict.txt")
 }
 
-func TestLoadUserDict(t *testing.T) {
-	SetDictionary("dict.txt")
-	LoadUserDict("userdict.txt")
+func TestLoadUserDictionary(t *testing.T) {
+	seg.LoadUserDictionary("userdict.txt")
 
 	sentence := "李小福是创新办主任也是云计算方面的专家; 什么是八一双鹿例如我输入一个带“韩玉赏鉴”的标题，在自定义词库中也增加了此词为N类型"
 	result := []string{"李小福", "是", "创新办", "主任", "也", "是", "云计算", "方面", "的", "专家", ";", " ", "什么", "是", "八一双鹿", "例如", "我", "输入", "一个", "带", "“", "韩玉赏鉴", "”", "的", "标题", "，", "在", "自定义词", "库中", "也", "增加", "了", "此", "词为", "N", "类型"}
 
-	words := chanToArray(Cut(sentence, false, true))
+	words := chanToArray(seg.Cut(sentence, true))
 	if len(words) != len(result) {
-		t.Error(len(words))
+		t.Fatal(len(words))
 	}
 	for index, word := range words {
 		if word != result[index] {
-			t.Error(word)
+			t.Fatal(word)
 		}
 	}
 
 	sentence = "easy_install is great"
 	result = []string{"easy_install", " ", "is", " ", "great"}
-	words = chanToArray(Cut(sentence, false, true))
+	words = chanToArray(seg.Cut(sentence, true))
 	if len(words) != len(result) {
-		t.Error(len(words))
+		t.Fatal(len(words))
 	}
 	for index, word := range words {
 		if word != result[index] {
-			t.Error(word)
+			t.Fatal(word)
 		}
 	}
 
 	sentence = "python 的正则表达式是好用的"
 	result = []string{"python", " ", "的", "正则表达式", "是", "好用", "的"}
-	words = chanToArray(Cut(sentence, false, true))
+	words = chanToArray(seg.Cut(sentence, true))
 	if len(words) != len(result) {
-		t.Error(words)
-		t.Error(result)
+		t.Fatal(words)
+		t.Fatal(result)
 	}
 	for index, word := range words {
 		if word != result[index] {
-			t.Error(word)
+			t.Fatal(word)
 		}
+	}
+	seg.LoadDictionary("dict.txt")
+}
+
+func BenchmarkCutNoHMM(b *testing.B) {
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(seg.Cut(sentence, false))
+	}
+}
+
+func BenchmarkCut(b *testing.B) {
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(seg.Cut(sentence, true))
+	}
+}
+
+func BenchmarkCutAll(b *testing.B) {
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(seg.CutAll(sentence))
+	}
+}
+
+func BenchmarkCutForSearchNoHMM(b *testing.B) {
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(seg.CutForSearch(sentence, false))
+	}
+}
+
+func BenchmarkCutForSearch(b *testing.B) {
+	sentence := "工信处女干事每月经过下属科室都要亲口交代24口交换机等技术性器件的安装工作"
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		chanToArray(seg.CutForSearch(sentence, true))
 	}
 }

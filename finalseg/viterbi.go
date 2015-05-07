@@ -67,11 +67,11 @@ func viterbi(obs []rune, states []byte) (float64, []byte) {
 		V[t] = make(map[byte]float64)
 		for _, y := range states {
 			ps0 := make(probStates, 0)
-			var em_p float64
+			var emP float64
 			if val, ok := probEmit[y][obs[t]]; ok {
-				em_p = val
+				emP = val
 			} else {
-				em_p = minFloat
+				emP = minFloat
 			}
 			for _, y0 := range prevStatus[y] {
 				var transP float64
@@ -80,7 +80,7 @@ func viterbi(obs []rune, states []byte) (float64, []byte) {
 				} else {
 					transP = minFloat
 				}
-				prob0 := V[t-1][y0] + transP + em_p
+				prob0 := V[t-1][y0] + transP + emP
 				ps0 = append(ps0, &probState{prob: prob0, state: y0})
 			}
 			sort.Sort(sort.Reverse(ps0))

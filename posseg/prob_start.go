@@ -1,264 +1,260 @@
 package posseg
 
-var (
-	probStart = make(map[stateTag]float64)
-)
-
-func init() {
-	probStart[stateTag{'B', "a"}] = -4.762305214596967
-	probStart[stateTag{'B', "ad"}] = -6.680066036784177
-	probStart[stateTag{'B', "ag"}] = -3.14e+100
-	probStart[stateTag{'B', "an"}] = -8.697083223018778
-	probStart[stateTag{'B', "b"}] = -5.018374362109218
-	probStart[stateTag{'B', "bg"}] = -3.14e+100
-	probStart[stateTag{'B', "c"}] = -3.423880184954888
-	probStart[stateTag{'B', "d"}] = -3.9750475297585357
-	probStart[stateTag{'B', "df"}] = -8.888974230828882
-	probStart[stateTag{'B', "dg"}] = -3.14e+100
-	probStart[stateTag{'B', "e"}] = -8.563551830394255
-	probStart[stateTag{'B', "en"}] = -3.14e+100
-	probStart[stateTag{'B', "f"}] = -5.491630418482717
-	probStart[stateTag{'B', "g"}] = -3.14e+100
-	probStart[stateTag{'B', "h"}] = -13.533365129970255
-	probStart[stateTag{'B', "i"}] = -6.1157847275557105
-	probStart[stateTag{'B', "in"}] = -3.14e+100
-	probStart[stateTag{'B', "j"}] = -5.0576191284681915
-	probStart[stateTag{'B', "jn"}] = -3.14e+100
-	probStart[stateTag{'B', "k"}] = -3.14e+100
-	probStart[stateTag{'B', "l"}] = -4.905883584659895
-	probStart[stateTag{'B', "ln"}] = -3.14e+100
-	probStart[stateTag{'B', "m"}] = -3.6524299819046386
-	probStart[stateTag{'B', "mg"}] = -3.14e+100
-	probStart[stateTag{'B', "mq"}] = -6.78695300139688
-	probStart[stateTag{'B', "n"}] = -1.6966257797548328
-	probStart[stateTag{'B', "ng"}] = -3.14e+100
-	probStart[stateTag{'B', "nr"}] = -2.2310495913769506
-	probStart[stateTag{'B', "nrfg"}] = -5.873722175405573
-	probStart[stateTag{'B', "nrt"}] = -4.985642733519195
-	probStart[stateTag{'B', "ns"}] = -2.8228438314969213
-	probStart[stateTag{'B', "nt"}] = -4.846091668182416
-	probStart[stateTag{'B', "nz"}] = -3.94698846057672
-	probStart[stateTag{'B', "o"}] = -8.433498702146057
-	probStart[stateTag{'B', "p"}] = -4.200984132085048
-	probStart[stateTag{'B', "q"}] = -6.998123858956596
-	probStart[stateTag{'B', "qe"}] = -3.14e+100
-	probStart[stateTag{'B', "qg"}] = -3.14e+100
-	probStart[stateTag{'B', "r"}] = -3.4098187790818413
-	probStart[stateTag{'B', "rg"}] = -3.14e+100
-	probStart[stateTag{'B', "rr"}] = -12.434752841302146
-	probStart[stateTag{'B', "rz"}] = -7.946116471570005
-	probStart[stateTag{'B', "s"}] = -5.522673590839954
-	probStart[stateTag{'B', "t"}] = -3.3647479094528574
-	probStart[stateTag{'B', "tg"}] = -3.14e+100
-	probStart[stateTag{'B', "u"}] = -9.163917277503234
-	probStart[stateTag{'B', "ud"}] = -3.14e+100
-	probStart[stateTag{'B', "ug"}] = -3.14e+100
-	probStart[stateTag{'B', "uj"}] = -3.14e+100
-	probStart[stateTag{'B', "ul"}] = -3.14e+100
-	probStart[stateTag{'B', "uv"}] = -3.14e+100
-	probStart[stateTag{'B', "uz"}] = -3.14e+100
-	probStart[stateTag{'B', "v"}] = -2.6740584874265685
-	probStart[stateTag{'B', "vd"}] = -9.044728760238115
-	probStart[stateTag{'B', "vg"}] = -3.14e+100
-	probStart[stateTag{'B', "vi"}] = -12.434752841302146
-	probStart[stateTag{'B', "vn"}] = -4.3315610890163585
-	probStart[stateTag{'B', "vq"}] = -12.147070768850364
-	probStart[stateTag{'B', "w"}] = -3.14e+100
-	probStart[stateTag{'B', "x"}] = -3.14e+100
-	probStart[stateTag{'B', "y"}] = -9.844485675856319
-	probStart[stateTag{'B', "yg"}] = -3.14e+100
-	probStart[stateTag{'B', "z"}] = -7.045681111485645
-	probStart[stateTag{'B', "zg"}] = -3.14e+100
-	probStart[stateTag{'E', "a"}] = -3.14e+100
-	probStart[stateTag{'E', "ad"}] = -3.14e+100
-	probStart[stateTag{'E', "ag"}] = -3.14e+100
-	probStart[stateTag{'E', "an"}] = -3.14e+100
-	probStart[stateTag{'E', "b"}] = -3.14e+100
-	probStart[stateTag{'E', "bg"}] = -3.14e+100
-	probStart[stateTag{'E', "c"}] = -3.14e+100
-	probStart[stateTag{'E', "d"}] = -3.14e+100
-	probStart[stateTag{'E', "df"}] = -3.14e+100
-	probStart[stateTag{'E', "dg"}] = -3.14e+100
-	probStart[stateTag{'E', "e"}] = -3.14e+100
-	probStart[stateTag{'E', "en"}] = -3.14e+100
-	probStart[stateTag{'E', "f"}] = -3.14e+100
-	probStart[stateTag{'E', "g"}] = -3.14e+100
-	probStart[stateTag{'E', "h"}] = -3.14e+100
-	probStart[stateTag{'E', "i"}] = -3.14e+100
-	probStart[stateTag{'E', "in"}] = -3.14e+100
-	probStart[stateTag{'E', "j"}] = -3.14e+100
-	probStart[stateTag{'E', "jn"}] = -3.14e+100
-	probStart[stateTag{'E', "k"}] = -3.14e+100
-	probStart[stateTag{'E', "l"}] = -3.14e+100
-	probStart[stateTag{'E', "ln"}] = -3.14e+100
-	probStart[stateTag{'E', "m"}] = -3.14e+100
-	probStart[stateTag{'E', "mg"}] = -3.14e+100
-	probStart[stateTag{'E', "mq"}] = -3.14e+100
-	probStart[stateTag{'E', "n"}] = -3.14e+100
-	probStart[stateTag{'E', "ng"}] = -3.14e+100
-	probStart[stateTag{'E', "nr"}] = -3.14e+100
-	probStart[stateTag{'E', "nrfg"}] = -3.14e+100
-	probStart[stateTag{'E', "nrt"}] = -3.14e+100
-	probStart[stateTag{'E', "ns"}] = -3.14e+100
-	probStart[stateTag{'E', "nt"}] = -3.14e+100
-	probStart[stateTag{'E', "nz"}] = -3.14e+100
-	probStart[stateTag{'E', "o"}] = -3.14e+100
-	probStart[stateTag{'E', "p"}] = -3.14e+100
-	probStart[stateTag{'E', "q"}] = -3.14e+100
-	probStart[stateTag{'E', "qe"}] = -3.14e+100
-	probStart[stateTag{'E', "qg"}] = -3.14e+100
-	probStart[stateTag{'E', "r"}] = -3.14e+100
-	probStart[stateTag{'E', "rg"}] = -3.14e+100
-	probStart[stateTag{'E', "rr"}] = -3.14e+100
-	probStart[stateTag{'E', "rz"}] = -3.14e+100
-	probStart[stateTag{'E', "s"}] = -3.14e+100
-	probStart[stateTag{'E', "t"}] = -3.14e+100
-	probStart[stateTag{'E', "tg"}] = -3.14e+100
-	probStart[stateTag{'E', "u"}] = -3.14e+100
-	probStart[stateTag{'E', "ud"}] = -3.14e+100
-	probStart[stateTag{'E', "ug"}] = -3.14e+100
-	probStart[stateTag{'E', "uj"}] = -3.14e+100
-	probStart[stateTag{'E', "ul"}] = -3.14e+100
-	probStart[stateTag{'E', "uv"}] = -3.14e+100
-	probStart[stateTag{'E', "uz"}] = -3.14e+100
-	probStart[stateTag{'E', "v"}] = -3.14e+100
-	probStart[stateTag{'E', "vd"}] = -3.14e+100
-	probStart[stateTag{'E', "vg"}] = -3.14e+100
-	probStart[stateTag{'E', "vi"}] = -3.14e+100
-	probStart[stateTag{'E', "vn"}] = -3.14e+100
-	probStart[stateTag{'E', "vq"}] = -3.14e+100
-	probStart[stateTag{'E', "w"}] = -3.14e+100
-	probStart[stateTag{'E', "x"}] = -3.14e+100
-	probStart[stateTag{'E', "y"}] = -3.14e+100
-	probStart[stateTag{'E', "yg"}] = -3.14e+100
-	probStart[stateTag{'E', "z"}] = -3.14e+100
-	probStart[stateTag{'E', "zg"}] = -3.14e+100
-	probStart[stateTag{'M', "a"}] = -3.14e+100
-	probStart[stateTag{'M', "ad"}] = -3.14e+100
-	probStart[stateTag{'M', "ag"}] = -3.14e+100
-	probStart[stateTag{'M', "an"}] = -3.14e+100
-	probStart[stateTag{'M', "b"}] = -3.14e+100
-	probStart[stateTag{'M', "bg"}] = -3.14e+100
-	probStart[stateTag{'M', "c"}] = -3.14e+100
-	probStart[stateTag{'M', "d"}] = -3.14e+100
-	probStart[stateTag{'M', "df"}] = -3.14e+100
-	probStart[stateTag{'M', "dg"}] = -3.14e+100
-	probStart[stateTag{'M', "e"}] = -3.14e+100
-	probStart[stateTag{'M', "en"}] = -3.14e+100
-	probStart[stateTag{'M', "f"}] = -3.14e+100
-	probStart[stateTag{'M', "g"}] = -3.14e+100
-	probStart[stateTag{'M', "h"}] = -3.14e+100
-	probStart[stateTag{'M', "i"}] = -3.14e+100
-	probStart[stateTag{'M', "in"}] = -3.14e+100
-	probStart[stateTag{'M', "j"}] = -3.14e+100
-	probStart[stateTag{'M', "jn"}] = -3.14e+100
-	probStart[stateTag{'M', "k"}] = -3.14e+100
-	probStart[stateTag{'M', "l"}] = -3.14e+100
-	probStart[stateTag{'M', "ln"}] = -3.14e+100
-	probStart[stateTag{'M', "m"}] = -3.14e+100
-	probStart[stateTag{'M', "mg"}] = -3.14e+100
-	probStart[stateTag{'M', "mq"}] = -3.14e+100
-	probStart[stateTag{'M', "n"}] = -3.14e+100
-	probStart[stateTag{'M', "ng"}] = -3.14e+100
-	probStart[stateTag{'M', "nr"}] = -3.14e+100
-	probStart[stateTag{'M', "nrfg"}] = -3.14e+100
-	probStart[stateTag{'M', "nrt"}] = -3.14e+100
-	probStart[stateTag{'M', "ns"}] = -3.14e+100
-	probStart[stateTag{'M', "nt"}] = -3.14e+100
-	probStart[stateTag{'M', "nz"}] = -3.14e+100
-	probStart[stateTag{'M', "o"}] = -3.14e+100
-	probStart[stateTag{'M', "p"}] = -3.14e+100
-	probStart[stateTag{'M', "q"}] = -3.14e+100
-	probStart[stateTag{'M', "qe"}] = -3.14e+100
-	probStart[stateTag{'M', "qg"}] = -3.14e+100
-	probStart[stateTag{'M', "r"}] = -3.14e+100
-	probStart[stateTag{'M', "rg"}] = -3.14e+100
-	probStart[stateTag{'M', "rr"}] = -3.14e+100
-	probStart[stateTag{'M', "rz"}] = -3.14e+100
-	probStart[stateTag{'M', "s"}] = -3.14e+100
-	probStart[stateTag{'M', "t"}] = -3.14e+100
-	probStart[stateTag{'M', "tg"}] = -3.14e+100
-	probStart[stateTag{'M', "u"}] = -3.14e+100
-	probStart[stateTag{'M', "ud"}] = -3.14e+100
-	probStart[stateTag{'M', "ug"}] = -3.14e+100
-	probStart[stateTag{'M', "uj"}] = -3.14e+100
-	probStart[stateTag{'M', "ul"}] = -3.14e+100
-	probStart[stateTag{'M', "uv"}] = -3.14e+100
-	probStart[stateTag{'M', "uz"}] = -3.14e+100
-	probStart[stateTag{'M', "v"}] = -3.14e+100
-	probStart[stateTag{'M', "vd"}] = -3.14e+100
-	probStart[stateTag{'M', "vg"}] = -3.14e+100
-	probStart[stateTag{'M', "vi"}] = -3.14e+100
-	probStart[stateTag{'M', "vn"}] = -3.14e+100
-	probStart[stateTag{'M', "vq"}] = -3.14e+100
-	probStart[stateTag{'M', "w"}] = -3.14e+100
-	probStart[stateTag{'M', "x"}] = -3.14e+100
-	probStart[stateTag{'M', "y"}] = -3.14e+100
-	probStart[stateTag{'M', "yg"}] = -3.14e+100
-	probStart[stateTag{'M', "z"}] = -3.14e+100
-	probStart[stateTag{'M', "zg"}] = -3.14e+100
-	probStart[stateTag{'S', "a"}] = -3.9025396831295227
-	probStart[stateTag{'S', "ad"}] = -11.048458480182255
-	probStart[stateTag{'S', "ag"}] = -6.954113917960154
-	probStart[stateTag{'S', "an"}] = -12.84021794941031
-	probStart[stateTag{'S', "b"}] = -6.472888763970454
-	probStart[stateTag{'S', "bg"}] = -3.14e+100
-	probStart[stateTag{'S', "c"}] = -4.786966795861212
-	probStart[stateTag{'S', "d"}] = -3.903919764181873
-	probStart[stateTag{'S', "df"}] = -3.14e+100
-	probStart[stateTag{'S', "dg"}] = -8.948397651299683
-	probStart[stateTag{'S', "e"}] = -5.942513006281674
-	probStart[stateTag{'S', "en"}] = -3.14e+100
-	probStart[stateTag{'S', "f"}] = -5.194820249981676
-	probStart[stateTag{'S', "g"}] = -6.507826815331734
-	probStart[stateTag{'S', "h"}] = -8.650563207383884
-	probStart[stateTag{'S', "i"}] = -3.14e+100
-	probStart[stateTag{'S', "in"}] = -3.14e+100
-	probStart[stateTag{'S', "j"}] = -4.911992119644354
-	probStart[stateTag{'S', "jn"}] = -3.14e+100
-	probStart[stateTag{'S', "k"}] = -6.940320595827818
-	probStart[stateTag{'S', "l"}] = -3.14e+100
-	probStart[stateTag{'S', "ln"}] = -3.14e+100
-	probStart[stateTag{'S', "m"}] = -3.269200652116097
-	probStart[stateTag{'S', "mg"}] = -10.825314928868044
-	probStart[stateTag{'S', "mq"}] = -3.14e+100
-	probStart[stateTag{'S', "n"}] = -3.8551483897645107
-	probStart[stateTag{'S', "ng"}] = -4.913434861102905
-	probStart[stateTag{'S', "nr"}] = -4.483663103956885
-	probStart[stateTag{'S', "nrfg"}] = -3.14e+100
-	probStart[stateTag{'S', "nrt"}] = -3.14e+100
-	probStart[stateTag{'S', "ns"}] = -3.14e+100
-	probStart[stateTag{'S', "nt"}] = -12.147070768850364
-	probStart[stateTag{'S', "nz"}] = -3.14e+100
-	probStart[stateTag{'S', "o"}] = -8.464460927750023
-	probStart[stateTag{'S', "p"}] = -2.9868401813596317
-	probStart[stateTag{'S', "q"}] = -4.888658618255058
-	probStart[stateTag{'S', "qe"}] = -3.14e+100
-	probStart[stateTag{'S', "qg"}] = -3.14e+100
-	probStart[stateTag{'S', "r"}] = -2.7635336784127853
-	probStart[stateTag{'S', "rg"}] = -10.275268591948773
-	probStart[stateTag{'S', "rr"}] = -3.14e+100
-	probStart[stateTag{'S', "rz"}] = -3.14e+100
-	probStart[stateTag{'S', "s"}] = -3.14e+100
-	probStart[stateTag{'S', "t"}] = -3.14e+100
-	probStart[stateTag{'S', "tg"}] = -6.272842531880403
-	probStart[stateTag{'S', "u"}] = -6.940320595827818
-	probStart[stateTag{'S', "ud"}] = -7.728230161053767
-	probStart[stateTag{'S', "ug"}] = -7.5394037026636855
-	probStart[stateTag{'S', "uj"}] = -6.85251045118004
-	probStart[stateTag{'S', "ul"}] = -8.4153713175535
-	probStart[stateTag{'S', "uv"}] = -8.15808672228609
-	probStart[stateTag{'S', "uz"}] = -9.299258625372996
-	probStart[stateTag{'S', "v"}] = -3.053292303412302
-	probStart[stateTag{'S', "vd"}] = -3.14e+100
-	probStart[stateTag{'S', "vg"}] = -5.9430181843676895
-	probStart[stateTag{'S', "vi"}] = -3.14e+100
-	probStart[stateTag{'S', "vn"}] = -11.453923588290419
-	probStart[stateTag{'S', "vq"}] = -3.14e+100
-	probStart[stateTag{'S', "w"}] = -3.14e+100
-	probStart[stateTag{'S', "x"}] = -8.427419656069674
-	probStart[stateTag{'S', "y"}] = -6.1970794699489575
-	probStart[stateTag{'S', "yg"}] = -13.533365129970255
-	probStart[stateTag{'S', "z"}] = -3.14e+100
-	probStart[stateTag{'S', "zg"}] = -3.14e+100
+var probStart = map[uint16]float64{
+	100: -4.762305214596967,
+	101: -6.680066036784177,
+	102: -3.14e+100,
+	103: -8.697083223018778,
+	104: -5.018374362109218,
+	105: -3.14e+100,
+	106: -3.423880184954888,
+	107: -3.9750475297585357,
+	108: -8.888974230828882,
+	109: -3.14e+100,
+	110: -8.563551830394255,
+	111: -3.14e+100,
+	112: -5.491630418482717,
+	113: -3.14e+100,
+	114: -13.533365129970255,
+	115: -6.1157847275557105,
+	116: -3.14e+100,
+	117: -5.0576191284681915,
+	118: -3.14e+100,
+	119: -3.14e+100,
+	120: -4.905883584659895,
+	121: -3.14e+100,
+	122: -3.6524299819046386,
+	123: -3.14e+100,
+	124: -6.78695300139688,
+	125: -1.6966257797548328,
+	126: -3.14e+100,
+	127: -2.2310495913769506,
+	128: -5.873722175405573,
+	129: -4.985642733519195,
+	130: -2.8228438314969213,
+	131: -4.846091668182416,
+	132: -3.94698846057672,
+	133: -8.433498702146057,
+	134: -4.200984132085048,
+	135: -6.998123858956596,
+	136: -3.14e+100,
+	137: -3.14e+100,
+	138: -3.4098187790818413,
+	139: -3.14e+100,
+	140: -12.434752841302146,
+	141: -7.946116471570005,
+	142: -5.522673590839954,
+	143: -3.3647479094528574,
+	144: -3.14e+100,
+	145: -9.163917277503234,
+	146: -3.14e+100,
+	147: -3.14e+100,
+	148: -3.14e+100,
+	149: -3.14e+100,
+	150: -3.14e+100,
+	151: -3.14e+100,
+	152: -2.6740584874265685,
+	153: -9.044728760238115,
+	154: -3.14e+100,
+	155: -12.434752841302146,
+	156: -4.3315610890163585,
+	157: -12.147070768850364,
+	158: -3.14e+100,
+	159: -3.14e+100,
+	160: -9.844485675856319,
+	161: -3.14e+100,
+	162: -7.045681111485645,
+	163: -3.14e+100,
+	200: -3.14e+100,
+	201: -3.14e+100,
+	202: -3.14e+100,
+	203: -3.14e+100,
+	204: -3.14e+100,
+	205: -3.14e+100,
+	206: -3.14e+100,
+	207: -3.14e+100,
+	208: -3.14e+100,
+	209: -3.14e+100,
+	210: -3.14e+100,
+	211: -3.14e+100,
+	212: -3.14e+100,
+	213: -3.14e+100,
+	214: -3.14e+100,
+	215: -3.14e+100,
+	216: -3.14e+100,
+	217: -3.14e+100,
+	218: -3.14e+100,
+	219: -3.14e+100,
+	220: -3.14e+100,
+	221: -3.14e+100,
+	222: -3.14e+100,
+	223: -3.14e+100,
+	224: -3.14e+100,
+	225: -3.14e+100,
+	226: -3.14e+100,
+	227: -3.14e+100,
+	228: -3.14e+100,
+	229: -3.14e+100,
+	230: -3.14e+100,
+	231: -3.14e+100,
+	232: -3.14e+100,
+	233: -3.14e+100,
+	234: -3.14e+100,
+	235: -3.14e+100,
+	236: -3.14e+100,
+	237: -3.14e+100,
+	238: -3.14e+100,
+	239: -3.14e+100,
+	240: -3.14e+100,
+	241: -3.14e+100,
+	242: -3.14e+100,
+	243: -3.14e+100,
+	244: -3.14e+100,
+	245: -3.14e+100,
+	246: -3.14e+100,
+	247: -3.14e+100,
+	248: -3.14e+100,
+	249: -3.14e+100,
+	250: -3.14e+100,
+	251: -3.14e+100,
+	252: -3.14e+100,
+	253: -3.14e+100,
+	254: -3.14e+100,
+	255: -3.14e+100,
+	256: -3.14e+100,
+	257: -3.14e+100,
+	258: -3.14e+100,
+	259: -3.14e+100,
+	260: -3.14e+100,
+	261: -3.14e+100,
+	262: -3.14e+100,
+	263: -3.14e+100,
+	300: -3.14e+100,
+	301: -3.14e+100,
+	302: -3.14e+100,
+	303: -3.14e+100,
+	304: -3.14e+100,
+	305: -3.14e+100,
+	306: -3.14e+100,
+	307: -3.14e+100,
+	308: -3.14e+100,
+	309: -3.14e+100,
+	310: -3.14e+100,
+	311: -3.14e+100,
+	312: -3.14e+100,
+	313: -3.14e+100,
+	314: -3.14e+100,
+	315: -3.14e+100,
+	316: -3.14e+100,
+	317: -3.14e+100,
+	318: -3.14e+100,
+	319: -3.14e+100,
+	320: -3.14e+100,
+	321: -3.14e+100,
+	322: -3.14e+100,
+	323: -3.14e+100,
+	324: -3.14e+100,
+	325: -3.14e+100,
+	326: -3.14e+100,
+	327: -3.14e+100,
+	328: -3.14e+100,
+	329: -3.14e+100,
+	330: -3.14e+100,
+	331: -3.14e+100,
+	332: -3.14e+100,
+	333: -3.14e+100,
+	334: -3.14e+100,
+	335: -3.14e+100,
+	336: -3.14e+100,
+	337: -3.14e+100,
+	338: -3.14e+100,
+	339: -3.14e+100,
+	340: -3.14e+100,
+	341: -3.14e+100,
+	342: -3.14e+100,
+	343: -3.14e+100,
+	344: -3.14e+100,
+	345: -3.14e+100,
+	346: -3.14e+100,
+	347: -3.14e+100,
+	348: -3.14e+100,
+	349: -3.14e+100,
+	350: -3.14e+100,
+	351: -3.14e+100,
+	352: -3.14e+100,
+	353: -3.14e+100,
+	354: -3.14e+100,
+	355: -3.14e+100,
+	356: -3.14e+100,
+	357: -3.14e+100,
+	358: -3.14e+100,
+	359: -3.14e+100,
+	360: -3.14e+100,
+	361: -3.14e+100,
+	362: -3.14e+100,
+	363: -3.14e+100,
+	400: -3.9025396831295227,
+	401: -11.048458480182255,
+	402: -6.954113917960154,
+	403: -12.84021794941031,
+	404: -6.472888763970454,
+	405: -3.14e+100,
+	406: -4.786966795861212,
+	407: -3.903919764181873,
+	408: -3.14e+100,
+	409: -8.948397651299683,
+	410: -5.942513006281674,
+	411: -3.14e+100,
+	412: -5.194820249981676,
+	413: -6.507826815331734,
+	414: -8.650563207383884,
+	415: -3.14e+100,
+	416: -3.14e+100,
+	417: -4.911992119644354,
+	418: -3.14e+100,
+	419: -6.940320595827818,
+	420: -3.14e+100,
+	421: -3.14e+100,
+	422: -3.269200652116097,
+	423: -10.825314928868044,
+	424: -3.14e+100,
+	425: -3.8551483897645107,
+	426: -4.913434861102905,
+	427: -4.483663103956885,
+	428: -3.14e+100,
+	429: -3.14e+100,
+	430: -3.14e+100,
+	431: -12.147070768850364,
+	432: -3.14e+100,
+	433: -8.464460927750023,
+	434: -2.9868401813596317,
+	435: -4.888658618255058,
+	436: -3.14e+100,
+	437: -3.14e+100,
+	438: -2.7635336784127853,
+	439: -10.275268591948773,
+	440: -3.14e+100,
+	441: -3.14e+100,
+	442: -3.14e+100,
+	443: -3.14e+100,
+	444: -6.272842531880403,
+	445: -6.940320595827818,
+	446: -7.728230161053767,
+	447: -7.5394037026636855,
+	448: -6.85251045118004,
+	449: -8.4153713175535,
+	450: -8.15808672228609,
+	451: -9.299258625372996,
+	452: -3.053292303412302,
+	453: -3.14e+100,
+	454: -5.9430181843676895,
+	455: -3.14e+100,
+	456: -11.453923588290419,
+	457: -3.14e+100,
+	458: -3.14e+100,
+	459: -8.427419656069674,
+	460: -6.1970794699489575,
+	461: -13.533365129970255,
+	462: -3.14e+100,
+	463: -3.14e+100,
 }
