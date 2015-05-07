@@ -40,7 +40,7 @@ func ExampleBeleveSearch() {
 
 	indexMapping.DefaultAnalyzer = "jieba"
 	cacheDir := "jieba.beleve"
-	os.Remove(cacheDir)
+	os.RemoveAll(cacheDir)
 	index, err := bleve.New(cacheDir, indexMapping)
 
 	if err != nil {
