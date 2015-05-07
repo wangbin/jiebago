@@ -1,4 +1,4 @@
-package jiebago_test
+package tokenizers_test
 
 import (
 	"fmt"
@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/blevesearch/bleve"
-	_ "github.com/wangbin/jiebago"
+	_ "github.com/wangbin/jiebago/tokenizers"
 )
 
 func Example_beleveSearch() {
@@ -15,7 +15,7 @@ func Example_beleveSearch() {
 
 	err := indexMapping.AddCustomTokenizer("jieba",
 		map[string]interface{}{
-			"file": "dict.txt",
+			"file": "../dict.txt",
 			"type": "jieba",
 		})
 	if err != nil {
@@ -79,7 +79,7 @@ func Example_beleveSearch() {
 
 	// search for some text
 	for _, keyword := range []string{"水果世博园", "你", "first", "中文", "交换机", "交换"} {
-		query := bleve.NewMatchQuery(keyword)
+		query := bleve.NewQueryStringQuery(keyword)
 		search := bleve.NewSearchRequest(query)
 		search.Highlight = bleve.NewHighlight()
 		searchResults, err := index.Search(search)

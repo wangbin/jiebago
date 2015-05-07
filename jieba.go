@@ -22,6 +22,11 @@ type Segmenter struct {
 	dict *Dictionary
 }
 
+// Dictionary returns segmenter's dictionary
+func (seg *Segmenter) Dictionary() *Dictionary {
+	return seg.dict
+}
+
 // LoadDictionary loads dictionary from given file name. Everytime
 // LoadDictionary is called, previously loaded dictionary will be cleard.
 func (seg *Segmenter) LoadDictionary(fileName string) error {

@@ -1,4 +1,4 @@
-package jiebago
+package tokenizers
 
 import (
 	"fmt"
@@ -7,6 +7,7 @@ import (
 
 	"github.com/blevesearch/bleve/analysis"
 	"github.com/blevesearch/bleve/registry"
+	"github.com/wangbin/jiebago"
 )
 
 // Name is the jieba tokenizer name.
@@ -16,7 +17,7 @@ var ideographRegexp = regexp.MustCompile(`\p{Han}+`)
 
 // JiebaTokenizer is the beleve tokenizer for jiebago.
 type JiebaTokenizer struct {
-	seg             Segmenter
+	seg             jiebago.Segmenter
 	hmm, searchMode bool
 }
 
@@ -41,7 +42,7 @@ Parameters:
     this word into "交换", "换机", which are valid Chinese words.
 */
 func NewJiebaTokenizer(dictFilePath string, hmm, searchMode bool) (analysis.Tokenizer, error) {
-	var seg Segmenter
+	var seg jiebago.Segmenter
 	err := seg.LoadDictionary(dictFilePath)
 	return &JiebaTokenizer{
 		seg:        seg,
@@ -59,6 +60,7 @@ func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 	pos := 1
 	var width int
 	var gram string
+	dict := jt.seg.Dictionary()
 	for word := range jt.seg.Cut(string(input), jt.hmm) {
 		if jt.searchMode {
 			runes := []rune(word)
@@ -68,7 +70,7 @@ func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 					for i := 0; i < width-step+1; i++ {
 						gram = string(runes[i : i+step])
 						gramLen := len(gram)
-						if value, ok := jt.seg.dict.Frequency(gram); ok && value > 0 {
+						if frequency, ok := dict.Frequency(gram); ok && frequency > 0 {
 							gramStart := start + len(string(runes[:i]))
 							token := analysis.Token{
 								Term:     []byte(gram),
