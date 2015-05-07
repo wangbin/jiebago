@@ -186,41 +186,42 @@ func (seg *Segmenter) cutDAG(sentence string) <-chan Segment {
 			frag := runes[x:y]
 			if y-x == 1 {
 				buf = append(buf, frag...)
-			} else {
-				if len(buf) > 0 {
-					bufString := string(buf)
-					if len(buf) == 1 {
-						if tag, ok := seg.dict.Pos(bufString); ok {
-							result <- Segment{bufString, tag}
-						} else {
-							result <- Segment{bufString, "x"}
-						}
-						buf = make([]rune, 0)
+				x = y
+				continue
+			}
+			if len(buf) > 0 {
+				bufString := string(buf)
+				if len(buf) == 1 {
+					if tag, ok := seg.dict.Pos(bufString); ok {
+						result <- Segment{bufString, tag}
 					} else {
-						if v, ok := seg.dict.Frequency(bufString); !ok || v == 0.0 {
-							for t := range seg.cutDetail(bufString) {
-								result <- t
-							}
+						result <- Segment{bufString, "x"}
+					}
+					buf = make([]rune, 0)
+					continue
+				}
+				if v, ok := seg.dict.Frequency(bufString); !ok || v == 0.0 {
+					for t := range seg.cutDetail(bufString) {
+						result <- t
+					}
+				} else {
+					for _, elem := range buf {
+						selem := string(elem)
+						if tag, ok := seg.dict.Pos(selem); ok {
+							result <- Segment{selem, tag}
 						} else {
-							for _, elem := range buf {
-								selem := string(elem)
-								if tag, ok := seg.dict.Pos(selem); ok {
-									result <- Segment{selem, tag}
-								} else {
-									result <- Segment{selem, "x"}
-								}
-
-							}
+							result <- Segment{selem, "x"}
 						}
-						buf = make([]rune, 0)
+
 					}
 				}
-				word := string(frag)
-				if tag, ok := seg.dict.Pos(word); ok {
-					result <- Segment{word, tag}
-				} else {
-					result <- Segment{word, "x"}
-				}
+				buf = make([]rune, 0)
+			}
+			word := string(frag)
+			if tag, ok := seg.dict.Pos(word); ok {
+				result <- Segment{word, tag}
+			} else {
+				result <- Segment{word, "x"}
 			}
 			x = y
 		}
@@ -270,19 +271,20 @@ func (seg *Segmenter) cutDAGNoHMM(sentence string) <-chan Segment {
 			if reEng1.MatchString(string(frag)) && len(frag) == 1 {
 				buf = append(buf, frag...)
 				x = y
-			} else {
-				if len(buf) > 0 {
-					result <- Segment{string(buf), "eng"}
-					buf = make([]rune, 0)
-				}
-				word := string(frag)
-				if tag, ok := seg.dict.Pos(word); ok {
-					result <- Segment{word, tag}
-				} else {
-					result <- Segment{word, "x"}
-				}
-				x = y
+				continue
 			}
+			if len(buf) > 0 {
+				result <- Segment{string(buf), "eng"}
+				buf = make([]rune, 0)
+			}
+			word := string(frag)
+			if tag, ok := seg.dict.Pos(word); ok {
+				result <- Segment{word, tag}
+			} else {
+				result <- Segment{word, "x"}
+			}
+			x = y
+
 		}
 		if len(buf) > 0 {
 			result <- Segment{string(buf), "eng"}
@@ -309,22 +311,22 @@ func (seg *Segmenter) Cut(sentence string, hmm bool) <-chan Segment {
 				for wordTag := range cut(blk) {
 					result <- wordTag
 				}
-			} else {
-				for _, x := range util.RegexpSplit(reSkipInternal, blk, -1) {
-					if reSkipInternal.MatchString(x) {
-						result <- Segment{x, "x"}
-					} else {
-						for _, xx := range x {
-							s := string(xx)
-							switch {
-							case reNum.MatchString(s):
-								result <- Segment{s, "m"}
-							case reEng.MatchString(x):
-								result <- Segment{x, "eng"}
-							default:
-								result <- Segment{s, "x"}
-							}
-						}
+				continue
+			}
+			for _, x := range util.RegexpSplit(reSkipInternal, blk, -1) {
+				if reSkipInternal.MatchString(x) {
+					result <- Segment{x, "x"}
+					continue
+				}
+				for _, xx := range x {
+					s := string(xx)
+					switch {
+					case reNum.MatchString(s):
+						result <- Segment{s, "m"}
+					case reEng.MatchString(x):
+						result <- Segment{x, "eng"}
+					default:
+						result <- Segment{s, "x"}
 					}
 				}
 			}
