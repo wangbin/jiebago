@@ -6,20 +6,17 @@ import (
 	"github.com/wangbin/jiebago"
 )
 
-var seg jiebago.Segmenter
-
-func init() {
-	seg.LoadDictionary("dict.txt")
-}
-
-func print(ch <-chan string) {
-	for word := range ch {
-		fmt.Printf(" %s /", word)
-	}
-	fmt.Println()
-}
-
 func Example() {
+	var seg jiebago.Segmenter
+	seg.LoadDictionary("dict.txt")
+
+	print := func(ch <-chan string) {
+		for word := range ch {
+			fmt.Printf(" %s /", word)
+		}
+		fmt.Println()
+	}
+
 	fmt.Print("【全模式】：")
 	print(seg.CutAll("我来到北京清华大学"))
 
@@ -38,8 +35,17 @@ func Example() {
 	// 【搜索引擎模式】： 小明 / 硕士 / 毕业 / 于 / 中国 / 科学 / 学院 / 科学院 / 中国科学院 / 计算 / 计算所 / ， / 后 / 在 / 日本 / 京都 / 大学 / 日本京都大学 / 深造 /
 }
 
-func ExampleLoadUserDictionary() {
-	var sentence = "李小福是创新办主任也是云计算方面的专家"
+func Example_loadUserDictionary() {
+	var seg jiebago.Segmenter
+	seg.LoadDictionary("dict.txt")
+
+	print := func(ch <-chan string) {
+		for word := range ch {
+			fmt.Printf(" %s /", word)
+		}
+		fmt.Println()
+	}
+	sentence := "李小福是创新办主任也是云计算方面的专家"
 	fmt.Print("Before:")
 	print(seg.Cut(sentence, true))
 
@@ -52,8 +58,11 @@ func ExampleLoadUserDictionary() {
 	// After: 李小福 / 是 / 创新办 / 主任 / 也 / 是 / 云计算 / 方面 / 的 / 专家 /
 }
 
-func ExampleTokenize() {
-	var sentence = []byte("永和服装饰品有限公司")
+func Example_tokenize() {
+	var seg jiebago.Segmenter
+	seg.LoadDictionary("dict.txt")
+
+	sentence := []byte("永和服装饰品有限公司")
 
 	// default mode
 	tokenizer, _ := jiebago.NewJiebaTokenizer("dict.txt", true, false)

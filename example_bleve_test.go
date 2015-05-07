@@ -9,7 +9,7 @@ import (
 	_ "github.com/wangbin/jiebago"
 )
 
-func ExampleBeleveSearch() {
+func Example_beleveSearch() {
 	// open a new index
 	indexMapping := bleve.NewIndexMapping()
 
