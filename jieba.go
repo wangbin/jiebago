@@ -4,7 +4,9 @@ package jiebago
 import (
 	"math"
 	"regexp"
+	"strings"
 
+	"github.com/wangbin/jiebago/dictionary"
 	"github.com/wangbin/jiebago/finalseg"
 	"github.com/wangbin/jiebago/util"
 )
@@ -22,9 +24,55 @@ type Segmenter struct {
 	dict *Dictionary
 }
 
-// Dictionary returns segmenter's dictionary
-func (seg *Segmenter) Dictionary() *Dictionary {
-	return seg.dict
+// Frequency returns a word's frequency and existence
+func (seg *Segmenter) Frequency(word string) (float64, bool) {
+	return seg.dict.Frequency(word)
+}
+
+// AddWord adds a new word with frequency to dictionary
+func (seg *Segmenter) AddWord(word string, frequency float64) {
+	seg.dict.AddToken(dictionary.NewToken(word, frequency, ""))
+}
+
+// Delete removes a word from dictionary
+func (seg *Segmenter) DeleteWord(word string) {
+	seg.dict.AddToken(dictionary.NewToken(word, 0.0, ""))
+}
+
+func (seg *Segmenter) SuggestFrequency(words ...string) float64 {
+	frequency := 1.0
+	if len(words) > 1 {
+		for _, word := range words {
+			if freq, ok := seg.dict.Frequency(word); ok {
+				frequency *= freq
+			}
+			frequency /= seg.dict.total
+		}
+		wordFreq := 0.0
+		if freq, ok := seg.dict.Frequency(strings.Join(words, "")); ok {
+			wordFreq = freq
+		}
+		if wordFreq < frequency {
+			frequency = wordFreq
+		}
+	} else {
+		word := words[0]
+		for segment := range seg.Cut(word, false) {
+			if freq, ok := seg.dict.Frequency(segment); ok {
+				frequency *= freq
+			}
+			frequency /= seg.dict.total
+		}
+		frequency = frequency*seg.dict.total + 1
+		wordFreq := 1.0
+		if freq, ok := seg.dict.Frequency(word); ok {
+			wordFreq = freq
+		}
+		if wordFreq > frequency {
+			frequency = wordFreq
+		}
+	}
+	return frequency
 }
 
 // LoadDictionary loads dictionary from given file name. Everytime

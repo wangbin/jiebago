@@ -60,28 +60,28 @@ func (jt *JiebaTokenizer) Tokenize(input []byte) analysis.TokenStream {
 	pos := 1
 	var width int
 	var gram string
-	dict := jt.seg.Dictionary()
 	for word := range jt.seg.Cut(string(input), jt.hmm) {
 		if jt.searchMode {
 			runes := []rune(word)
 			width = len(runes)
 			for _, step := range [2]int{2, 3} {
-				if width > step {
-					for i := 0; i < width-step+1; i++ {
-						gram = string(runes[i : i+step])
-						gramLen := len(gram)
-						if frequency, ok := dict.Frequency(gram); ok && frequency > 0 {
-							gramStart := start + len(string(runes[:i]))
-							token := analysis.Token{
-								Term:     []byte(gram),
-								Start:    gramStart,
-								End:      gramStart + gramLen,
-								Position: pos,
-								Type:     detectTokenType(gram),
-							}
-							rv = append(rv, &token)
-							pos++
+				if width <= step {
+					continue
+				}
+				for i := 0; i < width-step+1; i++ {
+					gram = string(runes[i : i+step])
+					gramLen := len(gram)
+					if frequency, ok := jt.seg.Frequency(gram); ok && frequency > 0 {
+						gramStart := start + len(string(runes[:i]))
+						token := analysis.Token{
+							Term:     []byte(gram),
+							Start:    gramStart,
+							End:      gramStart + gramLen,
+							Position: pos,
+							Type:     detectTokenType(gram),
 						}
+						rv = append(rv, &token)
+						pos++
 					}
 				}
 			}
