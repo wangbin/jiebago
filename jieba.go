@@ -4,7 +4,9 @@ package jiebago
 import (
 	"math"
 	"regexp"
+	"strings"
 
+	"github.com/wangbin/jiebago/dictionary"
 	"github.com/wangbin/jiebago/finalseg"
 	"github.com/wangbin/jiebago/util"
 )
@@ -22,9 +24,71 @@ type Segmenter struct {
 	dict *Dictionary
 }
 
-// Dictionary returns segmenter's dictionary
-func (seg *Segmenter) Dictionary() *Dictionary {
-	return seg.dict
+// Frequency returns a word's frequency and existence
+func (seg *Segmenter) Frequency(word string) (float64, bool) {
+	return seg.dict.Frequency(word)
+}
+
+// AddWord adds a new word with frequency to dictionary
+func (seg *Segmenter) AddWord(word string, frequency float64) {
+	seg.dict.AddToken(dictionary.NewToken(word, frequency, ""))
+}
+
+// DeleteWord removes a word from dictionary
+func (seg *Segmenter) DeleteWord(word string) {
+	seg.dict.AddToken(dictionary.NewToken(word, 0.0, ""))
+}
+
+/*
+SuggestFrequency returns a suggested frequncy of a word or a long word
+cutted into several short words.
+
+This method is useful when a word in the sentence is not cutted out correctly.
+
+If a word should not be further cutted, for example word "石墨烯" should not be
+cutted into "石墨" and "烯", SuggestFrequency("石墨烯") will return the maximu
+frequency for this word.
+
+If a word should be further cutted, for example word "今天天气" should be
+further cutted into two words "今天" and "天气",  SuggestFrequency("今天", "天气")
+should return the minimum frequency for word "今天天气".
+*/
+func (seg *Segmenter) SuggestFrequency(words ...string) float64 {
+	frequency := 1.0
+	if len(words) > 1 {
+		for _, word := range words {
+			if freq, ok := seg.dict.Frequency(word); ok {
+				frequency *= freq
+			}
+			frequency /= seg.dict.total
+		}
+		frequency, _ = math.Modf(frequency * seg.dict.total)
+		wordFreq := 0.0
+		if freq, ok := seg.dict.Frequency(strings.Join(words, "")); ok {
+			wordFreq = freq
+		}
+		if wordFreq < frequency {
+			frequency = wordFreq
+		}
+	} else {
+		word := words[0]
+		for segment := range seg.Cut(word, false) {
+			if freq, ok := seg.dict.Frequency(segment); ok {
+				frequency *= freq
+			}
+			frequency /= seg.dict.total
+		}
+		frequency, _ = math.Modf(frequency * seg.dict.total)
+		frequency += 1.0
+		wordFreq := 1.0
+		if freq, ok := seg.dict.Frequency(word); ok {
+			wordFreq = freq
+		}
+		if wordFreq > frequency {
+			frequency = wordFreq
+		}
+	}
+	return frequency
 }
 
 // LoadDictionary loads dictionary from given file name. Everytime
@@ -175,14 +239,14 @@ func (seg *Segmenter) cutDAGNoHMM(sentence string) <-chan string {
 			if reEng.MatchString(string(frag)) && len(frag) == 1 {
 				buf = append(buf, frag...)
 				x = y
-			} else {
-				if len(buf) > 0 {
-					result <- string(buf)
-					buf = make([]rune, 0)
-				}
-				result <- string(frag)
-				x = y
+				continue
 			}
+			if len(buf) > 0 {
+				result <- string(buf)
+				buf = make([]rune, 0)
+			}
+			result <- string(frag)
+			x = y
 		}
 		if len(buf) > 0 {
 			result <- string(buf)
