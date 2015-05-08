@@ -34,11 +34,25 @@ func (seg *Segmenter) AddWord(word string, frequency float64) {
 	seg.dict.AddToken(dictionary.NewToken(word, frequency, ""))
 }
 
-// Delete removes a word from dictionary
+// DeleteWord removes a word from dictionary
 func (seg *Segmenter) DeleteWord(word string) {
 	seg.dict.AddToken(dictionary.NewToken(word, 0.0, ""))
 }
 
+/*
+SuggestFrequency returns a suggested frequncy of a word or a long word
+cutted into several short words.
+
+This method is useful when a word in the sentence is not cutted out correctly.
+
+If a word should not be further cutted, for example word "石墨烯" should not be
+cutted into "石墨" and "烯", SuggestFrequency("石墨烯") will return the maximu
+frequency for this word.
+
+If a word should be further cutted, for example word "今天天气" should be
+further cutted into two words "今天" and "天气",  SuggestFrequency("今天", "天气")
+should return the minimum frequency for word "今天天气".
+*/
 func (seg *Segmenter) SuggestFrequency(words ...string) float64 {
 	frequency := 1.0
 	if len(words) > 1 {
@@ -48,6 +62,7 @@ func (seg *Segmenter) SuggestFrequency(words ...string) float64 {
 			}
 			frequency /= seg.dict.total
 		}
+		frequency, _ = math.Modf(frequency * seg.dict.total)
 		wordFreq := 0.0
 		if freq, ok := seg.dict.Frequency(strings.Join(words, "")); ok {
 			wordFreq = freq
@@ -63,7 +78,8 @@ func (seg *Segmenter) SuggestFrequency(words ...string) float64 {
 			}
 			frequency /= seg.dict.total
 		}
-		frequency = frequency*seg.dict.total + 1
+		frequency, _ = math.Modf(frequency * seg.dict.total)
+		frequency += 1.0
 		wordFreq := 1.0
 		if freq, ok := seg.dict.Frequency(word); ok {
 			wordFreq = freq
@@ -223,14 +239,14 @@ func (seg *Segmenter) cutDAGNoHMM(sentence string) <-chan string {
 			if reEng.MatchString(string(frag)) && len(frag) == 1 {
 				buf = append(buf, frag...)
 				x = y
-			} else {
-				if len(buf) > 0 {
-					result <- string(buf)
-					buf = make([]rune, 0)
-				}
-				result <- string(frag)
-				x = y
+				continue
 			}
+			if len(buf) > 0 {
+				result <- string(buf)
+				buf = make([]rune, 0)
+			}
+			result <- string(frag)
+			x = y
 		}
 		if len(buf) > 0 {
 			result <- string(buf)

@@ -35,6 +35,60 @@ func Example() {
 	// 【搜索引擎模式】： 小明 / 硕士 / 毕业 / 于 / 中国 / 科学 / 学院 / 科学院 / 中国科学院 / 计算 / 计算所 / ， / 后 / 在 / 日本 / 京都 / 大学 / 日本京都大学 / 深造 /
 }
 
+func Example_suggestFrequency() {
+	var seg jiebago.Segmenter
+	seg.LoadDictionary("dict.txt")
+
+	print := func(ch <-chan string) {
+		for word := range ch {
+			fmt.Printf(" %s /", word)
+		}
+		fmt.Println()
+	}
+	sentence := "超敏C反应蛋白是什么？"
+	fmt.Print("Before:")
+	print(seg.Cut(sentence, false))
+	word := "超敏C反应蛋白"
+	oldFrequency, _ := seg.Frequency(word)
+	frequency := seg.SuggestFrequency(word)
+	fmt.Printf("%s current frequency: %f, suggest: %f.\n", word, oldFrequency, frequency)
+	seg.AddWord(word, frequency)
+	fmt.Print("After:")
+	print(seg.Cut(sentence, false))
+
+	sentence = "如果放到post中将出错"
+	fmt.Print("Before:")
+	print(seg.Cut(sentence, false))
+	word = "中将"
+	oldFrequency, _ = seg.Frequency(word)
+	frequency = seg.SuggestFrequency("中", "将")
+	fmt.Printf("%s current frequency: %f, suggest: %f.\n", word, oldFrequency, frequency)
+	seg.AddWord(word, frequency)
+	fmt.Print("After:")
+	print(seg.Cut(sentence, false))
+
+	sentence = "今天天气不错"
+	fmt.Print("Before:")
+	print(seg.Cut(sentence, false))
+	word = "今天天气"
+	oldFrequency, _ = seg.Frequency(word)
+	frequency = seg.SuggestFrequency("今天", "天气")
+	fmt.Printf("%s current frequency: %f, suggest: %f.\n", word, oldFrequency, frequency)
+	seg.AddWord(word, frequency)
+	fmt.Print("After:")
+	print(seg.Cut(sentence, false))
+	// Output:
+	// Before: 超敏 / C / 反应 / 蛋白 / 是 / 什么 / ？ /
+	// 超敏C反应蛋白 current frequency: 0.000000, suggest: 1.000000.
+	// After: 超敏C反应蛋白 / 是 / 什么 / ？ /
+	// Before: 如果 / 放到 / post / 中将 / 出错 /
+	// 中将 current frequency: 763.000000, suggest: 494.000000.
+	// After: 如果 / 放到 / post / 中 / 将 / 出错 /
+	// Before: 今天天气 / 不错 /
+	// 今天天气 current frequency: 3.000000, suggest: 0.000000.
+	// After: 今天 / 天气 / 不错 /
+}
+
 func Example_loadUserDictionary() {
 	var seg jiebago.Segmenter
 	seg.LoadDictionary("dict.txt")
