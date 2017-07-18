@@ -74,7 +74,7 @@ func (t *TagExtracter) LoadStopWords(fileName string) error {
 func (t *TagExtracter) ExtractTags(sentence string, topK int) (tags Segments) {
 	freqMap := make(map[string]float64)
 
-	for w := range t.seg.Cut(sentence, true) {
+	for _, w := range t.seg.Cut(sentence, true) {
 		w = strings.TrimSpace(w)
 		if utf8.RuneCountInString(w) < 2 {
 			continue
