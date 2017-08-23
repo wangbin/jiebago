@@ -33,8 +33,13 @@ func (d *Dictionary) AddToken(token dictionary.Token) {
 }
 
 func (d *Dictionary) addToken(token dictionary.Token) {
+	hisFreq := d.freqMap[token.Text()]
 	d.freqMap[token.Text()] = token.Frequency()
-	d.total += token.Frequency()
+	if token.Frequency() > 0 {
+		d.total += token.Frequency()
+	} else {
+		d.total -= hisFreq
+	}
 	runes := []rune(token.Text())
 	n := len(runes)
 	for i := 0; i < n; i++ { //TODO: n-1?
