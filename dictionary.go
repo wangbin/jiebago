@@ -11,6 +11,7 @@ import (
 type Dictionary struct {
 	total, logTotal float64
 	freqMap         map[string]float64
+	posMap          map[string]string
 	sync.RWMutex
 }
 
@@ -43,6 +44,8 @@ func (d *Dictionary) addToken(token dictionary.Token) {
 			d.freqMap[frag] = 0.0
 		}
 	}
+
+	d.posMap[token.Text()] = token.Pos()
 }
 
 func (d *Dictionary) updateLogTotal() {
@@ -55,6 +58,13 @@ func (d *Dictionary) Frequency(key string) (float64, bool) {
 	freq, ok := d.freqMap[key]
 	d.RUnlock()
 	return freq, ok
+}
+
+func (d *Dictionary) Pos(key string) (string, bool) {
+	d.RLock()
+	pos, ok := d.posMap[key]
+	d.RUnlock()
+	return pos, ok
 }
 
 func (d *Dictionary) loadDictionary(fileName string) error {

@@ -29,6 +29,11 @@ func (seg *Segmenter) Frequency(word string) (float64, bool) {
 	return seg.dict.Frequency(word)
 }
 
+// Pos returns a word's part_of_speech and existence
+func (seg *Segmenter) Pos(word string) (string, bool) {
+	return seg.dict.Pos(word)
+}
+
 // AddWord adds a new word with frequency to dictionary
 func (seg *Segmenter) AddWord(word string, frequency float64) {
 	seg.dict.AddToken(dictionary.NewToken(word, frequency, ""))
@@ -94,7 +99,7 @@ func (seg *Segmenter) SuggestFrequency(words ...string) float64 {
 // LoadDictionary loads dictionary from given file name. Everytime
 // LoadDictionary is called, previously loaded dictionary will be cleard.
 func (seg *Segmenter) LoadDictionary(fileName string) error {
-	seg.dict = &Dictionary{freqMap: make(map[string]float64)}
+	seg.dict = &Dictionary{freqMap: make(map[string]float64), posMap: make(map[string]string)}
 	return seg.dict.loadDictionary(fileName)
 }
 
