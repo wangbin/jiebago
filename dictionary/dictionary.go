@@ -35,6 +35,7 @@ func loadDictionary(file *os.File) (<-chan Token, <-chan error) {
 			if length := len(fields); length > 1 {
 				token.frequency, err = strconv.ParseFloat(fields[1], 64)
 				if err != nil {
+					close(tokenCh)
 					errCh <- err
 					return
 				}
@@ -46,6 +47,7 @@ func loadDictionary(file *os.File) (<-chan Token, <-chan error) {
 		}
 
 		if err = scanner.Err(); err != nil {
+			close(tokenCh)
 			errCh <- err
 		}
 	}()
